@@ -51,15 +51,19 @@ Make sure that token, conf, and binary file are located at same location.
 
 ### On Windows
 
+copy ```StartServer64.bat ``` and rename it ```sever.bat```.
+
 Execute .exe file. Servername can be configured at server.bat
 
 ### On Linux
+
+copy ```start-server.sh``` and rename it ```server.sh```.
 
 ```bash
 ./DotNETCoreDiscordBot_Linux -servername (your server name)
 ```
 
-If servername parameter is not configured, it will start 'servertest' server.
+If servername parameter is not configured, it will start default 'servertest' server.
 
 # pzdiscordbot.conf guide
 

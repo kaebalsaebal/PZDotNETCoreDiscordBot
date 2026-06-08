@@ -198,3 +198,9 @@ Behavior:
 3. The server automatically restarts 10 minutes later to apply the update.
 4. automatically send notifications on 10 min, 5 min, 1 min.
 
+# Thanks to
+
+* [egebilecen](https://github.com/egebilecen): original discord bot author
+* .DotNET Core 8.0
+* Discord.NET
+* RCON

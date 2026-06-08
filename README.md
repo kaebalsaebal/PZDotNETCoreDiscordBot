@@ -51,19 +51,31 @@ Make sure that token, conf, and binary file are located at same location.
 
 ### On Windows
 
-copy ```StartServer64.bat ``` and rename it ```sever.bat```.
+copy ```StartServer64.bat ``` and rename it to match the `WindowsServerPath` configured in `pzdiscordbot.conf`.
 
-Execute .exe file. Servername can be configured at server.bat
+
+Execute .exe file. Servername can be configured at ```pzdiscordbot.conf``` file.
 
 ### On Linux
 
-copy ```start-server.sh``` and rename it ```server.sh```.
+copy ```start-server.sh``` and rename it to match the `LinuxServerPath` configured in `pzdiscordbot.conf`.
+
+ProjectZomboid64.json
 
 ```bash
 ./DotNETCoreDiscordBot_Linux -servername (your server name)
 ```
 
-If servername parameter is not configured, it will start default 'servertest' server.
+If servername parameter is not configured, it will start default server written at ```pzdiscordbot.conf```.
+
+## RCON Warning
+
+This project uses RCON for sending message to server.
+
+By Default, the RCON settings(IP,port,password) are configured in ```pzdiscordbot.conf``` on default value.
+
+But if you have configured your own RCON settings in (home)/Zomboid/Server/(Your Server name).ini,  
+The bot automatically finds and uses it.
 
 # pzdiscordbot.conf guide
 
@@ -90,22 +102,17 @@ If servername parameter is not configured, it will start default 'servertest' se
     "AutoServerStart": false,
     "NonPublicModLogging": false
   },
-  "LocalizationInfo": null
+  "RCONSettings": {
+    "IP": "127.0.0.1",
+    "Port": 27015,
+    "Password": "1234"
+  },
+  "WindowsServerPath": "./server.bat",
+  "LinuxServerPath": "./server.sh",
+  "UnixServerPath": "./server.sh",
+  "ServerName": "servertest"
 }
 ```
-
-* GuildId: Your Guild id
-* CommandChannelId: Your channel id to send command
-* LogChannelId: Your channel id to send log
-* PublicChannelId: Your channel id to send public messages
-* ~~ServerLogParserSettings: Unavailable yet...~~
-* ServerScheduleSettings: All numerics are milliseconds.
-  * RestartTimers: Time array for shutting down server
-  * ~~ServerRestartSchedule: Unavailable yet...~~
-  * WorkshopItemUpdateSchedule: How finding workshop update scheduler works.
-  * WorkshopItemUpdateRestartTimer: Server restarting time if workshop update found
-  * ~~ServerRestartScheduleType: Unavailable yet...~~
-  * ~~ServerRestartTimes: Unavailable yet...~~
 
 ## GuildId, CommandChannelId, LogchannelId, PublicChannelId
 
@@ -198,9 +205,52 @@ Behavior:
 3. The server automatically restarts 10 minutes later to apply the update.
 4. automatically send notifications on 10 min, 5 min, 1 min.
 
+## RCONSettings, ServerPath, ServerName
+
+```json
+{
+  "RCONSettings": {
+    "IP": "127.0.0.1",
+    "Port": 27015,
+    "Password": "1234"
+  },
+  "WindowsServerPath": "./server.bat",
+  "LinuxServerPath": "./server.sh",
+  "UnixServerPath": "./server.sh",
+  "ServerName": "servertest"
+}
+```
+
+| Setting                 | Description                                                                           |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| `RCONSettings.IP`       | The IP address used to connect to the game server's RCON interface.                   |
+| `RCONSettings.Port`     | The RCON port exposed by the game server.                                             |
+| `RCONSettings.Password` | The password required to authenticate with the RCON server.                           |
+| `WindowsServerPath`     | Path to the server startup script or executable on Windows systems.                   |
+| `LinuxServerPath`       | Path to the server startup script or executable on Linux systems.                     |
+| `UnixServerPath`        | Path to the server startup script or executable on Unix-based systems.                |
+| `ServerName`            | A friendly name used to identify the server in logs, notifications, and bot messages. |
+
+### Example
+
+```json
+{
+  "RCONSettings": {
+    "IP": "192.168.1.100",
+    "Port": 27015,
+    "Password": "my-rcon-password"
+  },
+  "WindowsServerPath": "C:/Servers/MyServer/start.bat",
+  "LinuxServerPath": "/home/steam/server/start.sh",
+  "UnixServerPath": "/home/steam/server/start.sh",
+  "ServerName": "Production Server"
+}
+```
+
+In this example, the bot connects to the server through RCON at `192.168.1.100:27015`, uses the specified password for authentication, and starts the server using the appropriate startup script depending on the operating system.
+
+
 # Thanks to
 
 * [egebilecen](https://github.com/egebilecen): original discord bot author
-* .DotNET Core 8.0
-* Discord.NET
-* RCON
+* [Discord.NET(https://docs.discordnet.dev/): framework to make this

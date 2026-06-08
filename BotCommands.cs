@@ -21,7 +21,8 @@ namespace DotNETCoreDiscordBot
         [RequireCommandChannel]
         public async Task RestartServerAsync()
         {
-            await ServerUtility.RestartServer(Context.Channel, 600000);
+            List<uint> restartTimers = Application.BotConfig.ServerScheduleSettings.GetRestartTimers();
+            await ServerUtility.RestartServer(Context.Channel, restartTimers);
         }
 
         [Command("shutdown_server")]

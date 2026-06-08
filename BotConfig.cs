@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,8 +15,13 @@ namespace DotNETCoreDiscordBot
 
     public class ServerScheduleSettings
     {
-        public uint ServerRestartSchedule = Convert.ToUInt32(TimeSpan.FromHours(6).TotalMilliseconds);
-        public uint WorkshopItemUpdateSchedule = Convert.ToUInt32(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        private List<uint> RestartTimers = new List<uint> {
+            Convert.ToUInt32(TimeSpan.FromMinutes(10).TotalMilliseconds),
+            Convert.ToUInt32(TimeSpan.FromMinutes(5).TotalMilliseconds),
+            Convert.ToUInt32(TimeSpan.FromMinutes(1).TotalMilliseconds)
+        };
+        private uint ServerRestartSchedule = Convert.ToUInt32(TimeSpan.FromHours(6).TotalMilliseconds);
+        public uint WorkshopItemUpdateSchedule = Convert.ToUInt32(TimeSpan.FromMinutes(30).TotalMilliseconds);
         public uint WorkshopItemUpdateRestartTimer = Convert.ToUInt32(TimeSpan.FromMinutes(15).TotalMilliseconds);
         public string ServerRestartScheduleType = "Interval";
         public List<string> ServerRestartTimes = new List<string> { "03:00" };
@@ -24,6 +30,11 @@ namespace DotNETCoreDiscordBot
         {
             return this.ServerRestartSchedule;
             //return this.ServerRestartScheduleType.ToLower() == "interval" ? this.ServerRestartSchedule : Scheduler.GetIntervalFromTimes(this.ServerRestartTimes);
+        }
+
+        public List<uint> GetRestartTimers()
+        {
+            return this.RestartTimers;
         }
 
     }

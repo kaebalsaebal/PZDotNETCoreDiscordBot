@@ -56,32 +56,52 @@ namespace DotNETCoreDiscordBot
             return "";
         }
 
-        public static async Task RestartServer(IMessageChannel channel, uint restartTimerMs)
+        public static async Task RestartServer(IMessageChannel channel, List<uint> restartTimers)
         {
-            int restartTimerMinutes = (int)(restartTimerMs / 60000);
+            restartTimers.Distinct().OrderByDescending(x => x).ToList();
+            int restartTimersCount = restartTimers.Count;
+
+            if (restartTimersCount == 0)
+            {
+                LogFile.WriteLine($"[ServerUtility] Error: RestartTimers are not configured...");
+                await channel.SendMessageAsync($"❌ RestartTimers are not configured...");
+                return;
+            }
 
             if (channel != null)
             {
-                LogFile.WriteLine($"[ServerUtility] Restarting server in {restartTimerMinutes} minutes...");
-                await channel.SendMessageAsync($"🔄 Restarting server in {restartTimerMinutes} minutes...");
+                for(int i=0; i<restartTimersCount; i++) {
 
-                await RconManager.SendCommandAsync($"servermsg \"Server will restart in {restartTimerMinutes} minute(s). Please find a safe place.\"");
+                    int countdown = (int)(restartTimers[i] / 60000);
 
-                await Task.Delay((int)restartTimerMs);
+
+                    LogFile.WriteLine($"[ServerUtility] Restarting server in {countdown} minutes...");
+                    await channel.SendMessageAsync($"🔄 Restarting server in {countdown} minutes...");
+                    await RconManager.SendCommandAsync($"servermsg \"Server will restart in {countdown} minute(s). Please find a safe place.\"");
+
+                    // if restartTimers is [600000,300000,60000], send messages and wait for [600000-300000=300000, 300000-60000=240000, 60000] miliseconds
+                    if (i == restartTimers.Count - 1) {
+                        await Task.Delay((int)restartTimers[i]);
+                    }
+                    else
+                    {
+                        await Task.Delay((int)(restartTimers[i] - restartTimers[i + 1]));
+                    }
+                }
+
 
 
                 LogFile.WriteLine("[ServerUtility] Saving server...");
                 await channel.SendMessageAsync("💾 Saving server...");
-
                 await RconManager.SendCommandAsync("save");
+
                 await Task.Delay(3000);
-
-                await RconManager.SendCommandAsync("quit");
-
 
                 LogFile.WriteLine("[ServerUtility] Shutting down server...");
                 await channel.SendMessageAsync("⏳ Shutting down server. Wait patiently...");
 
+                await RconManager.SendCommandAsync("quit");
+                await Task.Delay(6000);
                 await ServerProcessManager.WaitForExitAsync();
 
                 LogFile.WriteLine("[ServerUtility] Restarting Server");
@@ -97,15 +117,13 @@ namespace DotNETCoreDiscordBot
             {
                 LogFile.WriteLine("[ServerUtility] Saving server...");
                 await channel.SendMessageAsync("💾 Saving server...");
-
                 await RconManager.SendCommandAsync("save");
+
                 await Task.Delay(3000);
-
-                await RconManager.SendCommandAsync("quit");
-
 
                 LogFile.WriteLine("[ServerUtility] Shutting down server...");
                 await channel.SendMessageAsync("⏳ Shutting down server...");
+                await RconManager.SendCommandAsync("quit");
 
                 await ServerProcessManager.WaitForExitAsync();
 

@@ -136,7 +136,7 @@ namespace DotNETCoreDiscordBot
             {
                 if (result.Error != CommandError.UnknownCommand)
                 {
-                    LogFile.WriteLine($"[Program] Command prohibited: {context.User.Username}: {result.ErrorReason}");
+                    LogFile.WriteLine($"[Program] Command prohibited Error: {context.User.Username}: {result.ErrorReason}");
 
                     await context.Channel.SendMessageAsync($"🚫 {result.ErrorReason}");
                 }

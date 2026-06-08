@@ -76,7 +76,9 @@ namespace DotNETCoreDiscordBot
                             await publicChannel.SendMessageAsync($"🚨 [Workshop Item Update Scheduler] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
                         }
 
-                        await ServerUtility.RestartServer(publicChannel, RestartMs);
+                        List<uint> tempTimers = [RestartMs, Math.Max(RestartMs / 2, 60000), 60000];
+
+                        await ServerUtility.RestartServer(publicChannel, tempTimers);
                     }
 
                 }

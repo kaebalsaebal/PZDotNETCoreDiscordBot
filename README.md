@@ -56,7 +56,7 @@ Execute .exe file. Servername can be configured at server.bat
 ### On Linux
 
 ```bash
-./DotNETCoreDiscordBot -servername (your server name)
+./DotNETCoreDiscordBot_Linux -servername (your server name)
 ```
 
 If servername parameter is not configured, it will start 'servertest' server.

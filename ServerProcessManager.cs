@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Discord;
+using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +17,10 @@ namespace DotNETCoreDiscordBot
         private static bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
         public static string BasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
+
+        //Task Trigger
+        public static TaskCompletionSource<bool> ServerStarted;
+        public static TaskCompletionSource<bool> ServerSaved;
 
         private static void ParseServerScript(string scriptPath)
         {
@@ -77,8 +83,9 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        public static void StartServer()
+        public static void StartServerProcess()
         {
+
             if (serverProcess != null && !serverProcess.HasExited)
             {
                 LogFile.WriteLine("[ServerProcessManager] Error: Server already started");
@@ -122,10 +129,25 @@ namespace DotNETCoreDiscordBot
                 serverProcess.StartInfo.RedirectStandardError = true;
                 serverProcess.StartInfo.WorkingDirectory = Path.GetDirectoryName(scriptPath);
 
-                serverProcess.OutputDataReceived += (sender, e) =>
+                serverProcess.OutputDataReceived += async (sender, e) =>
                 {
+                    // Handle Process Log Script
                     if (!string.IsNullOrEmpty(e.Data))
+                    {
                         LogFile.WriteLine($"[PZ_SERVER] {e.Data}");
+
+                        // Callback to send Discord Message on Other Classes
+                        if (e.Data.Contains("SERVER STARTED"))
+                        {
+                            ServerStarted.TrySetResult(true);
+                        }
+
+                        // Callback2: If Save finished
+                        if (e.Data.Contains("Saving finish"))
+                        {
+                            ServerSaved.TrySetResult(true);
+                        }
+                    }
                 };
 
                 serverProcess.ErrorDataReceived += (sender, e) =>
@@ -155,7 +177,7 @@ namespace DotNETCoreDiscordBot
         }
 
         // Shutting Down Server(Force)
-        public static void StopServer()
+        public static void KillServerProcess()
         {
             if (serverProcess != null && !serverProcess.HasExited)
             {

@@ -68,8 +68,7 @@ namespace DotNETCoreDiscordBot
                     {
                         LogFile.WriteLine($"[Workshop Item Update Scheduler] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
 
-                        var guild = client.GetGuild(Application.BotConfig.GuildId);
-                        var publicChannel = guild?.GetTextChannel(Application.BotConfig.PublicChannelId);
+                        var publicChannel = ServerUtility.GetChannel(client, Application.BotConfig.PublicChannelId);
 
                         if (publicChannel != null)
                         {
@@ -78,7 +77,7 @@ namespace DotNETCoreDiscordBot
 
                         List<uint> tempTimers = [RestartMs, Math.Max(RestartMs / 2, 60000), 60000];
 
-                        await ServerUtility.RestartServer(publicChannel, tempTimers);
+                        await ServerUtility.RestartServer(client, publicChannel.Id, tempTimers);
                     }
 
                 }

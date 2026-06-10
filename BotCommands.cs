@@ -17,12 +17,19 @@ namespace DotNETCoreDiscordBot
             await ReplyAsync("Ping success");
         }
 
+        [Command("save")]
+        [RequireCommandChannel]
+        public async Task SaveAsync()
+        {
+            await ServerUtility.SaveServer(Context.Channel);
+        }
+
         [Command("restart_server")]
         [RequireCommandChannel]
         public async Task RestartServerAsync()
         {
             List<uint> restartTimers = Application.BotConfig.ServerScheduleSettings.GetRestartTimers();
-            await ServerUtility.RestartServer(Context.Channel, restartTimers);
+            await ServerUtility.RestartServer(Context.Client, Context.Channel.Id, restartTimers);
         }
 
         [Command("shutdown_server")]

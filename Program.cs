@@ -26,12 +26,12 @@ namespace DotNETCoreDiscordBot
             // Stop Zomboid Dedi if bot process down
             AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
             {
-                ServerProcessManager.StopServer();
+                ServerProcessManager.KillServerProcess();
             };
 
             Console.CancelKeyPress += (sender, eventArgs) =>
             {
-                ServerProcessManager.StopServer();
+                ServerProcessManager.KillServerProcess();
                 eventArgs.Cancel = false;
             };
 
@@ -97,14 +97,18 @@ namespace DotNETCoreDiscordBot
                 string token = Token.GetToken();
                 if (string.IsNullOrEmpty(token)) return;
 
+                // Start If discordSocketClient has been logined and started
+                _discordSocketClient.Ready += async () =>
+                {
+                    // Start Server
+                    await ServerUtility.StartServer(_discordSocketClient, BotConfig.PublicChannelId);
+
+                    // Start All Schedules
+                    Scheduler.StartAll(_discordSocketClient);
+                };
+
                 await _discordSocketClient.LoginAsync(TokenType.Bot, token);
                 await _discordSocketClient.StartAsync();
-
-                // Start Server
-                ServerProcessManager.StartServer();
-
-                // Start All Schedules
-                Scheduler.StartAll(_discordSocketClient);
 
                 await Task.Delay(-1);
             }
@@ -136,9 +140,9 @@ namespace DotNETCoreDiscordBot
             {
                 if (result.Error != CommandError.UnknownCommand)
                 {
-                    LogFile.WriteLine($"[Program] Command prohibited Error: {context.User.Username}: {result.ErrorReason}");
+                    LogFile.WriteLine($"[Program] Command Error: {context.User.Username}: {result.ErrorReason}");
 
-                    await context.Channel.SendMessageAsync($"🚫 {result.ErrorReason}");
+                    await context.Channel.SendMessageAsync($"🚫 Command Error: {result.ErrorReason}");
                 }
             }
         }

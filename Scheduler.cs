@@ -12,6 +12,9 @@ namespace DotNETCoreDiscordBot
         private static CancellationTokenSource _cts = new CancellationTokenSource();
         private static DateTime _lastCheckTime = DateTime.UtcNow;
 
+        public static readonly string needUpdatesFile = Path.Combine(AppContext.BaseDirectory, "needupdatefile.txt");
+        private static readonly object fileLock = new object();
+
         public static void StartAll(DiscordSocketClient client)
         {
             LogFile.WriteLine("[Scheduler] Initialising Background Schedules...");
@@ -29,7 +32,7 @@ namespace DotNETCoreDiscordBot
         private static async Task CheckModUpdateScheduler(DiscordSocketClient client, CancellationToken token)
         {
             uint intervalMs = Application.BotConfig.ServerScheduleSettings.WorkshopItemUpdateSchedule;
-            uint RestartMs = Application.BotConfig.ServerScheduleSettings.WorkshopItemUpdateRestartTimer;
+            List<uint> RestartTimers = Application.BotConfig.ServerScheduleSettings.GetRestartTimers();
             TimeSpan interval = TimeSpan.FromMilliseconds(intervalMs);
 
             using var timer = new PeriodicTimer(interval);
@@ -51,6 +54,7 @@ namespace DotNETCoreDiscordBot
 
                     bool updateFound = false;
                     List<string> updatedModNames = new List<string>();
+                    List<string> updatedModIds = new List<string>();
 
                     foreach (var mod in modDetails)
                     {
@@ -59,6 +63,7 @@ namespace DotNETCoreDiscordBot
                         {
                             updateFound = true;
                             updatedModNames.Add(mod.Title);
+                            updatedModIds.Add(mod.PublishedFileId);
                         }
                     }
 
@@ -68,16 +73,23 @@ namespace DotNETCoreDiscordBot
                     {
                         LogFile.WriteLine($"[Workshop Item Update Scheduler] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
 
-                        var publicChannel = ServerUtility.GetChannel(client, Application.BotConfig.PublicChannelId);
-
-                        if (publicChannel != null)
+                        lock (fileLock)
                         {
-                            await publicChannel.SendMessageAsync($"🚨 [Workshop Item Update Scheduler] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
+                            string msg = string.Join(";", updatedModIds);
+
+                            var file = File.CreateText(needUpdatesFile);
+                            file.WriteLine(msg);
+                            file.Close();
                         }
 
-                        List<uint> tempTimers = [RestartMs, Math.Max(RestartMs / 2, 60000), 60000];
+                        var channel = ServerUtility.GetChannel(client, Application.BotConfig.LogChannelId);
 
-                        await ServerUtility.RestartServer(client, publicChannel.Id, tempTimers);
+                        if (channel != null)
+                        {
+                            await channel.SendMessageAsync($"🚨 [Workshop Item Update Scheduler] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
+
+                            await ServerUtility.RestartServer(client, channel.Id, RestartTimers);
+                        }
                     }
 
                 }

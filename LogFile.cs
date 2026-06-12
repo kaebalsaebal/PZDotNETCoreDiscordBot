@@ -9,9 +9,9 @@ namespace DotNETCoreDiscordBot
 {
     public static class LogFile
     {
-        public static string Location = Path.Combine(AppContext.BaseDirectory, "PZBot.log");
+        public static string logsFile = Path.Combine(AppContext.BaseDirectory, "PZBot.log");
 
-        private static readonly object _fileLock = new object();
+        private static readonly object fileLock = new object();
 
         public static string GetDateTime()
         {
@@ -22,9 +22,9 @@ namespace DotNETCoreDiscordBot
         {
             var msg = "(" + GetDateTime() + ") " + log;
 
-            lock (_fileLock)
+            lock (fileLock)
             {
-                var file = File.AppendText(Location);
+                var file = File.AppendText(logsFile);
                 file.WriteLine(msg);
                 file.Close();
             }

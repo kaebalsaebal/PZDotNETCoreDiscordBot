@@ -10,6 +10,7 @@ namespace DotNETCoreDiscordBot
     [RequireTargetGuild]
     public class BotCommands : ModuleBase<SocketCommandContext>
     {
+
         [Command("ping")]
         [RequireCommandChannel]
         public async Task PingAsync()
@@ -21,7 +22,7 @@ namespace DotNETCoreDiscordBot
         [RequireCommandChannel]
         public async Task SaveAsync()
         {
-            await ServerUtility.SaveServer(Context.Channel);
+            await ServerUtility.SaveServer(Context.Client, Application.BotConfig.LogChannelId);
         }
 
         [Command("restart_server")]
@@ -29,14 +30,14 @@ namespace DotNETCoreDiscordBot
         public async Task RestartServerAsync()
         {
             List<uint> restartTimers = Application.BotConfig.ServerScheduleSettings.GetRestartTimers();
-            await ServerUtility.RestartServer(Context.Client, Context.Channel.Id, restartTimers);
+            await ServerUtility.RestartServer(Context.Client, Application.BotConfig.LogChannelId, restartTimers);
         }
 
         [Command("shutdown_server")]
         [RequireCommandChannel]
         public async Task ShutdownServerAsync()
         {
-            await ServerUtility.ShutdownServer(Context.Channel);
+            await ServerUtility.ShutdownServer(Context.Client, Application.BotConfig.LogChannelId);
         }
 
         // For Debug

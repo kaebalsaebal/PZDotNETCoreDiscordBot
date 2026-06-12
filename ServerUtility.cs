@@ -84,26 +84,33 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        public static async Task SaveServer(IMessageChannel channel)
+        public static async Task SaveServer(DiscordSocketClient client, ulong channelId)
         {
-            await SaveLock.WaitAsync();
 
-            try
+            var channel = GetChannel(client, channelId);
+
+            if (channel != null)
             {
-                LogFile.WriteLine("[ServerUtility] Saving server...");
-                await channel.SendMessageAsync("💾 Saving server...");
 
-                ServerProcessManager.ServerSaved = new TaskCompletionSource<bool>();
+                await SaveLock.WaitAsync();
 
-                await RconManager.SendCommandAsync("save");
+                try
+                {
+                    LogFile.WriteLine("[ServerUtility] Saving server...");
+                    await channel.SendMessageAsync("💾 Saving server...");
 
-                await ServerProcessManager.ServerSaved.Task;
+                    ServerProcessManager.ServerSaved = new TaskCompletionSource<bool>();
 
-                await channel.SendMessageAsync("💾 Saving Finished");
-            }
-            finally
-            {
-                SaveLock.Release();
+                    await RconManager.SendCommandAsync("save");
+
+                    await ServerProcessManager.ServerSaved.Task;
+
+                    await channel.SendMessageAsync("💾 Saving Finished");
+                }
+                finally
+                {
+                    SaveLock.Release();
+                }
             }
         }
 
@@ -152,11 +159,13 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        public static async Task ShutdownServer(IMessageChannel channel)
+        public static async Task ShutdownServer(DiscordSocketClient client, ulong channelId)
         {
+            var channel = GetChannel(client, channelId);
+
             if (channel != null)
             {
-                await SaveServer(channel);
+                await SaveServer(client, channelId);
 
                 await Task.Delay(3000);
 

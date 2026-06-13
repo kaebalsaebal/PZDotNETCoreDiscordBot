@@ -16,12 +16,12 @@ namespace DotNETCoreDiscordBot
             ushort port = Application.BotConfig.RCONSettings.Port;
             string password = Application.BotConfig.RCONSettings.Password;
 
-            string iniFile = ServerUtility.GetServerIniPath();
+            string iniFile = ServerServiceManager.GetServerIniPath();
 
             if (File.Exists(iniFile))
             {
-                string tempPort = ServerUtility.GetValueFromIni(iniFile, "RCONPort");
-                string tempPassword = ServerUtility.GetValueFromIni(iniFile, "RCONPassword");
+                string tempPort = ServerServiceManager.GetValueFromIni(iniFile, "RCONPort");
+                string tempPassword = ServerServiceManager.GetValueFromIni(iniFile, "RCONPassword");
 
                 if (!string.IsNullOrEmpty(tempPort) && ushort.TryParse(tempPort, out ushort parsedPort))
                 {
@@ -32,6 +32,8 @@ namespace DotNETCoreDiscordBot
                 {
                     password = tempPassword;
                 }
+
+                await Application.BotConfig.Save();
             }
 
             try

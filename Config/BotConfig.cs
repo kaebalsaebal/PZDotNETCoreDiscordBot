@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Discord.Interactions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
@@ -15,27 +16,12 @@ namespace DotNETCoreDiscordBot
 
     public class ServerScheduleSettings
     {
-        private List<uint> RestartTimers = new List<uint> {
-            Convert.ToUInt32(TimeSpan.FromMinutes(10).TotalMilliseconds),
-            Convert.ToUInt32(TimeSpan.FromMinutes(5).TotalMilliseconds),
-            Convert.ToUInt32(TimeSpan.FromMinutes(1).TotalMilliseconds)
-        };
-        private uint ServerRestartSchedule = Convert.ToUInt32(TimeSpan.FromHours(6).TotalMilliseconds);
+        public uint RestartTimer = Convert.ToUInt32(TimeSpan.FromMinutes(10).TotalMilliseconds);
+        public uint ServerRestartSchedule = Convert.ToUInt32(TimeSpan.FromHours(6).TotalMilliseconds);
         public uint WorkshopItemUpdateSchedule = Convert.ToUInt32(TimeSpan.FromMinutes(30).TotalMilliseconds);
         //public uint WorkshopItemUpdateRestartTimer = Convert.ToUInt32(TimeSpan.FromMinutes(15).TotalMilliseconds);
         public string ServerRestartScheduleType = "Interval";
         public List<string> ServerRestartTimes = new List<string> { "03:00" };
-
-        public uint GetServerRestartSchedule()
-        {
-            return this.ServerRestartSchedule;
-            //return this.ServerRestartScheduleType.ToLower() == "interval" ? this.ServerRestartSchedule : Scheduler.GetIntervalFromTimes(this.ServerRestartTimes);
-        }
-
-        public List<uint> GetRestartTimers()
-        {
-            return this.RestartTimers;
-        }
 
     }
 
@@ -52,10 +38,22 @@ namespace DotNETCoreDiscordBot
         public string Password = "";
     }
 
+    public class ServerLocationSettings
+    {
+        public string WindowsServerPath = Path.Combine(AppContext.BaseDirectory, "server.bat");
+        public string LinuxServerPath = Path.Combine(AppContext.BaseDirectory, "server.sh");
+        public string UnixServerPath = Path.Combine(AppContext.BaseDirectory, "server.sh");
+
+        public string ServerName = "servertest";
+    }
+
     public class BotConfig
     {
         [JsonIgnore]
-        public static readonly string SettingsFile = Path.Combine(AppContext.BaseDirectory, "pzdiscordbot.conf");
+        private static readonly SemaphoreSlim SaveLock = new SemaphoreSlim(1, 1);
+
+        [JsonIgnore]
+        public static readonly string SettingsFile = Path.Combine(AppContext.BaseDirectory, "pzdotnetdiscordbot.conf");
 
         public ulong GuildId;
         public ulong CommandChannelId;
@@ -68,17 +66,21 @@ namespace DotNETCoreDiscordBot
 
         public RCONSettings RCONSettings = new RCONSettings();
 
-        public string WindowsServerPath = Path.Combine(AppContext.BaseDirectory, "server.bat");
-        public string LinuxServerPath = Path.Combine(AppContext.BaseDirectory, "server.sh");
-        public string UnixServerPath = Path.Combine(AppContext.BaseDirectory, "server.sh");
+        public ServerLocationSettings ServerLocationSettings = new ServerLocationSettings();
 
-        public string ServerName = "servertest";
-
-        public void Save()
+        public async Task Save()
         {
-            File.WriteAllText(SettingsFile, JsonConvert.SerializeObject(this, Formatting.Indented));
+            await SaveLock.WaitAsync();
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                await File.WriteAllTextAsync(SettingsFile, json);
+            }
+            finally
+            {
+                SaveLock.Release();
+            }
         }
-
-
     }
 }

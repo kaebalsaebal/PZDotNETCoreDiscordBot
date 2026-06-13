@@ -32,7 +32,7 @@ namespace DotNETCoreDiscordBot
         private static async Task CheckModUpdateScheduler(DiscordSocketClient client, CancellationToken token)
         {
             uint intervalMs = Application.BotConfig.ServerScheduleSettings.WorkshopItemUpdateSchedule;
-            List<uint> RestartTimers = Application.BotConfig.ServerScheduleSettings.GetRestartTimers();
+            uint RestartTimer = Application.BotConfig.ServerScheduleSettings.RestartTimer;
             TimeSpan interval = TimeSpan.FromMilliseconds(intervalMs);
 
             using var timer = new PeriodicTimer(interval);
@@ -43,8 +43,8 @@ namespace DotNETCoreDiscordBot
             {
                 while (await timer.WaitForNextTickAsync(token))
                 {
-                    string iniPath = ServerUtility.GetServerIniPath();
-                    string workshopIdValue = ServerUtility.GetValueFromIni(iniPath, "WorkshopItems");
+                    string iniPath = ServerServiceManager.GetServerIniPath();
+                    string workshopIdValue = ServerServiceManager.GetValueFromIni(iniPath, "WorkshopItems");
                     string[] ids = workshopIdValue.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
                     if (ids.Length == 0) return;
@@ -82,13 +82,13 @@ namespace DotNETCoreDiscordBot
                             file.Close();
                         }
 
-                        var channel = ServerUtility.GetChannel(client, Application.BotConfig.LogChannelId);
+                        var channel = ServerServiceManager.GetChannel(client, Application.BotConfig.LogChannelId);
 
                         if (channel != null)
                         {
                             await channel.SendMessageAsync($"🚨 [Workshop Item Update Scheduler] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
 
-                            await ServerUtility.RestartServer(client, channel.Id, RestartTimers);
+                            await ServerServiceManager.RestartServer(client, channel.Id, RestartTimer);
                         }
                     }
 

@@ -28,7 +28,7 @@ Then, Create three Discord channels:
 
 ## configure a config file
 
-Make a ```pzdiscordbot.conf``` file on zomboid dedicated server location(same as ```bot_token.txt```).
+Make a ```pzdotnetdiscordbot.conf``` file on zomboid dedicated server location(same as ```bot_token.txt```).
 
 You can find template file at the releases page.
 
@@ -41,7 +41,7 @@ and configure your guild and channel ids on below:
   "PublicChannelId": ,
 ```
 
-(If you don't know ids, read below pzdiscordbot.conf guide.)
+(If you don't know ids, read below pzdotnetdiscordbot.conf guide.)
 
 ## start server
 
@@ -51,14 +51,14 @@ Make sure that token, conf, and binary file are located at same location.
 
 ### On Windows
 
-copy ```StartServer64.bat ``` and rename it to match the `WindowsServerPath` configured in `pzdiscordbot.conf`.
+copy ```StartServer64.bat ``` and rename it to match the `WindowsServerPath` configured in `pzdotnetdiscordbot.conf`.
 
 
-Execute .exe file. Servername can be configured at ```pzdiscordbot.conf``` file.
+Execute .exe file. Servername can be configured at ```pzdotnetdiscordbot.conf``` file.
 
 ### On Linux
 
-copy ```start-server.sh``` and rename it to match the `LinuxServerPath` configured in `pzdiscordbot.conf`.
+copy ```start-server.sh``` and rename it to match the `LinuxServerPath` configured in `pzdotnetdiscordbot.conf`.
 
 ProjectZomboid64.json
 
@@ -66,18 +66,18 @@ ProjectZomboid64.json
 ./DotNETCoreDiscordBot_Linux -servername (your server name)
 ```
 
-If servername parameter is not configured, it will start default server written at ```pzdiscordbot.conf```.
+If servername parameter is not configured, it will start default server written at ```pzdotnetdiscordbot.conf```.
 
 ## RCON Warning
 
 This project uses RCON for sending message to server.
 
-By Default, the RCON settings(IP,port,password) are configured in ```pzdiscordbot.conf``` on default value.
+By Default, the RCON settings(IP,port,password) are configured in ```pzdotnetdiscordbot.conf``` on default value.
 
 But if you have configured your own RCON settings in (home)/Zomboid/Server/(Your Server name).ini,  
 The bot automatically finds and uses it.
 
-# pzdiscordbot.conf guide
+# pzdotnetdiscordbot.conf guide
 
 ```conf
 {
@@ -89,7 +89,7 @@ The bot automatically finds and uses it.
     "PerkParserCacheDuration": 10
   },
   "ServerScheduleSettings": {
-    "RestartTimers": [600000,300000,60000],
+    "RestartTimes": [600000,300000,60000],
     "ServerRestartSchedule": 86400000,
     "WorkshopItemUpdateSchedule": 1800000,
     "WorkshopItemUpdateRestartTimer": 600000,
@@ -131,9 +131,9 @@ https://discord.com/channels/aaaa/bbbb
 ```
 , **aaaa** is **GuildId** and **bbbb** is **ChannelId**.
 
-## RestartTimers
+## RestartTimes
 
-The `RestartTimers` option accepts a list of miliseconds values in descending order.
+The `RestartTimes` option accepts a list of miliseconds values in descending order.
 
 When the remaining time reaches the first value, a notification is sent immediately.
 
@@ -143,7 +143,7 @@ Additional notifications are then sent based on the difference between consecuti
 
 ```json
 {
-  RestartTimers: [600000, 300000, 60000]
+  RestartTimes: [600000, 300000, 60000]
 }
 ```
 

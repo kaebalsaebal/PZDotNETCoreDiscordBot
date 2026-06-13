@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class ServerUtility
+    public static class ServerServiceManager
     {
         // Semaphore for Preventing Race Condition on Save
         private static readonly SemaphoreSlim SaveLock = new SemaphoreSlim(1, 1);
@@ -21,22 +21,22 @@ namespace DotNETCoreDiscordBot
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                scriptPath = Application.BotConfig.WindowsServerPath;
+                scriptPath = Application.BotConfig.ServerLocationSettings.WindowsServerPath;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                scriptPath = Application.BotConfig.LinuxServerPath;
+                scriptPath = Application.BotConfig.ServerLocationSettings.LinuxServerPath;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                scriptPath = Application.BotConfig.UnixServerPath;
+                scriptPath = Application.BotConfig.ServerLocationSettings.UnixServerPath;
             }
             return scriptPath;
         }
 
         public static string GetServerIniPath()
         {
-            string serverName = Application.BotConfig.ServerName;
+            string serverName = Application.BotConfig.ServerLocationSettings.ServerName;
 
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -114,43 +114,52 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        public static async Task RestartServer(DiscordSocketClient client, ulong channelId, List<uint> restartTimers)
+        public static async Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer)
         {
 
             var channel = GetChannel(client, channelId);
 
             if (channel != null)
             {
-                restartTimers.Distinct().OrderByDescending(x => x).ToList();
-                int restartTimersCount = restartTimers.Count;
-
-                if (restartTimersCount == 0)
+                List<uint> RestartTimers = new List<uint>
                 {
-                    LogFile.WriteLine($"[ServerUtility] Error: RestartTimers are not configured...");
-                    await channel.SendMessageAsync($"❌ RestartTimers are not configured...");
+                    RestartTimer
+                };
+
+                if (RestartTimer > 60000) {
+                    RestartTimers.Append((uint)60000);
+                }
+
+                RestartTimers.Distinct().OrderByDescending(x => x).ToList();
+                int RestartTimesCount = RestartTimers.Count;
+
+                if (RestartTimesCount == 0)
+                {
+                    LogFile.WriteLine($"[ServerUtility] Error: RestartTimes are not configured...");
+                    await channel.SendMessageAsync($"❌ RestartTimes are not configured...");
                     return;
                 }
 
-                for (int i=0; i<restartTimersCount; i++) {
+                for (int i=0; i<RestartTimesCount; i++) {
 
-                    int countdown = (int)(restartTimers[i] / 60000);
+                    int countdown = (int)(RestartTimers[i] / 60000);
 
 
                     LogFile.WriteLine($"[ServerUtility] Restarting server in {countdown} minutes...");
                     await channel.SendMessageAsync($"🔄 Restarting server in {countdown} minutes...");
                     await RconManager.SendCommandAsync($"servermsg \"Server will restart in {countdown} minute(s). Please find a safe place.\"");
 
-                    // if restartTimers is [600000,300000,60000], send messages and wait for [600000-300000=300000, 300000-60000=240000, 60000] miliseconds
-                    if (i == restartTimers.Count - 1) {
-                        await Task.Delay((int)restartTimers[i]);
+                    // if RestartTimes is [600000,300000,60000], send messages and wait for [600000-300000=300000, 300000-60000=240000, 60000] miliseconds
+                    if (i == RestartTimers.Count - 1) {
+                        await Task.Delay((int)RestartTimers[i]);
                     }
                     else
                     {
-                        await Task.Delay((int)(restartTimers[i] - restartTimers[i + 1]));
+                        await Task.Delay((int)(RestartTimers[i] - RestartTimers[i + 1]));
                     }
                 }
 
-                await ShutdownServer(channel);
+                await ShutdownServer(client, channelId);
 
                 LogFile.WriteLine("[ServerUtility] Restarting Server");
                 await channel.SendMessageAsync("🚀 Restarting Server. Wait patiently...");

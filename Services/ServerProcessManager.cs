@@ -60,7 +60,7 @@ namespace DotNETCoreDiscordBot
                             {
                                 string servername = nameParts[1].Replace("\"", "").Trim();
 
-                                Application.BotConfig.ServerName = servername;
+                                Application.BotConfig.ServerLocationSettings.ServerName = servername;
 
                                 LogFile.WriteLine($"[ServerProcessManager] Your Server Name is: {servername}");
                             }
@@ -94,7 +94,7 @@ namespace DotNETCoreDiscordBot
 
             string scriptPath = "";
 
-            scriptPath = ServerUtility.GetServerFilePath();
+            scriptPath = ServerServiceManager.GetServerFilePath();
             if (string.IsNullOrEmpty(scriptPath))
             {
                 LogFile.WriteLine("[ServerProcessManager] Error: This OS is not supported");
@@ -119,7 +119,7 @@ namespace DotNETCoreDiscordBot
                     Process.Start("chmod", $"+x \"{scriptPath}\"")?.WaitForExit();
                     serverProcess.StartInfo.FileName = "/bin/bash";
 
-                    serverProcess.StartInfo.Arguments = $"\"{scriptPath}\" -servername \"{Application.BotConfig.ServerName}\"";
+                    serverProcess.StartInfo.Arguments = $"\"{scriptPath}\" -servername \"{Application.BotConfig.ServerLocationSettings.ServerName}\"";
                 }
 
                 serverProcess.StartInfo.UseShellExecute = false;

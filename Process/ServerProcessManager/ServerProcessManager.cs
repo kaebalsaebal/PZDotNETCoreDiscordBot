@@ -43,7 +43,7 @@ namespace DotNETCoreDiscordBot
             _botConfig = botConfig;
         }
 
-        private ServerProcessStrategy GetCurrentOSStrategy()
+        private ServerProcess GetCurrentOSProcess()
         {
             return ServerProcessFactory.Create(_botConfig);
         }
@@ -59,7 +59,7 @@ namespace DotNETCoreDiscordBot
 
             try
             {
-                var strategy = GetCurrentOSStrategy();
+                var strategy = GetCurrentOSProcess();
 
                 await strategy.ParseServerScript();
 

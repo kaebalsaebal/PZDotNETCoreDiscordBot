@@ -18,7 +18,7 @@ namespace DotNETCoreDiscordBot.Interactions.SlashCommands
             await Application.BotConfig.Save();
             await RespondAsync($"Set Public Channel to {channel.Name}", ephemeral: true);
 
-            await Application.StartBotService();
+            await Application.CheckBotInitCondition();
         }
 
         [SlashCommand("set_command_channel", "Sets Command Channel")]
@@ -28,7 +28,7 @@ namespace DotNETCoreDiscordBot.Interactions.SlashCommands
             await Application.BotConfig.Save();
             await RespondAsync($"Set Command Channel to {channel.Name}", ephemeral: true);
 
-            await Application.StartBotService();
+            await Application.CheckBotInitCondition();
         }
 
         [SlashCommand("set_log_channel", "Sets Log Channel")]
@@ -38,7 +38,7 @@ namespace DotNETCoreDiscordBot.Interactions.SlashCommands
             await Application.BotConfig.Save();
             await RespondAsync($"Set Log Channel to {channel.Name}", ephemeral: true);
 
-            await Application.StartBotService();
+            await Application.CheckBotInitCondition();
         }
     }
 }

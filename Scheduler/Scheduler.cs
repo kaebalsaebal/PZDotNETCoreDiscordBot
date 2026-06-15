@@ -12,7 +12,7 @@ namespace DotNETCoreDiscordBot
         private static CancellationTokenSource _cts = new CancellationTokenSource();
         private static DateTime _lastCheckTime = DateTime.UtcNow;
 
-        public static readonly string needUpdatesFile = Path.Combine(AppContext.BaseDirectory, "needupdatefile.txt");
+        private static readonly string needUpdatesFile = Path.Combine(AppContext.BaseDirectory, "needupdatefile.txt");
         private static readonly object fileLock = new object();
 
         public static void StartAll(DiscordSocketClient client)
@@ -75,7 +75,7 @@ namespace DotNETCoreDiscordBot
 
                         lock (fileLock)
                         {
-                            string msg = string.Join(";", updatedModIds);
+                            string msg = string.Join("\n", updatedModIds);
 
                             var file = File.CreateText(needUpdatesFile);
                             file.WriteLine(msg);

@@ -127,7 +127,7 @@ namespace DotNETCoreDiscordBot
                 };
 
                 if (RestartTimer > 60000) {
-                    RestartTimers.Append((uint)60000);
+                    RestartTimers.Add((uint)60000);
                 }
 
                 RestartTimers.Distinct().OrderByDescending(x => x).ToList();

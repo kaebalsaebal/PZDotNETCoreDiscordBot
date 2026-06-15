@@ -22,7 +22,7 @@ namespace DotNETCoreDiscordBot
         public static TaskCompletionSource<bool> ServerStarted;
         public static TaskCompletionSource<bool> ServerSaved;
 
-        private static void ParseServerScript(string scriptPath)
+        private static async Task ParseServerScript(string scriptPath)
         {
 
             if (!File.Exists(scriptPath)) return;
@@ -62,7 +62,9 @@ namespace DotNETCoreDiscordBot
 
                                 Application.BotConfig.ServerLocationSettings.ServerName = servername;
 
-                                LogFile.WriteLine($"[ServerProcessManager] Your Server Name is: {servername}");
+                                LogFile.WriteLine($"[ServerProcessManager] Servername has been configured: {servername}");
+
+                                await Application.BotConfig.Save();
                             }
                         }
                     }

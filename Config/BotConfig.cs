@@ -79,6 +79,7 @@ namespace DotNETCoreDiscordBot
             }
             finally
             {
+                LogFile.WriteLine($"[BotConfig] Config File Saved...");
                 SaveLock.Release();
             }
         }

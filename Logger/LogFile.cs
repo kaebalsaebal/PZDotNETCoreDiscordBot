@@ -12,7 +12,7 @@ namespace DotNETCoreDiscordBot
 {
     public static class LogFile
     {
-        public static string logsFile = Path.Combine(AppContext.BaseDirectory, "PZBot.log");
+        private static string logsFile = Path.Combine(AppContext.BaseDirectory, "PZBot.log");
 
         private static readonly object fileLock = new object();
 

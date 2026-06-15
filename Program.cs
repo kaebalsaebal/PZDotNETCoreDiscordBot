@@ -37,21 +37,40 @@ namespace DotNETCoreDiscordBot
                 eventArgs.Cancel = false;
             };
 
-            // parse servername if linux
-            for (int i = 0; i < param.Length; i++)
+            try
             {
-                if (param[i].ToLower() == "-servername" && i + 1 < param.Length)
-                {
-                    string servername = param[i + 1].Replace("\"", "").Trim();
+                LogFile.WriteLine($"[Program] Loading Config File...");
 
-                    if (!string.IsNullOrEmpty(servername))
-                    {
-                        BotConfig.ServerLocationSettings.ServerName = servername;
-                        LogFile.WriteLine($"[Program] Servername Has Configured: {servername}...");
-                    }
-                    break;
+                if (File.Exists(BotConfig.SettingsFile))
+                {
+                    BotConfig = JsonConvert.DeserializeObject<BotConfig>(
+                                    File.ReadAllText(BotConfig.SettingsFile),
+                                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                 }
+
+                // parse servername if linux
+                for (int i = 0; i < param.Length; i++)
+                {
+                    if (param[i].ToLower() == "-servername" && i + 1 < param.Length)
+                    {
+                        string servername = param[i + 1].Replace("\"", "").Trim();
+
+                        if (!string.IsNullOrEmpty(servername))
+                        {
+                            BotConfig.ServerLocationSettings.ServerName = servername;
+                            LogFile.WriteLine($"[Program] Servername has been configured: {servername}");
+                        }
+                        break;
+                    }
+                }
+
+                await BotConfig.Save();
+
+            } catch(Exception e)
+            {
+                LogFile.WriteLine($"[Program] Config File Error: {e.Message}");
             }
+            
 
             var config = new DiscordSocketConfig()
             {
@@ -105,15 +124,7 @@ namespace DotNETCoreDiscordBot
                     await _interactionService.RegisterCommandsGloballyAsync();
                     LogFile.WriteLine("[Program] Interaction Command has been applied...");
 
-                    // Init bot conf if conf file not exists
-                    if (File.Exists(BotConfig.SettingsFile))
-                    {
-                        BotConfig = JsonConvert.DeserializeObject<BotConfig>(
-                                        File.ReadAllText(BotConfig.SettingsFile),
-                                        new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
-                    }
-
-                    await StartBotService();
+                    await CheckBotInitCondition();
                 };
 
                 await _discordSocketClient.LoginAsync(TokenType.Bot, token);
@@ -127,7 +138,7 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        public static async Task StartBotService()
+        public static async Task CheckBotInitCondition()
         {
             if (BotConfig.PublicChannelId != 0 &&
                 BotConfig.CommandChannelId != 0 &&

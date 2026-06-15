@@ -10,33 +10,37 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class ServerServiceManager
+
+    public interface IServerServiceManager
     {
-        // Semaphore for Preventing Race Condition on Save
-        private static readonly SemaphoreSlim SaveLock = new SemaphoreSlim(1, 1);
+        string GetServerIniPath();
+        string GetValueFromIni(string iniPath, string key);
+        IMessageChannel? GetChannel(DiscordSocketClient client, ulong channelId);
 
-        public static string GetServerFilePath()
+        Task StartServer(DiscordSocketClient client, ulong channelId);
+        Task SaveServer(DiscordSocketClient client, ulong channelId);
+        Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer);
+        Task ShutdownServer(DiscordSocketClient client, ulong channelId);
+    }
+    public class ServerServiceManager: IServerServiceManager
+    {
+        private readonly IServerProcessManager _serverProcess;
+        private readonly BotConfig _botConfig;
+        private readonly IRconManager _rconManager;
+
+        // Semaphore for Preventing Race Condition on SaveServer
+        private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
+
+        public ServerServiceManager(IServerProcessManager serverProcess, BotConfig botConfig, IRconManager rconManager)
         {
-            string scriptPath = "";
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                scriptPath = Path.Combine(AppContext.BaseDirectory, Application.BotConfig.ServerProcessSettings.WindowsServerFile);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                scriptPath = Path.Combine(AppContext.BaseDirectory, Application.BotConfig.ServerProcessSettings.LinuxServerFile);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                scriptPath = Path.Combine(AppContext.BaseDirectory, Application.BotConfig.ServerProcessSettings.UnixServerFile);
-            }
-            return scriptPath;
+            _serverProcess = serverProcess;
+            _botConfig = botConfig;
+            _rconManager = rconManager;
         }
 
-        public static string GetServerIniPath()
+        public string GetServerIniPath()
         {
-            string serverName = Application.BotConfig.ServerProcessSettings.ServerName;
+            string serverName = _botConfig.ServerName;
 
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
@@ -45,7 +49,7 @@ namespace DotNETCoreDiscordBot
             return Path.Combine(targetDirectory, $"{serverName}.ini");
         }
 
-        public static string GetValueFromIni(string iniPath, string key)
+        public string GetValueFromIni(string iniPath, string key)
         {
             if (!File.Exists(iniPath)) return "";
 
@@ -61,30 +65,27 @@ namespace DotNETCoreDiscordBot
             return "";
         }
 
-        public static IMessageChannel? GetChannel(DiscordSocketClient client, ulong channelId)
+        public IMessageChannel? GetChannel(DiscordSocketClient client, ulong channelId)
         {
             return client.GetChannel(channelId) as IMessageChannel;
         }
 
-        public static async Task StartServer(DiscordSocketClient client, ulong channelId)
+        public async Task StartServer(DiscordSocketClient client, ulong channelId)
         {
             var channel = GetChannel(client, channelId);
 
             if (channel != null)
             {
 
-                ServerProcessManager.ServerStarted = new TaskCompletionSource<bool>();
+                await _serverProcess.StartServerProcess();
 
-                // serverStartedTrigger
-                ServerProcessManager.StartServerProcess();
-
-                await ServerProcessManager.ServerStarted.Task;
+                await _serverProcess.WaitForServerStart();
 
                 await channel.SendMessageAsync($"@everyone 🔥 Server Started!!!");
             }
         }
 
-        public static async Task SaveServer(DiscordSocketClient client, ulong channelId)
+        public async Task SaveServer(DiscordSocketClient client, ulong channelId)
         {
 
             var channel = GetChannel(client, channelId);
@@ -92,29 +93,26 @@ namespace DotNETCoreDiscordBot
             if (channel != null)
             {
 
-                await SaveLock.WaitAsync();
+                await _saveLock.WaitAsync();
 
                 try
                 {
-                    LogFile.WriteLine("[ServerUtility] Saving server...");
                     await channel.SendMessageAsync("💾 Saving server...");
 
-                    ServerProcessManager.ServerSaved = new TaskCompletionSource<bool>();
+                    await _rconManager.SendCommandAsync("save");
 
-                    await RconManager.SendCommandAsync("save");
-
-                    await ServerProcessManager.ServerSaved.Task;
+                    await _serverProcess.WaitForServerSave();
 
                     await channel.SendMessageAsync("💾 Saving Finished");
                 }
                 finally
                 {
-                    SaveLock.Release();
+                    _saveLock.Release();
                 }
             }
         }
 
-        public static async Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer)
+        public async Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer)
         {
 
             var channel = GetChannel(client, channelId);
@@ -135,7 +133,7 @@ namespace DotNETCoreDiscordBot
 
                 if (RestartTimesCount == 0)
                 {
-                    LogFile.WriteLine($"[ServerUtility] Error: RestartTimes are not configured...");
+                    await LogFile.WriteLine($"[ServerUtility] Error: RestartTimes are not configured...");
                     await channel.SendMessageAsync($"❌ RestartTimes are not configured...");
                     return;
                 }
@@ -145,9 +143,9 @@ namespace DotNETCoreDiscordBot
                     int countdown = (int)(RestartTimers[i] / 60000);
 
 
-                    LogFile.WriteLine($"[ServerUtility] Restarting server in {countdown} minutes...");
+                    await LogFile.WriteLine($"[ServerUtility] Restarting server in {countdown} minutes...");
                     await channel.SendMessageAsync($"🔄 Restarting server in {countdown} minutes...");
-                    await RconManager.SendCommandAsync($"servermsg \"Server will restart in {countdown} minute(s). Please find a safe place.\"");
+                    await _rconManager.SendCommandAsync($"servermsg \"Server will restart in {countdown} minute(s). Please find a safe place.\"");
 
                     // if RestartTimes is [600000,300000,60000], send messages and wait for [600000-300000=300000, 300000-60000=240000, 60000] miliseconds
                     if (i == RestartTimers.Count - 1) {
@@ -161,14 +159,14 @@ namespace DotNETCoreDiscordBot
 
                 await ShutdownServer(client, channelId);
 
-                LogFile.WriteLine("[ServerUtility] Restarting Server");
+                await LogFile.WriteLine("[ServerUtility] Restarting Server");
                 await channel.SendMessageAsync("🚀 Restarting Server. Wait patiently...");
 
                 await StartServer(client, channelId);
             }
         }
 
-        public static async Task ShutdownServer(DiscordSocketClient client, ulong channelId)
+        public async Task ShutdownServer(DiscordSocketClient client, ulong channelId)
         {
             var channel = GetChannel(client, channelId);
 
@@ -178,12 +176,12 @@ namespace DotNETCoreDiscordBot
 
                 await Task.Delay(3000);
 
-                LogFile.WriteLine("[ServerUtility] Shutting down server...");
+                await LogFile.WriteLine("[ServerUtility] Shutting down server...");
                 await channel.SendMessageAsync("⏳ Shutting down server...");
-                await RconManager.SendCommandAsync("quit");
+                await _rconManager.SendCommandAsync("quit");
                 await Task.Delay(6000);
 
-                await ServerProcessManager.WaitForExitAsync();
+                await _serverProcess.WaitForExitAsync();
 
             }
         }

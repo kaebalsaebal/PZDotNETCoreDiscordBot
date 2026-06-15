@@ -43,17 +43,29 @@ namespace DotNETCoreDiscordBot
         public string WindowsServerFile = "server.bat";
         public string LinuxServerFile = "server.sh";
         public string UnixServerFile = "server.sh";
-
-        public string ServerName = "servertest";
     }
 
     public class BotConfig
     {
         [JsonIgnore]
-        private static readonly SemaphoreSlim SaveLock = new SemaphoreSlim(1, 1);
+        public string ServerName { get; set; } = "servertest";
 
         [JsonIgnore]
-        public static readonly string SettingsFile = Path.Combine(AppContext.BaseDirectory, "pzdotnetdiscordbot.conf");
+        public string[] Linuxparams { get; set; } = Array.Empty<string>();
+
+        [JsonIgnore]
+        public bool SaveAsFile = true;
+
+        [JsonIgnore]
+        private static readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
+
+        [JsonIgnore]
+        private static readonly string _location = Path.Combine(AppContext.BaseDirectory, "pzdotnetdiscordbot.conf");
+
+        public string GetConfLocation()
+        {
+            return _location;
+        }
 
         public ulong GuildId;
         public ulong CommandChannelId;
@@ -70,17 +82,17 @@ namespace DotNETCoreDiscordBot
 
         public async Task Save()
         {
-            await SaveLock.WaitAsync();
+            await _saveLock.WaitAsync();
 
             try
             {
                 string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-                await File.WriteAllTextAsync(SettingsFile, json);
+                await File.WriteAllTextAsync(_location, json);
             }
             finally
             {
-                LogFile.WriteLine($"[BotConfig] Config File Saved...");
-                SaveLock.Release();
+                await LogFile.WriteLine($"[BotConfig] Config File has been saved...");
+                _saveLock.Release();
             }
         }
     }

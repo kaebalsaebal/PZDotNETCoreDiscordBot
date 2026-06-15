@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Interactions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,11 @@ namespace DotNETCoreDiscordBot
 {
     public class RequireCommandChannelAttribute : PreconditionAttribute
     {
+
         public override Task<PreconditionResult> CheckRequirementsAsync(IInteractionContext context, ICommandInfo command, IServiceProvider services)
         {
-            ulong cmdChannelId = Application.BotConfig.CommandChannelId;
+            var botConfig = services.GetRequiredService<BotConfig>();
+            ulong cmdChannelId = botConfig.CommandChannelId;
 
             if (cmdChannelId == 0 || context.Channel.Id == cmdChannelId)
             {
@@ -24,11 +27,15 @@ namespace DotNETCoreDiscordBot
             }
         }
     }
+
+
     public class RequirePublicChannelAttribute : PreconditionAttribute
     {
+
         public override Task<PreconditionResult> CheckRequirementsAsync(IInteractionContext context, ICommandInfo command, IServiceProvider services)
         {
-            ulong pubChannelId = Application.BotConfig.PublicChannelId;
+            var botConfig = services.GetRequiredService<BotConfig>();
+            ulong pubChannelId = botConfig.PublicChannelId;
 
             if (pubChannelId == 0 || context.Channel.Id == pubChannelId)
             {

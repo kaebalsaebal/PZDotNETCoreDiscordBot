@@ -11,7 +11,11 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class SteamWebAPI
+    public interface ISteamWebAPI
+    {
+        Task<List<SteamWebAPI.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
+    }
+    public class SteamWebAPI : ISteamWebAPI
     {
         public static class Model
         {
@@ -62,11 +66,16 @@ namespace DotNETCoreDiscordBot
             }
         }
 
+        private readonly HttpClient _client;
+        private readonly string _baseAPIURL = "https://api.steampowered.com/";
 
-        private static readonly string baseAPIURL = "https://api.steampowered.com/";
-        public static async Task<List<Model.WorkshopItemDetails>> GetWorkshopItemDetailsAsync(string[] idList)
+        public SteamWebAPI(HttpClient client)
         {
-            using var client = new HttpClient();
+            _client = client;
+        }
+
+        public async Task<List<Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList)
+        {
             string apiEndPoint = "ISteamRemoteStorage/GetPublishedFileDetails/v1/";
 
             var parameters = new List<KeyValuePair<string, string>>
@@ -76,13 +85,13 @@ namespace DotNETCoreDiscordBot
 
             for (int i = 0; i < idList.Length; i++)
             {
-                parameters.Add(new KeyValuePair<string, string>("publishedfileids[" + i.ToString() + "]", idList[i]));
+                parameters.Add(new KeyValuePair<string, string>($"publishedfileids[{i}]", idList[i]));
             }
 
             var content = new FormUrlEncodedContent(parameters);
             try
             {
-                var response = await client.PostAsync(baseAPIURL + apiEndPoint, content);
+                var response = await _client.PostAsync(_baseAPIURL + apiEndPoint, content);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -101,9 +110,9 @@ namespace DotNETCoreDiscordBot
 
                 return new List<Model.WorkshopItemDetails>();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                LogFile.WriteLine($"[SteamWebAPI] Error: {e.Message}");
+                await LogFile.WriteLine($"[SteamWebAPI] Error: {e.Message}");
                 return new List<Model.WorkshopItemDetails>();
             }
         }

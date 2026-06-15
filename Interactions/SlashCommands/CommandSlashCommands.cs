@@ -12,6 +12,17 @@ namespace DotNETCoreDiscordBot
     public class CommandSlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
 
+        private readonly IServerServiceManager _serverService;
+        private readonly ISteamWebAPI _steamApi;
+        private readonly BotConfig _botConfig;
+
+        public CommandSlashCommands(IServerServiceManager serverService, ISteamWebAPI steamApi, BotConfig botConfig)
+        {
+            _serverService = serverService;
+            _steamApi = steamApi;
+            _botConfig = botConfig;
+        }
+
         [SlashCommand("ping", "Do you like watching me")]
         public async Task Ping()
         {
@@ -21,10 +32,12 @@ namespace DotNETCoreDiscordBot
         [SlashCommand("set_configs", "Configures other settings")]
         public async Task SetConfigs()
         {
-            var current = Application.BotConfig;
+            var current = _botConfig;
 
             var modal = new BotSetupModal
             {
+                SaveAsFile = current.SaveAsFile.ToString().ToLower(),
+
                 RestartTimer = current.ServerScheduleSettings.RestartTimer.ToString(),
                 RCONIP = current.RCONSettings.IP,
                 RCONPort = current.RCONSettings.Port.ToString(),
@@ -40,9 +53,19 @@ namespace DotNETCoreDiscordBot
         [ModalInteraction("set_configs")]
         public async Task OnModalSubmit(BotSetupModal modal)
         {
+            if (bool.TryParse(modal.SaveAsFile.Trim(), out bool parsedSaveAsFile))
+            {
+                _botConfig.SaveAsFile = parsedSaveAsFile;
+            }
+            else
+            {
+                await RespondAsync("⚠️SaveAsFile value must be 'true' or 'false'", ephemeral: true);
+                return;
+            }
+
             if (uint.TryParse(modal.RestartTimer, out uint parsedTimer))
             {
-                Application.BotConfig.ServerScheduleSettings.RestartTimer = parsedTimer;
+                _botConfig.ServerScheduleSettings.RestartTimer = parsedTimer;
             }
             else
             {
@@ -50,12 +73,12 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            Application.BotConfig.RCONSettings.IP = modal.RCONIP;
-            Application.BotConfig.RCONSettings.Password = modal.RCONPassword ?? "";
+            _botConfig.RCONSettings.IP = modal.RCONIP;
+            _botConfig.RCONSettings.Password = modal.RCONPassword ?? "";
 
             if (ushort.TryParse(modal.RCONPort, out ushort parsedPort))
             {
-                Application.BotConfig.RCONSettings.Port = parsedPort;
+                _botConfig.RCONSettings.Port = parsedPort;
             }
             else
             {
@@ -63,18 +86,18 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            Application.BotConfig.ServerProcessSettings.WindowsServerFile = modal.WindowsServerFile ?? "server.bat";
-            Application.BotConfig.ServerProcessSettings.LinuxServerFile = modal.LinuxServerFile ?? "server.sh";
-            Application.BotConfig.ServerProcessSettings.UnixServerFile = modal.UnixServerFile ?? "server.sh";
+            _botConfig.ServerProcessSettings.WindowsServerFile = modal.WindowsServerFile ?? "server.bat";
+            _botConfig.ServerProcessSettings.LinuxServerFile = modal.LinuxServerFile ?? "server.sh";
+            _botConfig.ServerProcessSettings.UnixServerFile = modal.UnixServerFile ?? "server.sh";
 
-            await Application.BotConfig.Save();
+            await _botConfig.Save();
             await RespondAsync("💾Config has been Updated", ephemeral: true);
         }
 
         [SlashCommand("save", "Saves Server")]
         public async Task Save()
         {
-            await ServerServiceManager.SaveServer(Context.Client, Application.BotConfig.LogChannelId);
+            await _serverService.SaveServer(Context.Client, _botConfig.LogChannelId);
         }
 
         [SlashCommand("restart_server", "Restarts server")]
@@ -86,13 +109,13 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            await ServerServiceManager.RestartServer(Context.Client, Application.BotConfig.LogChannelId, minutes*60000);
+            await _serverService.RestartServer(Context.Client, _botConfig.LogChannelId, minutes*60000);
         }
 
         [SlashCommand("shutdown_server", "Shuts down server immediately")]
         public async Task ShutdownServer()
         {
-            await ServerServiceManager.ShutdownServer(Context.Client, Application.BotConfig.LogChannelId);
+            await _serverService.ShutdownServer(Context.Client, _botConfig.LogChannelId);
         }
 
         // For Debug
@@ -104,15 +127,15 @@ namespace DotNETCoreDiscordBot
 
             string[] ids = Array.Empty<string>();
 
-            string configFilePath = ServerServiceManager.GetServerIniPath();
+            string configFilePath = _serverService.GetServerIniPath();
             if (!File.Exists(configFilePath))
             {
                 await RespondAsync($"❌ Failed to Get {configFilePath} File...");
             }
-            string workshopString = ServerServiceManager.GetValueFromIni(configFilePath, "WorkshopItems");
+            string workshopString = _serverService.GetValueFromIni(configFilePath, "WorkshopItems");
             ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
-            var modDetails = await SteamWebAPI.GetWorkshopItemDetailsAsync(ids);
+            var modDetails = await _steamApi.GetWorkshopItemDetails(ids);
 
             if (modDetails == null || modDetails.Count == 0)
             {

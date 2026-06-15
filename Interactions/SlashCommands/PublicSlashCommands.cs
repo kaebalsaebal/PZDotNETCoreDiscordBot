@@ -10,11 +10,18 @@ namespace DotNETCoreDiscordBot
     [RequirePublicChannel]
     public class PublicSlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
+
+        private readonly IRconManager _rconManager;
+
+        public PublicSlashCommands(IRconManager rconManager)
+        {
+            _rconManager = rconManager;
+        }
+
         [SlashCommand("players", "Gets players joined")]
-        [RequirePublicChannel]
         public async Task CheckPlayers()
         {
-            string result = await RconManager.SendCommandAsync("players");
+            string result = await _rconManager.SendCommandAsync("players");
 
             await RespondAsync($"```\n{result}\n```");
         }

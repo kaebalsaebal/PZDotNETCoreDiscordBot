@@ -13,6 +13,10 @@ namespace DotNETCoreDiscordBot
 
         public string Title => "Config Settings Menu";
 
+        [InputLabel("Save Logs As File??? (true / false)")]
+        [ModalTextInput("save_as_file", TextInputStyle.Short, "true/false", minLength: 4, maxLength: 5)]
+        public string SaveAsFile { get; set; }
+
         [InputLabel("ServerRestartTimer")]
         [ModalTextInput("Server Restart Notification Timer(ms: 1000ms=1s)", placeholder: "600000", maxLength: 15)]
         public string RestartTimer { get; set; }

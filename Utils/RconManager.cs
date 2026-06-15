@@ -8,20 +8,34 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class RconManager
+    public interface IRconManager
     {
-        public static async Task<string> SendCommandAsync(string command)
-        {
-            string ip = Application.BotConfig.RCONSettings.IP;
-            ushort port = Application.BotConfig.RCONSettings.Port;
-            string password = Application.BotConfig.RCONSettings.Password;
+        Task<string> SendCommandAsync(string command);
+    }
 
-            string iniFile = ServerServiceManager.GetServerIniPath();
+    public class RconManager : IRconManager
+    {
+        private readonly BotConfig _config;
+
+        public RconManager(BotConfig config)
+        {
+            _config = config;
+        }
+
+        public async Task<string> SendCommandAsync(string command)
+        {
+            string ip = _config.RCONSettings.IP;
+            ushort port = _config.RCONSettings.Port;
+            string password = _config.RCONSettings.Password;
+
+            string serverName = _config.ServerName;
+            string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string iniFile = Path.Combine(homePath, "Zomboid", "Server", $"{serverName}.ini");
 
             if (File.Exists(iniFile))
             {
-                string tempPort = ServerServiceManager.GetValueFromIni(iniFile, "RCONPort");
-                string tempPassword = ServerServiceManager.GetValueFromIni(iniFile, "RCONPassword");
+                string tempPort = GetValueFromIni(iniFile, "RCONPort");
+                string tempPassword = GetValueFromIni(iniFile, "RCONPassword");
 
                 if (!string.IsNullOrEmpty(tempPort) && ushort.TryParse(tempPort, out ushort parsedPort))
                 {
@@ -33,7 +47,7 @@ namespace DotNETCoreDiscordBot
                     password = tempPassword;
                 }
 
-                await Application.BotConfig.Save();
+                await _config.Save();
             }
 
             try
@@ -43,16 +57,29 @@ namespace DotNETCoreDiscordBot
                 using (var rcon = new RCON(ipAddress, port, password))
                 {
                     await rcon.ConnectAsync();
-
                     string response = await rcon.SendCommandAsync(command);
                     return response;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                LogFile.WriteLine($"[RconManager] Error: {e.Message}");
+                await LogFile.WriteLine($"[RconManager] Error: {e.Message}");
                 return $"RCON Error: ({e.Message})";
             }
+        }
+
+        private string GetValueFromIni(string iniPath, string key)
+        {
+            if (!File.Exists(iniPath)) return "";
+            var lines = File.ReadAllLines(iniPath);
+            foreach (var line in lines)
+            {
+                if (line.StartsWith($"{key}="))
+                {
+                    return line.Substring($"{key}=".Length);
+                }
+            }
+            return "";
         }
     }
 }

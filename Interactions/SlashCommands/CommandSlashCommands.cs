@@ -29,6 +29,10 @@ namespace DotNETCoreDiscordBot
                 RCONIP = current.RCONSettings.IP,
                 RCONPort = current.RCONSettings.Port.ToString(),
                 RCONPassword = current.RCONSettings.Password,
+
+                WindowsServerFile = current.ServerProcessSettings.WindowsServerFile,
+                LinuxServerFile = current.ServerProcessSettings.LinuxServerFile,
+                UnixServerFile = current.ServerProcessSettings.UnixServerFile,
             };
 
             await RespondWithModalAsync<BotSetupModal>("set_configs", modal);
@@ -58,6 +62,10 @@ namespace DotNETCoreDiscordBot
                 await RespondAsync("⚠️RCON Port value must be consisted of digits", ephemeral: true);
                 return;
             }
+
+            Application.BotConfig.ServerProcessSettings.WindowsServerFile = modal.WindowsServerFile ?? "server.bat";
+            Application.BotConfig.ServerProcessSettings.LinuxServerFile = modal.LinuxServerFile ?? "server.sh";
+            Application.BotConfig.ServerProcessSettings.UnixServerFile = modal.UnixServerFile ?? "server.sh";
 
             await Application.BotConfig.Save();
             await RespondAsync("💾Config has been Updated", ephemeral: true);

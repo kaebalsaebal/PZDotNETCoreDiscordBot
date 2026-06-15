@@ -38,11 +38,11 @@ namespace DotNETCoreDiscordBot
         public string Password = "";
     }
 
-    public class ServerLocationSettings
+    public class ServerProcessSettings
     {
-        public string WindowsServerPath = Path.Combine(AppContext.BaseDirectory, "server.bat");
-        public string LinuxServerPath = Path.Combine(AppContext.BaseDirectory, "server.sh");
-        public string UnixServerPath = Path.Combine(AppContext.BaseDirectory, "server.sh");
+        public string WindowsServerFile = "server.bat";
+        public string LinuxServerFile = "server.sh";
+        public string UnixServerFile = "server.sh";
 
         public string ServerName = "servertest";
     }
@@ -66,7 +66,7 @@ namespace DotNETCoreDiscordBot
 
         public RCONSettings RCONSettings = new RCONSettings();
 
-        public ServerLocationSettings ServerLocationSettings = new ServerLocationSettings();
+        public ServerProcessSettings ServerProcessSettings = new ServerProcessSettings();
 
         public async Task Save()
         {

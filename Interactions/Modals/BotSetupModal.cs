@@ -28,5 +28,17 @@ namespace DotNETCoreDiscordBot
         [InputLabel("RCON Password")]
         [ModalTextInput("rcon_pw", style: TextInputStyle.Short)]
         public string? RCONPassword { get; set; }
+
+        [InputLabel("Your Windows Server Script File Name")]
+        [ModalTextInput("windows_server_file", placeholder: "server.bat")]
+        public string? WindowsServerFile { get; set; }
+
+        [InputLabel("Your Linux Server Script File Name")]
+        [ModalTextInput("linux_server_file", placeholder: "server.sh")]
+        public string? LinuxServerFile { get; set; }
+
+        [InputLabel("Your MacOS Server Script File Name")]
+        [ModalTextInput("unix_server_file", placeholder: "server.sh")]
+        public string? UnixServerFile { get; set; }
     }
 }

@@ -60,7 +60,7 @@ namespace DotNETCoreDiscordBot
                             {
                                 string servername = nameParts[1].Replace("\"", "").Trim();
 
-                                Application.BotConfig.ServerLocationSettings.ServerName = servername;
+                                Application.BotConfig.ServerProcessSettings.ServerName = servername;
 
                                 LogFile.WriteLine($"[ServerProcessManager] Servername has been configured: {servername}");
 
@@ -121,7 +121,7 @@ namespace DotNETCoreDiscordBot
                     Process.Start("chmod", $"+x \"{scriptPath}\"")?.WaitForExit();
                     serverProcess.StartInfo.FileName = "/bin/bash";
 
-                    serverProcess.StartInfo.Arguments = $"\"{scriptPath}\" -servername \"{Application.BotConfig.ServerLocationSettings.ServerName}\"";
+                    serverProcess.StartInfo.Arguments = $"\"{scriptPath}\" -servername \"{Application.BotConfig.ServerProcessSettings.ServerName}\"";
                 }
 
                 serverProcess.StartInfo.UseShellExecute = false;

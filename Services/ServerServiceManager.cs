@@ -21,22 +21,22 @@ namespace DotNETCoreDiscordBot
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                scriptPath = Application.BotConfig.ServerLocationSettings.WindowsServerPath;
+                scriptPath = Path.Combine(AppContext.BaseDirectory, Application.BotConfig.ServerProcessSettings.WindowsServerFile);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                scriptPath = Application.BotConfig.ServerLocationSettings.LinuxServerPath;
+                scriptPath = Path.Combine(AppContext.BaseDirectory, Application.BotConfig.ServerProcessSettings.LinuxServerFile);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                scriptPath = Application.BotConfig.ServerLocationSettings.UnixServerPath;
+                scriptPath = Path.Combine(AppContext.BaseDirectory, Application.BotConfig.ServerProcessSettings.UnixServerFile);
             }
             return scriptPath;
         }
 
         public static string GetServerIniPath()
         {
-            string serverName = Application.BotConfig.ServerLocationSettings.ServerName;
+            string serverName = Application.BotConfig.ServerProcessSettings.ServerName;
 
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 

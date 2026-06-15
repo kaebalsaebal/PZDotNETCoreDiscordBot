@@ -20,7 +20,7 @@ namespace DotNETCoreDiscordBot
         private static IServiceProvider _services;
 
         public static BotConfig BotConfig { get; set; } = new BotConfig();
-        private static bool _servicesStarted = false;
+        private static bool _botReady = false;
         public static void Main(string[] _) => MainAsync(_).GetAwaiter().GetResult();
 
         private static async Task MainAsync(string[] param)
@@ -46,25 +46,25 @@ namespace DotNETCoreDiscordBot
                     BotConfig = JsonConvert.DeserializeObject<BotConfig>(
                                     File.ReadAllText(BotConfig.SettingsFile),
                                     new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
-                }
 
-                // parse servername if linux
-                for (int i = 0; i < param.Length; i++)
-                {
-                    if (param[i].ToLower() == "-servername" && i + 1 < param.Length)
+                    // parse servername if linux
+                    for (int i = 0; i < param.Length; i++)
                     {
-                        string servername = param[i + 1].Replace("\"", "").Trim();
-
-                        if (!string.IsNullOrEmpty(servername))
+                        if (param[i].ToLower() == "-servername" && i + 1 < param.Length)
                         {
-                            BotConfig.ServerLocationSettings.ServerName = servername;
-                            LogFile.WriteLine($"[Program] Servername has been configured: {servername}");
-                        }
-                        break;
-                    }
-                }
+                            string servername = param[i + 1].Replace("\"", "").Trim();
 
-                await BotConfig.Save();
+                            if (!string.IsNullOrEmpty(servername))
+                            {
+                                BotConfig.ServerProcessSettings.ServerName = servername;
+                                LogFile.WriteLine($"[Program] Servername has been configured: {servername}");
+                            }
+                            break;
+                        }
+                    }
+
+                    await BotConfig.Save();
+                }
 
             } catch(Exception e)
             {
@@ -144,8 +144,8 @@ namespace DotNETCoreDiscordBot
                 BotConfig.CommandChannelId != 0 &&
                 BotConfig.LogChannelId != 0)
             {
-                if (_servicesStarted) return;
-                _servicesStarted = true;
+                if (_botReady) return;
+                _botReady = true;
 
                 LogFile.WriteLine("[Program] All channels configured! Starting Server and Scheduler...");
 

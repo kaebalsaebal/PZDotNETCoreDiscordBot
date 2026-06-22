@@ -59,16 +59,16 @@ namespace DotNETCoreDiscordBot
 
             try
             {
-                var strategy = GetCurrentOSProcess();
+                var curOS = GetCurrentOSProcess();
 
-                await strategy.ParseServerScript();
+                await curOS.ParseServerScript();
 
                 await LogFile.WriteLine($"[ServerProcessManager] Servername has been configured: {_botConfig.ServerName}");
                 await _botConfig.Save();
 
                 _serverProcess = new Process();
 
-                strategy.SetupProcessStartInfo(
+                curOS.SetupProcessStartInfo(
                     _serverProcess.StartInfo,
                     _botConfig.ServerName
                 );
@@ -78,7 +78,7 @@ namespace DotNETCoreDiscordBot
                 _serverProcess.StartInfo.RedirectStandardInput = true;
                 _serverProcess.StartInfo.RedirectStandardOutput = true;
                 _serverProcess.StartInfo.RedirectStandardError = true;
-                _serverProcess.StartInfo.WorkingDirectory = strategy.GetDirectory();
+                _serverProcess.StartInfo.WorkingDirectory = curOS.GetDirectory();
 
                 _serverProcess.OutputDataReceived += async (sender, e) =>
                 {

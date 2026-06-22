@@ -10,6 +10,7 @@ namespace DotNETCoreDiscordBot
 {
     public interface IRconManager
     {
+        Task LoadRCONConfig();
         Task<string> SendCommandAsync(string command);
     }
 
@@ -22,39 +23,35 @@ namespace DotNETCoreDiscordBot
             _config = config;
         }
 
-        public async Task<string> SendCommandAsync(string command)
+        public async Task LoadRCONConfig()
         {
-            string ip = _config.RCONSettings.IP;
-            ushort port = _config.RCONSettings.Port;
-            string password = _config.RCONSettings.Password;
-
             string serverName = _config.ServerName;
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string iniFile = Path.Combine(homePath, "Zomboid", "Server", $"{serverName}.ini");
 
-            if (File.Exists(iniFile))
-            {
-                string tempPort = GetValueFromIni(iniFile, "RCONPort");
-                string tempPassword = GetValueFromIni(iniFile, "RCONPassword");
+            if (!File.Exists(iniFile))
+                return;
 
-                if (!string.IsNullOrEmpty(tempPort) && ushort.TryParse(tempPort, out ushort parsedPort))
-                {
-                    port = parsedPort;
-                }
+            string tempPort = Tools.GetValueFromIni(iniFile, "RCONPort");
+            string tempPassword = Tools.GetValueFromIni(iniFile, "RCONPassword");
 
-                if (tempPassword != null)
-                {
-                    password = tempPassword;
-                }
+            if (ushort.TryParse(tempPort, out ushort port))
+                _config.RCONSettings.Port = port;
 
-                await _config.Save();
-            }
+            _config.RCONSettings.Password = tempPassword ?? "";
 
+            await _config.Save();
+        }
+
+        public async Task<string> SendCommandAsync(string command)
+        {
             try
             {
-                IPAddress ipAddress = IPAddress.Parse(ip);
+                IPAddress tempIP = IPAddress.Parse(_config.RCONSettings.IP);
+                ushort tempPort = _config.RCONSettings.Port;
+                string tempPwd = _config.RCONSettings.Password;
 
-                using (var rcon = new RCON(ipAddress, port, password))
+                using (var rcon = new RCON(tempIP, tempPort, tempPwd))
                 {
                     await rcon.ConnectAsync();
                     string response = await rcon.SendCommandAsync(command);
@@ -64,22 +61,8 @@ namespace DotNETCoreDiscordBot
             catch (Exception e)
             {
                 await LogFile.WriteLine($"[RconManager] Error: {e.Message}");
-                return $"RCON Error: ({e.Message})";
+                throw;
             }
-        }
-
-        private string GetValueFromIni(string iniPath, string key)
-        {
-            if (!File.Exists(iniPath)) return "";
-            var lines = File.ReadAllLines(iniPath);
-            foreach (var line in lines)
-            {
-                if (line.StartsWith($"{key}="))
-                {
-                    return line.Substring($"{key}=".Length);
-                }
-            }
-            return "";
         }
     }
 }

@@ -41,8 +41,8 @@ namespace DotNETCoreDiscordBot.Scheduler
             {
                 while (await timer.WaitForNextTickAsync(token))
                 {
-                    string iniPath = _serverService.GetServerIniPath();
-                    string workshopIdValue = _serverService.GetValueFromIni(iniPath, "WorkshopItems");
+                    string iniPath = Tools.GetServerIniPath(_botConfig.ServerName);
+                    string workshopIdValue = Tools.GetValueFromIni(iniPath, "WorkshopItems");
                     string[] ids = workshopIdValue.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
                     if (ids.Length == 0) continue;

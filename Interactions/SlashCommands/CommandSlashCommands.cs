@@ -26,29 +26,28 @@ namespace DotNETCoreDiscordBot
         [SlashCommand("ping", "Do you like watching me")]
         public async Task Ping()
         {
-            await RespondAsync("☠PONG☠");
+            await RespondAsync("☠PONG☠", ephemeral: true);
         }
 
         [SlashCommand("set_configs", "Configures other settings")]
         public async Task SetConfigs()
         {
-            var current = _botConfig;
-
-            var modal = new BotSetupModal
+            try
             {
-                SaveAsFile = current.SaveAsFile.ToString().ToLower(),
+                var current = _botConfig;
 
-                RestartTimer = current.ServerScheduleSettings.RestartTimer.ToString(),
-                RCONIP = current.RCONSettings.IP,
-                RCONPort = current.RCONSettings.Port.ToString(),
-                RCONPassword = current.RCONSettings.Password,
+                var modal = new BotSetupModal
+                {
+                    SaveAsFile = current.SaveAsFile.ToString().ToLower(),
+                    RestartTimer = current.ServerScheduleSettings.RestartTimer.ToString(),
+                    WorkshopInterval = current.ServerScheduleSettings.WorkshopItemUpdateSchedule.ToString(),
+                };
 
-                WindowsServerFile = current.ServerProcessSettings.WindowsServerFile,
-                LinuxServerFile = current.ServerProcessSettings.LinuxServerFile,
-                UnixServerFile = current.ServerProcessSettings.UnixServerFile,
-            };
-
-            await RespondWithModalAsync<BotSetupModal>("set_configs", modal);
+                await RespondWithModalAsync<BotSetupModal>("set_configs", modal);
+            } catch(Exception e)
+            {
+                await RespondAsync($"COMMAND ERROR: {e.Message}", ephemeral: true);
+            }
         }
         [ModalInteraction("set_configs")]
         public async Task OnModalSubmit(BotSetupModal modal)
@@ -59,7 +58,7 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                await RespondAsync("⚠️SaveAsFile value must be 'true' or 'false'", ephemeral: true);
+                await RespondAsync("SaveAsFile value must be 'true' or 'false'", ephemeral: true);
                 return;
             }
 
@@ -69,111 +68,149 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                await RespondAsync("⚠️RestartTimer value must be consisted of digits", ephemeral: true);
+                await RespondAsync("RestartTimer value must be consisted of digits", ephemeral: true);
                 return;
             }
 
-            _botConfig.RCONSettings.IP = modal.RCONIP;
-            _botConfig.RCONSettings.Password = modal.RCONPassword ?? "";
-
-            if (ushort.TryParse(modal.RCONPort, out ushort parsedPort))
+            if (uint.TryParse(modal.WorkshopInterval, out uint parsedInterval))
             {
-                _botConfig.RCONSettings.Port = parsedPort;
+                _botConfig.ServerScheduleSettings.WorkshopItemUpdateSchedule = parsedInterval;
             }
             else
             {
-                await RespondAsync("⚠️RCON Port value must be consisted of digits", ephemeral: true);
+                await RespondAsync("WorkshopInterval value must be consisted of digits", ephemeral: true);
                 return;
             }
 
-            _botConfig.ServerProcessSettings.WindowsServerFile = modal.WindowsServerFile ?? "server.bat";
-            _botConfig.ServerProcessSettings.LinuxServerFile = modal.LinuxServerFile ?? "server.sh";
-            _botConfig.ServerProcessSettings.UnixServerFile = modal.UnixServerFile ?? "server.sh";
-
             await _botConfig.Save();
-            await RespondAsync("💾Config has been Updated", ephemeral: true);
+            await RespondAsync("Config has been Updated", ephemeral: true);
         }
 
         [SlashCommand("save_server", "Saves Server")]
         public async Task Save()
         {
-            await RespondAsync("Saving Server...");
+            try
+            {
+                await DeferAsync();
 
-            await _serverService.SaveServer(Context.Client, _botConfig.LogChannelId);
+                await _serverService.SaveServer(Context.Client, _botConfig.LogChannelId);
 
+                await FollowupAsync("Save completed...", ephemeral: true);
+            }
+            catch (Exception e)
+            {
+                await FollowupAsync($"COMMAND ERROR: {e.Message}", ephemeral: true);
+            }
         }
 
         [SlashCommand("restart_server", "Restarts server")]
         public async Task RestartServer([Summary("minutes", "Restarts server after minutes")] uint minutes)
         {
+            await DeferAsync();
 
-            if (minutes < 1 || minutes > 60)
+            _ = Task.Run(async () =>
             {
-                await RespondAsync("Please enter 1~60");
-                return;
+                await _serverService.RestartServer(
+                    Context.Client,
+                    _botConfig.LogChannelId,
+                    minutes * 60000);
+            });
+
+            await FollowupAsync($"Restarting server after {minutes} minutes...", ephemeral: true);
+        }
+
+        [SlashCommand("restart_cancel", "Cancel scheduled restart")]
+        public async Task CancelRestart()
+        {
+            try
+            {
+                await DeferAsync();
+
+                bool isCancelled = await _serverService.CancelRestart(Context.Client, _botConfig.LogChannelId);
+
+                if (isCancelled)
+                {
+                    await FollowupAsync("✅ Scheduled restart cancelled", ephemeral: true);
+                }
+                else
+                {
+                    await FollowupAsync("⚠️ There is no scheduled restart", ephemeral: true);
+                }
             }
-
-            await RespondAsync("Restarting Server...");
-
-            await _serverService.RestartServer(Context.Client, _botConfig.LogChannelId, minutes*60000);
-
+            catch (Exception e)
+            {
+                await FollowupAsync($"COMMAND ERROR: {e.Message}", ephemeral: true);
+            }
         }
 
         [SlashCommand("shutdown_server", "Shuts down server immediately")]
         public async Task ShutdownServer()
         {
-            await RespondAsync("Shutting down Server...");
+            try
+            {
+                await DeferAsync();
 
-            await _serverService.ShutdownServer(Context.Client, _botConfig.LogChannelId);
+                await _serverService.ShutdownServer(Context.Client, _botConfig.LogChannelId);
 
+                await FollowupAsync("Server has shut down...", ephemeral: true);
+            } catch(Exception e)
+            {
+                await FollowupAsync($"COMMAND ERROR: {e.Message}", ephemeral: true);
+            }
         }
 
         // For Debug
-        [SlashCommand("checkmodupdate", "For debug")]
+        [SlashCommand("check_workshop_mods", "Your Server Mods Info")]
         public async Task CheckWorkshopItems()
         {
-
-            await RespondAsync("🔍 Checking Mod Update Date...");
-
-            await DeferAsync();
-
-            string[] ids = Array.Empty<string>();
-
-            string configFilePath = _serverService.GetServerIniPath();
-            if (!File.Exists(configFilePath))
+            try
             {
-                await FollowupAsync($"❌ Failed to Get {configFilePath} File...");
-            }
-            string workshopString = _serverService.GetValueFromIni(configFilePath, "WorkshopItems");
-            ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                await DeferAsync();
 
-            var modDetails = await _steamApi.GetWorkshopItemDetails(ids);
+                await FollowupAsync("Checking Mod Update Date...", ephemeral: true);
 
-            if (modDetails == null || modDetails.Count == 0)
+                string[] ids = Array.Empty<string>();
+
+                string configFilePath = Tools.GetServerIniPath(_botConfig.ServerName);
+                if (!File.Exists(configFilePath))
+                {
+                    await FollowupAsync($"Failed to Get {configFilePath} File...");
+                    return;
+                }
+                string workshopString = Tools.GetValueFromIni(configFilePath, "WorkshopItems");
+                ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+                var modDetails = await _steamApi.GetWorkshopItemDetails(ids);
+
+                if (modDetails == null || modDetails.Count == 0)
+                {
+                    await FollowupAsync("Failed to Fetch Mod Data...", ephemeral: true);
+                    return;
+                }
+
+                var sb = new StringBuilder();
+                sb.AppendLine($"**[Mod Update Check Result - Total {modDetails.Count}]**");
+
+                var sortedMods = modDetails.OrderByDescending(m => m.TimeUpdated).ToList();
+
+                foreach (var mod in sortedMods.Take(10))
+                {
+                    DateTime lastUpdate = DateTimeOffset.FromUnixTimeSeconds(mod.TimeUpdated).LocalDateTime;
+
+                    sb.AppendLine($"- **{mod.Title}** (ID: {mod.PublishedFileId})");
+                    sb.AppendLine($"  Last Update Date: {lastUpdate:yyyy-MM-dd HH:mm:ss}");
+                }
+
+                if (sortedMods.Count > 10)
+                {
+                    sb.AppendLine($"...{sortedMods.Count - 10} Mods and so more...");
+                }
+
+                await FollowupAsync(sb.ToString());
+            } catch (Exception e)
             {
-                await FollowupAsync("❌ Failed to Fetch Mod Data...");
-                return;
-            }
-
-            var sb = new StringBuilder();
-            sb.AppendLine($"**[Mod Update Check Result - Total {modDetails.Count}]**");
-
-            var sortedMods = modDetails.OrderByDescending(m => m.TimeUpdated).ToList();
-
-            foreach (var mod in sortedMods.Take(10))
-            {
-                DateTime lastUpdate = DateTimeOffset.FromUnixTimeSeconds(mod.TimeUpdated).LocalDateTime;
-
-                sb.AppendLine($"- **{mod.Title}** (ID: {mod.PublishedFileId})");
-                sb.AppendLine($"  Last Update Date: {lastUpdate:yyyy-MM-dd HH:mm:ss}");
-            }
-
-            if (sortedMods.Count > 10)
-            {
-                sb.AppendLine($"...{sortedMods.Count - 10} Mods and so more...");
-            }
-
-            await FollowupAsync(sb.ToString());
+                await FollowupAsync($"COMMAND ERROR: {e.Message}", ephemeral: true);
+            }            
         }
     }
 }

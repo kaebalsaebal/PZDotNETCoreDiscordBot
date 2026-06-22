@@ -19,7 +19,7 @@ I'll try my best to implement the remaining features as well...
 | **/check_workshop_mods** | | Show last 10 update mods in your server | command |
 | **/save_server** | | Save current server state | command |
 | **/restart_server** | minutes | Restart server after param minutes | command |
-| **/restart_cancel** | minutes | Cancel scheduled restart job | command |
+| **/restart_cancel** | | Cancel scheduled restart job | command |
 | **/shutdown_server** | | Shut down server safely | command |
 | **/set_configs** | | Configure your bot setting(see below) | command |
 | **/players** | | Show players logged in | public |

@@ -11,8 +11,16 @@ namespace DotNETCoreDiscordBot
 {
     public abstract class ServerProcess
     {
-        protected string _scriptPath = "";
+        protected readonly string _scriptPath = "";
+        protected readonly BotConfig _botConfig;
+
         private string _basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
+
+        protected ServerProcess(BotConfig botConfig, string scriptPath)
+        {
+            _botConfig = botConfig;
+            _scriptPath = scriptPath;
+        }
 
         public string GetDirectory()
         {

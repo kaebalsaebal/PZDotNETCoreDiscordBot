@@ -9,14 +9,8 @@ namespace DotNETCoreDiscordBot
 {
     public class WindowsProcess : ServerProcess
     {
-
-        private readonly BotConfig _botConfig;
-        private readonly string _scriptPath;
-
-        public WindowsProcess(BotConfig botConfig)
+        public WindowsProcess(BotConfig botConfig, string scriptPath) : base(botConfig, scriptPath)
         {
-            _botConfig = botConfig;
-            _scriptPath = Path.Combine(AppContext.BaseDirectory, botConfig.ServerProcessSettings.WindowsServerFile);
         }
 
         protected override void ExtractOSParams(string line)

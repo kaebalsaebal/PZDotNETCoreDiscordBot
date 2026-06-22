@@ -11,20 +11,24 @@ namespace DotNETCoreDiscordBot
     {
         public static ServerProcess Create(BotConfig botConfig)
         {
+
+            string windowsLoc = botConfig.ServerProcessSettings.WindowsServerFile;
+            string linuxLoc = botConfig.ServerProcessSettings.LinuxServerFile;
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                return new WindowsProcess(botConfig);
+                return new WindowsProcess(botConfig, windowsLoc);
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) { 
-                return new LinuxProcess(botConfig);
+                return new LinuxProcess(botConfig, linuxLoc);
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                return new LinuxProcess(botConfig);
+                return new LinuxProcess(botConfig, linuxLoc);
             }
 
-            return new WindowsProcess(botConfig);
+            return new WindowsProcess(botConfig, windowsLoc);
         }
     }
 }

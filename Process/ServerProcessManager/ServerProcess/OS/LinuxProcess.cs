@@ -9,13 +9,8 @@ namespace DotNETCoreDiscordBot
 {
     public class LinuxProcess : ServerProcess
     {
-
-        private readonly BotConfig _botConfig;
-
-        public LinuxProcess(BotConfig botConfig)
+        public LinuxProcess(BotConfig botConfig, string scriptPath) : base(botConfig, scriptPath)
         {
-            _botConfig = botConfig;
-            _scriptPath = Path.Combine(AppContext.BaseDirectory, botConfig.ServerProcessSettings.LinuxServerFile);
         }
 
         protected override void ExtractOSParams(string line)

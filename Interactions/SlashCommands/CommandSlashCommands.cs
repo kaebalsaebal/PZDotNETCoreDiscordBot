@@ -94,28 +94,38 @@ namespace DotNETCoreDiscordBot
             await RespondAsync("💾Config has been Updated", ephemeral: true);
         }
 
-        [SlashCommand("save", "Saves Server")]
+        [SlashCommand("save_server", "Saves Server")]
         public async Task Save()
         {
+            await RespondAsync("Saving Server...");
+
             await _serverService.SaveServer(Context.Client, _botConfig.LogChannelId);
+
         }
 
         [SlashCommand("restart_server", "Restarts server")]
         public async Task RestartServer([Summary("minutes", "Restarts server after minutes")] uint minutes)
         {
-            if(minutes < 1 || minutes > 60)
+
+            if (minutes < 1 || minutes > 60)
             {
                 await RespondAsync("Please enter 1~60");
                 return;
             }
 
+            await RespondAsync("Restarting Server...");
+
             await _serverService.RestartServer(Context.Client, _botConfig.LogChannelId, minutes*60000);
+
         }
 
         [SlashCommand("shutdown_server", "Shuts down server immediately")]
         public async Task ShutdownServer()
         {
+            await RespondAsync("Shutting down Server...");
+
             await _serverService.ShutdownServer(Context.Client, _botConfig.LogChannelId);
+
         }
 
         // For Debug
@@ -125,12 +135,14 @@ namespace DotNETCoreDiscordBot
 
             await RespondAsync("🔍 Checking Mod Update Date...");
 
+            await DeferAsync();
+
             string[] ids = Array.Empty<string>();
 
             string configFilePath = _serverService.GetServerIniPath();
             if (!File.Exists(configFilePath))
             {
-                await RespondAsync($"❌ Failed to Get {configFilePath} File...");
+                await FollowupAsync($"❌ Failed to Get {configFilePath} File...");
             }
             string workshopString = _serverService.GetValueFromIni(configFilePath, "WorkshopItems");
             ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
@@ -139,7 +151,7 @@ namespace DotNETCoreDiscordBot
 
             if (modDetails == null || modDetails.Count == 0)
             {
-                await RespondAsync("❌ Failed to Fetch Mod Data...");
+                await FollowupAsync("❌ Failed to Fetch Mod Data...");
                 return;
             }
 
@@ -161,7 +173,7 @@ namespace DotNETCoreDiscordBot
                 sb.AppendLine($"...{sortedMods.Count - 10} Mods and so more...");
             }
 
-            await RespondAsync(sb.ToString());
+            await FollowupAsync(sb.ToString());
         }
     }
 }

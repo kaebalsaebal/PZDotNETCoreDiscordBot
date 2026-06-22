@@ -21,7 +21,7 @@ I'll try my best to implement the remaining features as well...
 | **/restart_server** | minutes | Restart server after param minutes | command |
 | **/restart_cancel** | minutes | Cancel scheduled restart job | command |
 | **/shutdown_server** | | Shut down server safely | command |
-| **/set_configs** | | Configure your bot setting(mod check interval, log file create, restart timer when mod update found) | command |
+| **/set_configs** | | Configure your bot setting(see below) | command |
 | **/players** | | Show players logged in | public |
 
 # How to use
@@ -97,6 +97,10 @@ If you set 'true' on /set_configs menu, the ```PZBot_Logs``` directory will be c
 <img width="143" height="69" alt="image" src="https://github.com/user-attachments/assets/0ad64fd5-a156-4880-9517-33aae193e9ba" />
 
 <img width="148" height="53" alt="image" src="https://github.com/user-attachments/assets/3dcd503d-1a91-4f3d-9de9-3c87efd0bd77" />
+
+```/set_config``` modal example:
+
+<img width="480" height="490" alt="image" src="https://github.com/user-attachments/assets/81cec294-b38d-4e89-8627-86cd4ed65c60" />
 
 
 # Thanks to

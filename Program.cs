@@ -39,8 +39,6 @@ namespace DotNETCoreDiscordBot
                     botConfig = JsonConvert.DeserializeObject<BotConfig>(
                                     File.ReadAllText(botConfig.GetConfLocation()),
                                     new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
-
-                    botConfig.Linuxparams = param;
                 }
 
             } catch(Exception e)
@@ -121,7 +119,7 @@ namespace DotNETCoreDiscordBot
             await _commandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
             await _interactionService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
 
-            // Handle Command/Slash Command
+            // Receive Command/Slash Command
             _discordSocketClient.MessageReceived += HandleCommand;
             _discordSocketClient.InteractionCreated += HandleInteraction;
 
@@ -217,28 +215,36 @@ namespace DotNETCoreDiscordBot
 
         private static async Task HandleCommand(SocketMessage socketMessage)
         {
-            var message = socketMessage as SocketUserMessage;
-            if (message == null) return;
-
-            int argPos = 0;
-
-            if (!(message.HasCharPrefix('!', ref argPos)
-                || message.HasMentionPrefix(_discordSocketClient.CurrentUser, ref argPos))
-                || message.Author.IsBot) return;
-
-            var context = new SocketCommandContext(_discordSocketClient, message);
-
-            var result = await _commandService.ExecuteAsync(
-                context: context,
-                argPos: argPos,
-                services: _services);
-
-            if (!result.IsSuccess)
+            try
             {
-                if (result.Error != CommandError.UnknownCommand)
+                var message = socketMessage as SocketUserMessage;
+                if (message == null) return;
+
+                int argPos = 0;
+
+                if (!(message.HasCharPrefix('!', ref argPos)
+                    || message.HasMentionPrefix(_discordSocketClient.CurrentUser, ref argPos))
+                    || message.Author.IsBot) return;
+
+                var context = new SocketCommandContext(_discordSocketClient, message);
+
+                var result = await _commandService.ExecuteAsync(
+                    context: context,
+                    argPos: argPos,
+                    services: _services);
+
+                if (!result.IsSuccess)
                 {
-                    LogFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), context.Channel.Id);
+                    if (result.Error != CommandError.UnknownCommand)
+                    {
+                        LogFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), context.Channel.Id);
+                    }
+
                 }
+            }
+            catch (Exception e)
+            {
+                LogFile.WriteLine(Messages.Get("unknown_error").KeyFormat(("error", e.Message)));
             }
         }
 
@@ -276,7 +282,7 @@ namespace DotNETCoreDiscordBot
                 {
                     await RespondOrFollowup(context.Interaction, Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
 
-                    LogFile.WriteLine(Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                    LogFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
                 }
 
             } catch(Exception e)
@@ -298,9 +304,11 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        private static async Task DiscordLog(LogMessage msg)
+        private static Task DiscordLog(LogMessage msg)
         {
             LogFile.WriteLine(Messages.Get("discord_log").KeyFormat(("log", $"{msg.Message ?? msg.Exception?.Message}")));
+
+            return Task.CompletedTask;
         }
 
     }

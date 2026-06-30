@@ -22,7 +22,7 @@ namespace DotNETCoreDiscordBot
         public string RestartTimer { get; set; }
 
         [InputLabel("Workshop Scheduler Running Interval(ms)")]
-        [ModalTextInput("workshop_inverval", placeholder: "600000", maxLength: 15)]
+        [ModalTextInput("workshop_inverval", placeholder: "1800000", maxLength: 15)]
         public string WorkshopInterval { get; set; }
     }
 }

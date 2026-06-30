@@ -32,8 +32,9 @@ namespace DotNETCoreDiscordBot
             if (!File.Exists(iniFile))
                 return;
 
-            string tempPort = Tools.GetValueFromIni(iniFile, "RCONPort");
-            string tempPassword = Tools.GetValueFromIni(iniFile, "RCONPassword");
+            var tools = new Tools();
+            string tempPort = tools.GetValueFromIni(iniFile, "RCONPort");
+            string tempPassword = tools.GetValueFromIni(iniFile, "RCONPassword");
 
             if (ushort.TryParse(tempPort, out ushort port))
                 _config.RCONSettings.Port = port;

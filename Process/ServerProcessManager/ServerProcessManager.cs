@@ -24,7 +24,7 @@ namespace DotNETCoreDiscordBot
     public class ServerProcessManager : IServerProcessManager
     {
         private readonly BotConfig _botConfig;
-        private Process _serverProcess = null;
+        private Process? _serverProcess = null;
 
         private TaskCompletionSource<bool> _serverStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private TaskCompletionSource<bool> _serverSaved = new(TaskCreationOptions.RunContinuationsAsynchronously);

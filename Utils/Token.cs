@@ -9,7 +9,7 @@ namespace DotNETCoreDiscordBot
     public static class Token
     {
         private static readonly string tokenFile = Path.Combine(AppContext.BaseDirectory, "bot_token.txt");
-        private static string token = null;
+        private static string? token = null;
 
         public static string GetToken()
         {

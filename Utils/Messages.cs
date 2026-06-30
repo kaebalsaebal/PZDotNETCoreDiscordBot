@@ -14,7 +14,7 @@ namespace DotNETCoreDiscordBot
 
     public static class Messages
     {
-        private static Dictionary<string, string> _messages = null;
+        private static Dictionary<string, string>? _messages = null;
         private static readonly Dictionary<string, string> _defaultMessages = new Dictionary<string, string>
         {
             // Program
@@ -32,7 +32,6 @@ namespace DotNETCoreDiscordBot
             {"command_error", "🚫 Command error: {error}" },
             {"precondition_error", "🚫 Precondition error: {error}" },
             {"exception_error", "🚫 Exception error: {error}" },
-            {"interaction_error", "🚫 Interaction error: {error}" },
             {"unknown_error", "🚫 unknown error: {error}" },
             {"discord_log", "[Discord] {log}" },
 

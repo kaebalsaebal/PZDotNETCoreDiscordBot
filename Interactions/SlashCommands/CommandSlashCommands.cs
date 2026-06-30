@@ -143,13 +143,15 @@ namespace DotNETCoreDiscordBot
 
             string[] ids = Array.Empty<string>();
 
-            string configFilePath = Tools.GetServerIniPath(_botConfig.ServerName);
+            var tools = new Tools();
+
+            string configFilePath = tools.GetServerIniPath(_botConfig.ServerName);
             if (!File.Exists(configFilePath))
             {
                 await FollowupAsync($"Failed to Get {configFilePath} File...");
                 return;
             }
-            string workshopString = Tools.GetValueFromIni(configFilePath, "WorkshopItems");
+            string workshopString = tools.GetValueFromIni(configFilePath, "WorkshopItems");
             ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
             var modDetails = await _steamApi.GetWorkshopItemDetails(ids);

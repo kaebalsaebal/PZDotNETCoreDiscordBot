@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class Tools
+    public class Tools
     {
-        public static string GetServerIniPath(string servername)
+        public string GetServerIniPath(string servername)
         {
             string serverName = servername;
 
@@ -19,7 +19,7 @@ namespace DotNETCoreDiscordBot
             return Path.Combine(targetDirectory, $"{serverName}.ini");
         }
 
-        public static string GetValueFromIni(string iniPath, string key)
+        public string GetValueFromIni(string iniPath, string key)
         {
             if (!File.Exists(iniPath)) return "";
 

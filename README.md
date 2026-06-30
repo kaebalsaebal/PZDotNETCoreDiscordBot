@@ -17,7 +17,6 @@ I'll try my best to implement the remaining features as well...
 | **/set_command_channel** | target channel | Set bot's command message channel | |
 | **/set_log_channel** | target channel | Set bot's log message channel | |
 | **/set_configs** | | Configure your bot setting(see below) | command |
-| **/check_workshop_mods** | | Show last 10 update mods in your server | command |
 | **/save_server** | | Save current server state | command |
 | **/restart_server** | minutes | Restart server after param minutes | command |
 | **/restart_cancel** | | Cancel scheduled restart job | command |
@@ -25,8 +24,8 @@ I'll try my best to implement the remaining features as well...
 | **/revoke_auth** | user | Revoke user a permission to execute commands in command channel | command |
 | **/show_auth** | user | Show users who can execute commands in command channel | command |
 | **/get_cpu_ram** | | Show server's CPU and memory usage | command |
-
 | **/players** | | Show players logged in | public |
+| **/check_workshop_mods** | item | Show last (item) update mods in your server | public |
 
 # How to use
 

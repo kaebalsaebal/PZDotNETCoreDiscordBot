@@ -13,19 +13,24 @@ I'll try my best to implement the remaining features as well...
 
 | Commands | Params | Feature | Available Channel |
 | --- | :-: | --- | :-: |
-| **/set_public_channel** | target channel | Set bot's public message channel | |
-| **/set_command_channel** | target channel | Set bot's command message channel | |
-| **/set_log_channel** | target channel | Set bot's log message channel | |
+| **/set_public_channel** | target channel | Set bot's public message channel | command |
+| **/set_command_channel** | target channel | Set bot's command message channel | command |
+| **/set_log_channel** | target channel | Set bot's log message channel | command |
 | **/set_configs** | | Configure your bot setting(see below) | command |
 | **/save_server** | | Save current server state | command |
 | **/restart_server** | minutes | Restart server after param minutes | command |
 | **/restart_cancel** | | Cancel scheduled restart job | command |
-| **/grant_auth_** | user | Grant user a permission to execute commands in command channel | command |
+| **/grant_auth** | user | Grant user a permission to execute commands in command channel | command |
 | **/revoke_auth** | user | Revoke user a permission to execute commands in command channel | command |
 | **/show_auth** | user | Show users who can execute commands in command channel | command |
 | **/get_cpu_ram** | | Show server's CPU and memory usage | command |
 | **/players** | | Show players logged in | public |
 | **/check_workshop_mods** | item | Show last (item) update mods in your server | public |
+
+
+Commands in ```command``` channel can be used **only for granted user**.
+
+At first, the server owner is granted permission. Owner can manage granted user by ```/grant_auth```, ```/revoke_auth```, and ```/show_auth``` commands.
 
 # How to use
 
@@ -76,10 +81,6 @@ execute as below:
 When you run server first, the bot sends you direct message like above.
 
 Follow the instruction, and when these channels set, the bot automatically starts.
-
-Commands in command channel can be used by granted user.
-
-At first, server owner is granted permission. Owner can manage granted user by ```/grant_auth```, ```/revoke_auth```, and ```/show_auth``` commands._
 
 ### RCON setting
 

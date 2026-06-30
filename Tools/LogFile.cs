@@ -21,7 +21,7 @@ namespace DotNETCoreDiscordBot
             {
                 string logDate = DateTime.Now.ToString("yyMMdd");
 
-                return Path.Combine(AppContext.BaseDirectory, "PZBot_Logs", $"PZBot.log.{logDate}");
+                return Path.Combine(AppContext.BaseDirectory, "PZBot_Logs", $"PZBot_log_{logDate}.txt");
             }
         }
 
@@ -39,7 +39,7 @@ namespace DotNETCoreDiscordBot
             return DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
         }
 
-        public static async Task WriteLine(string log, ulong? channelId = null)
+        public static void WriteLine(string log, ulong? channelId = null)
         {
             var msg = "(" + GetDateTime() + ") " + log;
             Console.WriteLine(msg);
@@ -49,35 +49,39 @@ namespace DotNETCoreDiscordBot
 
             if (isSaveAsFile)
             {
-                await _logLock.WaitAsync();
-
-                try
+                _ = Task.Run(async() =>
                 {
-                    string logPath = Path.GetDirectoryName(_location);
+                    await _logLock.WaitAsync();
 
-                    if (!string.IsNullOrEmpty(logPath))
+                    try
                     {
-                        Directory.CreateDirectory(logPath);
+                        string logPath = Path.GetDirectoryName(_location);
+
+                        if (!string.IsNullOrEmpty(logPath))
+                        {
+                            Directory.CreateDirectory(logPath);
+                        }
+
+                        using (var file = File.AppendText(_location))
+                        {
+                            await file.WriteLineAsync(msg);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(Messages.Get("logfile_error").KeyFormat(("error", e.Message)));
+                    }
+                    finally
+                    {
+                        _logLock.Release();
                     }
 
-                    using (var file = File.AppendText(_location))
+                    if (_services != null && channelId.HasValue)
                     {
-                        await file.WriteLineAsync(msg);
+                        _ = SendLogToDiscord(log, channelId.Value);
                     }
-                } 
-                catch(Exception e)
-                {
-                    Console.WriteLine($"[LogFile] Log File Write Error: {e.Message}");
-                }
-                finally
-                {
-                    _logLock.Release();
-                }
-
-                if (_services != null && channelId.HasValue)
-                {
-                    _ = SendLogToDiscord(log, channelId.Value);
-                }
+                });
+                
             }
         }
 
@@ -98,7 +102,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[LogFile] Discord Log Send Error: {e.Message}");
+                Console.WriteLine(Messages.Get("logfile_error").KeyFormat(("error", e.Message)));
             }
         }
     }

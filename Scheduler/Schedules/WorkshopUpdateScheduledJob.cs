@@ -9,7 +9,6 @@ namespace DotNETCoreDiscordBot.Scheduler
 {
     public class WorkshopUpdateScheduledJob : IScheduledJob
     {
-        public string JobName => "Workshop Item Update Check Scheduler";
 
         private readonly DiscordSocketClient _client;
         private readonly BotConfig _botConfig;
@@ -35,7 +34,7 @@ namespace DotNETCoreDiscordBot.Scheduler
             TimeSpan interval = TimeSpan.FromMilliseconds(intervalMs);
 
             using var timer = new PeriodicTimer(interval);
-            await LogFile.WriteLine($"[{JobName}] Scheduler Running...");
+            LogFile.WriteLine(Messages.Get("workshop_scheduler_running"));
 
             try
             {
@@ -69,7 +68,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
                     if (updateFound)
                     {
-                        await LogFile.WriteLine($"[{JobName}] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
+                        LogFile.WriteLine(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))));
 
                         await _workshopLock.WaitAsync();
 
@@ -89,7 +88,7 @@ namespace DotNETCoreDiscordBot.Scheduler
                         var channel = _serverService.GetChannel(_client, _botConfig.LogChannelId);
                         if (channel != null)
                         {
-                            await channel.SendMessageAsync($"🚨 [{JobName}] Mod Update Found!!! ({string.Join(", ", updatedModNames)})");
+                            await channel.SendMessageAsync(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))));
                             await _serverService.RestartServer(_client, channel.Id, RestartTimer);
                         }
                     }
@@ -97,11 +96,11 @@ namespace DotNETCoreDiscordBot.Scheduler
             }
             catch (OperationCanceledException)
             {
-                await LogFile.WriteLine($"[{JobName}] Scheduler Cancelled...");
+                LogFile.WriteLine(Messages.Get("workshop_scheduler_stop"));
             }
             catch (Exception e)
             {
-                await LogFile.WriteLine($"[{JobName}] Error: {e.Message}");
+                LogFile.WriteLine(Messages.Get("workshop_scheduler_error").KeyFormat(("error", e.Message)));
             }
         }
     }

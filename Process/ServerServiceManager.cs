@@ -15,11 +15,10 @@ namespace DotNETCoreDiscordBot
     public interface IServerServiceManager
     {
         IMessageChannel? GetChannel(DiscordSocketClient client, ulong channelId);
-
         Task StartServer(DiscordSocketClient client, ulong channelId);
         Task SaveServer(DiscordSocketClient client, ulong channelId);
         Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer);
-        Task<bool> CancelRestart(DiscordSocketClient client, ulong channelId);
+        bool CancelRestart(DiscordSocketClient client, ulong channelId);
         Task ShutdownServer(DiscordSocketClient client, ulong channelId);
     }
     public class ServerServiceManager: IServerServiceManager
@@ -47,18 +46,25 @@ namespace DotNETCoreDiscordBot
 
         public async Task StartServer(DiscordSocketClient client, ulong channelId)
         {
-            await _rconManager.LoadRCONConfig();
-
-            var channel = GetChannel(client, channelId);
-
-            if (channel != null)
+            try
             {
-                await _serverProcess.StartServerProcess();
+                await _rconManager.LoadRCONConfig();
 
-                await _serverProcess.WaitForServerStart();
+                var channel = GetChannel(client, channelId);
 
-                await channel.SendMessageAsync($"@everyone 🔥 Server Started!!!");
+                if (channel != null)
+                {
+                    await _serverProcess.StartServerProcess();
+
+                    await _serverProcess.WaitForServerStart();
+
+                    await channel.SendMessageAsync(Messages.Get("server_started_notification"));
+                }
+            } catch(Exception e)
+            {
+                throw;
             }
+            
         }
 
         public async Task SaveServer(DiscordSocketClient client, ulong channelId)
@@ -74,13 +80,13 @@ namespace DotNETCoreDiscordBot
 
                     try
                     {
-                        await channel.SendMessageAsync("💾 Saving server...");
+                        await channel.SendMessageAsync(Messages.Get("save_server_notification"));
 
                         await _rconManager.SendCommandAsync("save");
 
                         await _serverProcess.WaitForServerSave();
 
-                        await channel.SendMessageAsync("💾 Saving Finished");
+                        await channel.SendMessageAsync(Messages.Get("server_saved_notification"));
                     }
                     finally
                     {
@@ -122,8 +128,7 @@ namespace DotNETCoreDiscordBot
 
                     if (RestartTimesCount == 0)
                     {
-                        await LogFile.WriteLine($"[ServerUtility] Error: RestartTimes are not configured...");
-                        await channel.SendMessageAsync($"❌ RestartTimes are not configured...");
+                        LogFile.WriteLine(Messages.Get("restart_config_error"), channelId);
                         return;
                     }
 
@@ -134,9 +139,8 @@ namespace DotNETCoreDiscordBot
 
                         int countdown = (int)(RestartTimers[i] / 60000);
 
-                        await LogFile.WriteLine($"[ServerUtility] Restarting server in {countdown} minutes...");
-                        await channel.SendMessageAsync($"🔄 Restarting server in {countdown} minutes...");
-                        await _rconManager.SendCommandAsync($"servermsg \"Server will restart in {countdown} minute(s). Please find a safe place.\"");
+                        LogFile.WriteLine(Messages.Get("restart_server_notification").KeyFormat(("minutes",  countdown)), channelId);
+                        await _rconManager.SendCommandAsync("servermsg \""+Messages.Get("restart_server_notification_rcon").KeyFormat(("minutes", countdown))+"\"");
 
                         // if RestartTimes is [600000,60000], send messages and wait for [600000-60000=540000] miliseconds
                         if (i == (RestartTimesCount - 1))
@@ -150,14 +154,14 @@ namespace DotNETCoreDiscordBot
                     }
 
                     await ShutdownServer(client, channelId);
-                    await LogFile.WriteLine("[ServerUtility] Restarting Server");
-                    await channel.SendMessageAsync("🚀 Restarting Server. Wait patiently...");
+                    LogFile.WriteLine(Messages.Get("restart_server"), channelId);
                     await StartServer(client, channelId);
 
                 }
                 catch (OperationCanceledException)
                 {
-                    await LogFile.WriteLine("[ServerUtility] Restart task has stopped safely...");
+                    LogFile.WriteLine(Messages.Get("restart_server_canceled"), channelId);
+                    await _rconManager.SendCommandAsync("servermsg \""+Messages.Get("restart_server_canceled_rcon")+"\"");
                 }
                 finally
                 {
@@ -171,7 +175,7 @@ namespace DotNETCoreDiscordBot
             
 
         }
-        public async Task<bool> CancelRestart(DiscordSocketClient client, ulong channelId)
+        public bool CancelRestart(DiscordSocketClient client, ulong channelId)
         {
             try
             {
@@ -182,15 +186,6 @@ namespace DotNETCoreDiscordBot
                 }
 
                 _restartCts.Cancel();
-
-                await LogFile.WriteLine("[ServerUtility] Server restart has been cancelled by user command.");
-
-                var channel = GetChannel(client, channelId);
-                if (channel != null)
-                {
-                    await channel.SendMessageAsync("❌ Server restart has been cancelled...");
-                }
-                await _rconManager.SendCommandAsync("servermsg \"The scheduled server restart has been cancelled.\"");
 
                 return true;
             } catch(Exception e)
@@ -211,8 +206,7 @@ namespace DotNETCoreDiscordBot
 
                     await Task.Delay(3000);
 
-                    await LogFile.WriteLine("[ServerUtility] Shutting down server...");
-                    await channel.SendMessageAsync("⏳ Shutting down server...");
+                    LogFile.WriteLine(Messages.Get("shutdown_server"), channelId);
                     await _rconManager.SendCommandAsync("quit");
                     await Task.Delay(6000);
 

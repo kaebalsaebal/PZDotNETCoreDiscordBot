@@ -19,7 +19,7 @@ namespace DotNETCoreDiscordBot
 
             if (!File.Exists(tokenFile))
             {
-                throw new FileNotFoundException($"{tokenFile} not found. Make sure to locate bot_token.txt file on the game directory..");
+                throw new Exception(Messages.Get("token_not_found"));
             }
 
             try
@@ -27,13 +27,13 @@ namespace DotNETCoreDiscordBot
                 token = File.ReadAllText(tokenFile);
                 if (string.IsNullOrEmpty(token))
                 {
-                    throw new InvalidOperationException("Failed to read bot_token.txt file..");
+                    throw new Exception(Messages.Get("token_read_failed"));
                 }
                 return token;
             }
             catch(Exception e)
             {
-                throw new IOException("Unexpected error has been occured..", e);
+                throw new Exception(e.Message);
             }
         }
     }

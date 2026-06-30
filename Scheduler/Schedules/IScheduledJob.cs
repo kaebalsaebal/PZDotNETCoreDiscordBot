@@ -9,7 +9,6 @@ namespace DotNETCoreDiscordBot
 {
     public interface IScheduledJob
     {
-        string JobName { get; }
         Task ExecuteAsync(CancellationToken token);
     }
 }

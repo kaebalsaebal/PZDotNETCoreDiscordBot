@@ -23,27 +23,7 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                return Task.FromResult(PreconditionResult.FromError("This command is limited to command channel"));
-            }
-        }
-    }
-
-
-    public class RequirePublicChannelAttribute : PreconditionAttribute
-    {
-
-        public override Task<PreconditionResult> CheckRequirementsAsync(IInteractionContext context, ICommandInfo command, IServiceProvider services)
-        {
-            var botConfig = services.GetRequiredService<BotConfig>();
-            ulong pubChannelId = botConfig.PublicChannelId;
-
-            if (pubChannelId == 0 || context.Channel.Id == pubChannelId)
-            {
-                return Task.FromResult(PreconditionResult.FromSuccess());
-            }
-            else
-            {
-                return Task.FromResult(PreconditionResult.FromError("This command is limited to public channel"));
+                return Task.FromResult(PreconditionResult.FromError(Messages.Get("command_channel_only")));
             }
         }
     }

@@ -4,6 +4,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using DotNETCoreDiscordBot.Scheduler;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -31,7 +32,7 @@ namespace DotNETCoreDiscordBot
             // Load Config File
             try
             {
-                await LogFile.WriteLine($"[Program] Loading Config File...");
+                LogFile.WriteLine(Messages.Get("load_config"));
 
                 if (File.Exists(botConfig.GetConfLocation()))
                 {
@@ -44,7 +45,7 @@ namespace DotNETCoreDiscordBot
 
             } catch(Exception e)
             {
-                await LogFile.WriteLine($"[Program] Config File Load Error: {e.Message}");
+                LogFile.WriteLine(Messages.Get("load_config_error").KeyFormat(("error", e.Message)));
             }
 
 
@@ -63,6 +64,7 @@ namespace DotNETCoreDiscordBot
                 CaseSensitiveCommands = false
             });
             _commandService.Log += DiscordLog;
+            LogFile.WriteLine(Messages.Get("load_command_log"));
 
             _interactionService = new InteractionService(_discordSocketClient, new InteractionServiceConfig
             {
@@ -70,6 +72,7 @@ namespace DotNETCoreDiscordBot
                 DefaultRunMode = Discord.Interactions.RunMode.Async
             });
             _interactionService.Log += DiscordLog;
+            LogFile.WriteLine(Messages.Get("load_interaction_log"));
 
             // Add Services to do Singleton
             var servicesCollection = new ServiceCollection();
@@ -94,16 +97,19 @@ namespace DotNETCoreDiscordBot
 
             _services = servicesCollection.BuildServiceProvider();
             LogFile.LoadService(_services);
+            LogFile.WriteLine(Messages.Get("load_services_collection"));
 
             // Stop Program If Force Stop
-            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
+            AppDomain.CurrentDomain.ProcessExit += async (sender, eventArgs) =>
             {
+                LogFile.WriteLine(Messages.Get("kill_process"));
                 var processManager = _services.GetRequiredService<IServerProcessManager>();
                 processManager.KillServerProcess();
             };
 
-            Console.CancelKeyPress += (sender, eventArgs) =>
+            Console.CancelKeyPress += async (sender, eventArgs) =>
             {
+                LogFile.WriteLine(Messages.Get("kill_process"));
                 var processManager = _services.GetRequiredService<IServerProcessManager>();
                 processManager.KillServerProcess();
                 eventArgs.Cancel = false;
@@ -132,23 +138,27 @@ namespace DotNETCoreDiscordBot
                     {
                         // add Interaction Service to All Guilds
                         await _interactionService.RegisterCommandsGloballyAsync();
-                        await LogFile.WriteLine("[Program] Interaction Command has been applied...");
+                        // Handle Slash Command Result
+                        _interactionService.SlashCommandExecuted += HandleInteractionResult;
 
                         // Background Service Run
                         _ = Task.Run(async () =>
                         {
                             try
                             {
+                                await GrantFirstAuth(botConfig);
+                                #if !DEBUG
                                 await CheckBotInitCondition(botConfig);
+                                #endif
                             }
                             catch (Exception e)
                             {
-                                await LogFile.WriteLine($"[Program] Check Bot Init Condition Error: {e.Message}");
+                                LogFile.WriteLine(Messages.Get("init_condition_error").KeyFormat(("error", e.Message)));
                             }
                         });
                     } catch(Exception e)
                     {
-                        await LogFile.WriteLine($"[Program] Discord Ready Handler Error: {e.Message}");
+                        LogFile.WriteLine(Messages.Get("ready_handler_error").KeyFormat(("error", e.Message)));
                     }
 
                     await Task.CompletedTask;
@@ -161,7 +171,21 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                await LogFile.WriteLine($"[Program] Token Error: {e.Message}");
+                LogFile.WriteLine(Messages.Get("discord_token_error").KeyFormat(("error", e.Message)));
+            }
+        }
+
+        // Grant command interaction authority to bot owner
+        public static async Task GrantFirstAuth(BotConfig botConfig)
+        {
+            var appInfo = await _discordSocketClient.GetApplicationInfoAsync();
+            ulong ownerId = appInfo.Owner.Id;
+
+            if (!botConfig.AuthorizedUsers.Contains(ownerId))
+            {
+                botConfig.AuthorizedUsers.Add(ownerId);
+                await botConfig.Save();
+
             }
         }
 
@@ -174,7 +198,7 @@ namespace DotNETCoreDiscordBot
                 if (_botReady) return;
                 _botReady = true;
 
-                await LogFile.WriteLine("[Program] Bot is Ready! Starting Server and Scheduler...", botConfig.LogChannelId);
+                LogFile.WriteLine(Messages.Get("init_condition_ready"), botConfig.LogChannelId);
 
                 var serverService = _services.GetRequiredService<IServerServiceManager>();
                 var schedulerService = _services.GetRequiredService<ISchedulerService>();
@@ -184,10 +208,10 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                await LogFile.WriteLine("[Program] Config File Incomplete or Not Found. Waiting for setup commands...");
+                LogFile.WriteLine(Messages.Get("bot_config_incomplete"));
 
                 var bot = await _discordSocketClient.GetApplicationInfoAsync();
-                await bot.Owner.SendMessageAsync("✨Bot Config Not Found or Incomplete. Run \n `/set_public_channel`, \n `/set_command_channel`, \n `/set_log_channel` \n Command In Your Server✨");
+                await bot.Owner.SendMessageAsync(Messages.Get("bot_config_incomplete"));
             }
         }
 
@@ -213,35 +237,70 @@ namespace DotNETCoreDiscordBot
             {
                 if (result.Error != CommandError.UnknownCommand)
                 {
-                    await LogFile.WriteLine($"[Program] Command Error: {context.User.Username}: {result.ErrorReason}");
-
-                    await context.Channel.SendMessageAsync($"🚫 Command Error: {result.ErrorReason}");
+                    LogFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), context.Channel.Id);
                 }
             }
         }
 
+        // Send slash command to discord
         private static async Task HandleInteraction(SocketInteraction interaction)
         {
             var context = new SocketInteractionContext(_discordSocketClient, interaction);
 
-            var result = await _interactionService.ExecuteCommandAsync(
+            await _interactionService.ExecuteCommandAsync(
                 context: context,
                 services: _services);
 
-            if (!result.IsSuccess)
+        }
+
+        // Get slash command result from discord(divided get/set methods because of interaction's async mechanism)
+        private static async Task HandleInteractionResult(SlashCommandInfo info, IInteractionContext context, Discord.Interactions.IResult result)
+        {
+            if (result.IsSuccess) return;
+
+            try
             {
+                if (result.Error == InteractionCommandError.UnmetPrecondition)
+                {
+                    await RespondOrFollowup(context.Interaction, Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+
+                    LogFile.WriteLine(Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                }
+                if (result.Error == InteractionCommandError.Exception)
+                {
+                    await RespondOrFollowup(context.Interaction, Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+
+                    LogFile.WriteLine(Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                }
                 if (result.Error != InteractionCommandError.UnknownCommand)
                 {
-                    await LogFile.WriteLine($"[Program] Slash Command Error: {context.User.Username}: {result.ErrorReason}");
+                    await RespondOrFollowup(context.Interaction, Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
 
-                    await interaction.RespondAsync($"🚫 Slash Command Error: {result.ErrorReason}", ephemeral: true);
+                    LogFile.WriteLine(Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
                 }
+
+            } catch(Exception e)
+            {
+                LogFile.WriteLine(Messages.Get("unknown_error").KeyFormat(("error", e.Message)));
+            }
+
+            
+        }
+        private static async Task RespondOrFollowup(IDiscordInteraction interaction, string message)
+        {
+            if (interaction.HasResponded)
+            {
+                await interaction.FollowupAsync(message, ephemeral: true);
+            }
+            else
+            {
+                await interaction.RespondAsync(message, ephemeral: true);
             }
         }
 
         private static async Task DiscordLog(LogMessage msg)
         {
-            await LogFile.WriteLine($"[Discord] {msg.Message ?? msg.Exception?.Message}");
+            LogFile.WriteLine(Messages.Get("discord_log").KeyFormat(("log", $"{msg.Message ?? msg.Exception?.Message}")));
         }
 
     }

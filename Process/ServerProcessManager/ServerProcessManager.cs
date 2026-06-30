@@ -28,7 +28,6 @@ namespace DotNETCoreDiscordBot
 
         private TaskCompletionSource<bool> _serverStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private TaskCompletionSource<bool> _serverSaved = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
         public Task WaitForServerStart()
         {
             return _serverStarted.Task;
@@ -53,7 +52,7 @@ namespace DotNETCoreDiscordBot
 
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
-                await LogFile.WriteLine("[ServerProcessManager] Error: Server already started");
+                LogFile.WriteLine(Messages.Get("server_already_started"));
                 return;
             }
 
@@ -63,7 +62,7 @@ namespace DotNETCoreDiscordBot
 
                 await curOS.ParseServerScript();
 
-                await LogFile.WriteLine($"[ServerProcessManager] Servername has been configured: {_botConfig.ServerName}");
+                LogFile.WriteLine(Messages.Get("servername_configured").KeyFormat(("servername", _botConfig.ServerName)), _botConfig.LogChannelId);
                 await _botConfig.Save();
 
                 _serverProcess = new Process();
@@ -84,7 +83,7 @@ namespace DotNETCoreDiscordBot
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                     {
-                        await LogFile.WriteLine($"[PZ_SERVER] {e.Data}");
+                        LogFile.WriteLine($"[PZ_SERVER] {e.Data}");
 
                         if (e.Data.Contains("SERVER STARTED"))
                         {
@@ -101,7 +100,7 @@ namespace DotNETCoreDiscordBot
                 _serverProcess.ErrorDataReceived += async (sender, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
-                        await LogFile.WriteLine($"[PZ_ERROR] {e.Data}");
+                        LogFile.WriteLine($"[PZ_ERROR] {e.Data}");
                 };
 
                 _serverProcess.Start();
@@ -110,7 +109,8 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                await LogFile.WriteLine($"[ServerProcessManager] Error: {e.Message}");
+                LogFile.WriteLine(Messages.Get("process_manager_error").KeyFormat(("error", e.Message)));
+                throw;
             }
         }
 
@@ -129,9 +129,10 @@ namespace DotNETCoreDiscordBot
                     _serverProcess.Kill(true);
                     await _serverProcess.WaitForExitAsync();
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    await LogFile.WriteLine($"[ServerProcessManager] Error While Stopping Server: {ex.Message}");
+                    LogFile.WriteLine(Messages.Get("process_manager_error").KeyFormat(("error", e.Message)));
+                    throw;
                 }
             }
         }

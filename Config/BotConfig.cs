@@ -47,6 +47,7 @@ namespace DotNETCoreDiscordBot
 
     public class BotConfig
     {
+
         [JsonIgnore]
         public string ServerName { get; set; } = "servertest";
 
@@ -71,6 +72,7 @@ namespace DotNETCoreDiscordBot
         public ulong CommandChannelId;
         public ulong LogChannelId;
         public ulong PublicChannelId;
+        public List<ulong> AuthorizedUsers { get; set; } = new List<ulong>();
 
         public ServerLogParserSettings ServerLogParserSettings = new ServerLogParserSettings();
         public ServerScheduleSettings ServerScheduleSettings = new ServerScheduleSettings();
@@ -91,7 +93,7 @@ namespace DotNETCoreDiscordBot
             }
             finally
             {
-                await LogFile.WriteLine($"[BotConfig] Config File has been saved...");
+                LogFile.WriteLine($"[BotConfig] Config File has been saved...");
                 _saveLock.Release();
             }
         }

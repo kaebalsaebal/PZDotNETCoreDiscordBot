@@ -24,7 +24,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
         public async Task StartAll()
         {
-            await LogFile.WriteLine("[Scheduler] Initialising Background Schedules...");
+            LogFile.WriteLine(Messages.Get("init_scheduler"));
 
             foreach (var job in _jobs)
             {
@@ -35,7 +35,7 @@ namespace DotNETCoreDiscordBot.Scheduler
         public async Task StopAll()
         {
             _token.Cancel();
-            await LogFile.WriteLine("[Scheduler] All Background Schedulers Stopped...");
+            LogFile.WriteLine(Messages.Get("stop_scheduler"));
         }
     }
 }

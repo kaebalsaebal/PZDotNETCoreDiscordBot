@@ -112,7 +112,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                await LogFile.WriteLine($"[SteamWebAPI] Error: {e.Message}");
+                LogFile.WriteLine(Messages.Get("steam_api_error").KeyFormat(("error", e.Message)));
                 return new List<Model.WorkshopItemDetails>();
             }
         }

@@ -54,7 +54,7 @@ namespace DotNETCoreDiscordBot
             if (needModify)
             {
                 await File.WriteAllLinesAsync(_scriptPath, newLines);
-                await LogFile.WriteLine($"[ServerProcessManager] Removed pause/read in Server Script File");
+                LogFile.WriteLine(Messages.Get("parse_script_modify"));
             }
         }
 
@@ -69,7 +69,7 @@ namespace DotNETCoreDiscordBot
                 {
                     _basePath = Path.Combine(_basePath, "Zomboid");
                 }
-                await LogFile.WriteLine($"[ServerProcessManager] Custom Location Found: {_basePath}");
+                LogFile.WriteLine(Messages.Get("custom_location_found").KeyFormat(("location", _basePath)));
             }
         }
 

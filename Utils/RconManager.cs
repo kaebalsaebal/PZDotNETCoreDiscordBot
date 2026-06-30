@@ -60,8 +60,8 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                await LogFile.WriteLine($"[RconManager] Error: {e.Message}");
-                throw;
+                LogFile.WriteLine(Messages.Get("rcon_error").KeyFormat(("error", e.Message)));
+                throw new Exception(e.Message);
             }
         }
     }

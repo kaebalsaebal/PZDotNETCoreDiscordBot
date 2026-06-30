@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    [RequireAuthorizedUser]
+    [RequireAuthorizedUser, RequireCommandChannel]
     public class CommandSlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
 

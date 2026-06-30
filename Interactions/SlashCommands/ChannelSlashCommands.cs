@@ -24,7 +24,7 @@ namespace DotNETCoreDiscordBot
         {
             _botConfig.PublicChannelId = channel.Id;
             await _botConfig.Save();
-            await RespondAsync(Messages.Get("slash_public_channel").KeyFormat(("channel", channel.Name)), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_public_channel").KeyFormat(("channel", $"**{channel.Name}**")), ephemeral: true);
 
             await Application.CheckBotInitCondition(_botConfig);
         }
@@ -34,7 +34,7 @@ namespace DotNETCoreDiscordBot
         {
             _botConfig.CommandChannelId = channel.Id;
             await _botConfig.Save();
-            await RespondAsync(Messages.Get("slash_command_channel").KeyFormat(("channel", channel.Name)), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_command_channel").KeyFormat(("channel", $"**{channel.Name}**")), ephemeral: true);
 
             await Application.CheckBotInitCondition(_botConfig);
         }
@@ -44,7 +44,7 @@ namespace DotNETCoreDiscordBot
         {
             _botConfig.LogChannelId = channel.Id;
             await _botConfig.Save();
-            await RespondAsync(Messages.Get("slash_log_channel").KeyFormat(("channel", channel.Name)), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_log_channel").KeyFormat(("channel", $"**{channel.Name}**")), ephemeral: true);
 
             await Application.CheckBotInitCondition(_botConfig);
         }

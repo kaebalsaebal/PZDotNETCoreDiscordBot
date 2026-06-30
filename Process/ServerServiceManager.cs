@@ -20,6 +20,7 @@ namespace DotNETCoreDiscordBot
         Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer);
         bool CancelRestart(DiscordSocketClient client, ulong channelId);
         Task ShutdownServer(DiscordSocketClient client, ulong channelId);
+        Task<double[]> GetUsage();
     }
     public class ServerServiceManager: IServerServiceManager
     {
@@ -218,6 +219,19 @@ namespace DotNETCoreDiscordBot
                 throw;
             }
             
+        }
+
+        public async Task<double[]> GetUsage()
+        {
+            try
+            {
+                double[] result = await _serverProcess.GetProcessUsage();
+                return result;
+
+            } catch(Exception e)
+            {
+                throw;
+            }
         }
     }
 }

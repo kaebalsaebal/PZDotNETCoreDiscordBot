@@ -16,12 +16,16 @@ I'll try my best to implement the remaining features as well...
 | **/set_public_channel** | target channel | Set bot's public message channel | |
 | **/set_command_channel** | target channel | Set bot's command message channel | |
 | **/set_log_channel** | target channel | Set bot's log message channel | |
+| **/set_configs** | | Configure your bot setting(see below) | command |
 | **/check_workshop_mods** | | Show last 10 update mods in your server | command |
 | **/save_server** | | Save current server state | command |
 | **/restart_server** | minutes | Restart server after param minutes | command |
 | **/restart_cancel** | | Cancel scheduled restart job | command |
-| **/shutdown_server** | | Shut down server safely | command |
-| **/set_configs** | | Configure your bot setting(see below) | command |
+| **/grant_auth_** | user | Grant user a permission to execute commands in command channel | command |
+| **/revoke_auth** | user | Revoke user a permission to execute commands in command channel | command |
+| **/show_auth** | user | Show users who can execute commands in command channel | command |
+| **/get_cpu_ram** | | Show server's CPU and memory usage | command |
+
 | **/players** | | Show players logged in | public |
 
 # How to use
@@ -73,6 +77,10 @@ execute as below:
 When you run server first, the bot sends you direct message like above.
 
 Follow the instruction, and when these channels set, the bot automatically starts.
+
+Commands in command channel can be used by granted user.
+
+At first, server owner is granted permission. Owner can manage granted user by ```/grant_auth```, ```/revoke_auth```, and ```/show_auth``` commands._
 
 ### RCON setting
 

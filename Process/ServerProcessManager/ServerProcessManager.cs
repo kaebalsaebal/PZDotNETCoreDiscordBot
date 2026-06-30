@@ -19,12 +19,15 @@ namespace DotNETCoreDiscordBot
         Task StartServerProcess();
         Task WaitForExitAsync();
         void KillServerProcess();
+
+        Task<double[]> GetProcessUsage();
     }
 
     public class ServerProcessManager : IServerProcessManager
     {
         private readonly BotConfig _botConfig;
         private Process? _serverProcess = null;
+        private IServerProcess _curOS;
 
         private TaskCompletionSource<bool> _serverStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
         private TaskCompletionSource<bool> _serverSaved = new(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -42,11 +45,6 @@ namespace DotNETCoreDiscordBot
             _botConfig = botConfig;
         }
 
-        private ServerProcess GetCurrentOSProcess()
-        {
-            return ServerProcessFactory.Create(_botConfig);
-        }
-
         public async Task StartServerProcess()
         {
 
@@ -58,16 +56,17 @@ namespace DotNETCoreDiscordBot
 
             try
             {
-                var curOS = GetCurrentOSProcess();
+                var factory = new ServerProcessFactory();
+                _curOS = factory.Create(_botConfig);
 
-                await curOS.ParseServerScript();
+                await _curOS.ParseServerScript();
 
                 LogFile.WriteLine(Messages.Get("servername_configured").KeyFormat(("servername", _botConfig.ServerName)), _botConfig.LogChannelId);
                 await _botConfig.Save();
 
                 _serverProcess = new Process();
 
-                curOS.SetupProcessStartInfo(
+                _curOS.SetupProcessStartInfo(
                     _serverProcess.StartInfo,
                     _botConfig.ServerName
                 );
@@ -77,7 +76,7 @@ namespace DotNETCoreDiscordBot
                 _serverProcess.StartInfo.RedirectStandardInput = true;
                 _serverProcess.StartInfo.RedirectStandardOutput = true;
                 _serverProcess.StartInfo.RedirectStandardError = true;
-                _serverProcess.StartInfo.WorkingDirectory = curOS.GetDirectory();
+                _serverProcess.StartInfo.WorkingDirectory = _curOS.GetDirectory();
 
                 _serverProcess.OutputDataReceived += async (sender, e) =>
                 {
@@ -135,6 +134,16 @@ namespace DotNETCoreDiscordBot
                     throw;
                 }
             }
+        }
+
+        public async Task<double[]> GetProcessUsage()
+        {
+            if (_curOS == null) return [0.0,0.0];
+
+            double cpu = await _curOS.GetCPUUsage();
+            double ram = _curOS.GetRAMUsage();
+
+            return [ cpu, ram ];
         }
     }
 }

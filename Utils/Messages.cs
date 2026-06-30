@@ -57,16 +57,29 @@ namespace DotNETCoreDiscordBot
             {"custom_location_found", "[ServerProcess] Custom Location Found: {location}" },
 
             //CommandSlashCommands
+            {"slash_modal_value_error1", "SaveAsFile value must be 'true' or 'false'"},
+            {"slash_modal_value_error2", "RestartTimer value must be consisted of digits" },
+            {"slash_modal_value_error3", "WorkshopInterval value must be consisted of digits" },
+            {"slash_modal_updated", "Config has been Updated" },
+
             {"slash_grant_already_exists","{user} has already been granted."},
             {"slash_grant", "Granted command permission to {user}."},
             {"slash_revoke_owner", "Revoking bot owner is not allowed." },
-            {"slash_revoke_already_exists", "{user} has already been revoked." },
+            {"slash_revoke_already_exists", "```{user}``` has already been revoked." },
             {"slash_revoke", "Revoked command permission to {user}" },
+            {"slash_show_granted_title","**✔️[Command Channel Granted User List]✔️**" },
 
             {"slash_restart_server", "Restarting server after {minutes} minutes..." },
             {"slash_restart_canceled", "Scheduled restart cancelled"},
             {"slash_no_restart", "There is no scheduled restart." },
             {"slash_shutdown_server", "Server has shut down." },
+
+            {"slash_get_usage_title", "**💻[CPU and Memory Current Usage]🖥️**"},
+
+            {"slash_workshop_file_failed", "Failed to Get {config} File..."},
+            {"slash_workshop_api_failed", "Failed to get workshop mods info by SteamAPI..." },
+            {"slash_workshop_no_mods", "There is no mods in your server." },
+            {"slash_workshop_title", "**💎[Workshop Mods in {servername} - Total {count}]💎**" },
 
             //ChannelSlashCommands
             {"slash_public_channel", "Set Public Channel to {channel}"},

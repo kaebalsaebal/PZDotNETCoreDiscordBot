@@ -40,5 +40,47 @@ namespace DotNETCoreDiscordBot
             startInfo.FileName = "/bin/bash";
             startInfo.Arguments = $"\"{_scriptPath}\" -servername \"{serverName}\"";
         }
+
+        public override async Task<double> GetCPUUsage()
+        {
+            try
+            {
+                var stat1 = File.ReadAllLines("/proc/stat")[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                long idle1 = long.Parse(stat1[4]);
+                long total1 = stat1.Skip(1).Take(7).Select(long.Parse).Sum();
+
+                await Task.Delay(500);
+
+                var stat2 = File.ReadAllLines("/proc/stat")[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                long idle2 = long.Parse(stat2[4]);
+                long total2 = stat2.Skip(1).Take(7).Select(long.Parse).Sum();
+
+                long totalDelta = total2 - total1;
+                if (totalDelta == 0) return 0.0;
+
+                return (1.0 - ((double)(idle2 - idle1) / totalDelta)) * 100.0;
+            }
+            catch { return 0.0; }
+        }
+
+        public override double GetRAMUsage()
+        {
+            try
+            {
+                var lines = File.ReadAllLines("/proc/meminfo");
+                double total = 0, available = 0;
+
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("MemTotal:"))
+                        double.TryParse(line.Split(' ', StringSplitOptions.RemoveEmptyEntries)[1], out total);
+                    else if (line.StartsWith("MemAvailable:"))
+                        double.TryParse(line.Split(' ', StringSplitOptions.RemoveEmptyEntries)[1], out available);
+                }
+
+                return total > 0 ? ((total - available) / total) * 100.0 : 0.0;
+            }
+            catch { return 0.0; }
+        }
     }
 }

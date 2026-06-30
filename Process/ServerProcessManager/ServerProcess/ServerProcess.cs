@@ -9,9 +9,19 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    public abstract class ServerProcess
+
+    public interface IServerProcess
     {
-        protected readonly string _scriptPath = "";
+        string GetDirectory();
+        Task ParseServerScript();
+        void SetupProcessStartInfo(ProcessStartInfo startInfo, string serverName);
+        Task<double> GetCPUUsage();
+        double GetRAMUsage();
+    }
+
+    public abstract class ServerProcess: IServerProcess
+    {
+        protected readonly string _scriptPath;
         protected readonly BotConfig _botConfig;
 
         private string _basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
@@ -24,7 +34,7 @@ namespace DotNETCoreDiscordBot
 
         public string GetDirectory()
         {
-            return Path.GetDirectoryName(_scriptPath);
+            return Path.GetDirectoryName(_scriptPath) ?? "";
         }
 
         public async Task ParseServerScript()
@@ -58,7 +68,7 @@ namespace DotNETCoreDiscordBot
             }
         }
 
-        private async void ExtractCommonParams(string param)
+        private void ExtractCommonParams(string param)
         {
             if (param.Contains("user.home"))
             {
@@ -75,5 +85,8 @@ namespace DotNETCoreDiscordBot
 
         protected abstract void ExtractOSParams(string line);
         public abstract void SetupProcessStartInfo(ProcessStartInfo startInfo, string serverName);
+
+        public abstract Task<double> GetCPUUsage();
+        public abstract double GetRAMUsage();
     }
 }

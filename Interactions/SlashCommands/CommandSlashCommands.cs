@@ -8,18 +8,16 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    [RequireAuthorizedUser, RequireCommandChannel]
+    [RequireAuthorizedUser]
     public class CommandSlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
 
         private readonly IServerServiceManager _serverService;
-        private readonly ISteamWebAPI _steamApi;
         private readonly BotConfig _botConfig;
 
-        public CommandSlashCommands(IServerServiceManager serverService, ISteamWebAPI steamApi, BotConfig botConfig)
+        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig)
         {
             _serverService = serverService;
-            _steamApi = steamApi;
             _botConfig = botConfig;
         }
 
@@ -52,7 +50,7 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                await RespondAsync("SaveAsFile value must be 'true' or 'false'", ephemeral: true);
+                await RespondAsync(Messages.Get("slash_modal_value_error1"), ephemeral: true);
                 return;
             }
 
@@ -62,7 +60,7 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                await RespondAsync("RestartTimer value must be consisted of digits", ephemeral: true);
+                await RespondAsync(Messages.Get("slash_modal_value_error2"), ephemeral: true);
                 return;
             }
 
@@ -72,12 +70,12 @@ namespace DotNETCoreDiscordBot
             }
             else
             {
-                await RespondAsync("WorkshopInterval value must be consisted of digits", ephemeral: true);
+                await RespondAsync(Messages.Get("slash_modal_value_error3"), ephemeral: true);
                 return;
             }
 
             await _botConfig.Save();
-            await RespondAsync("Config has been Updated", ephemeral: true);
+            await RespondAsync(Messages.Get("slash_modal_updated"), ephemeral: true);
         }
 
         [SlashCommand("save_server", "Saves Server")]
@@ -91,8 +89,8 @@ namespace DotNETCoreDiscordBot
             await FollowupAsync("Save completed...", ephemeral: true);
         }
 
-        [SlashCommand("restart_server", "Restarts server")]
-        public async Task RestartServer([Summary("minutes", "Restarts server after minutes")] uint minutes)
+        [SlashCommand("restart_server", "Restarts server after n minutes")]
+        public async Task RestartServer([Summary("minutes", "Restarts server after n minutes")] uint minutes)
         {
             await DeferAsync();
 
@@ -134,71 +132,22 @@ namespace DotNETCoreDiscordBot
             await FollowupAsync(Messages.Get("slash_shutdown_server"), ephemeral: true);
         }
 
-        [SlashCommand("check_workshop_mods", "Your Server Mods Info")]
-        public async Task CheckWorkshopItems()
-        {
-            await DeferAsync();
-
-            await FollowupAsync("Checking Mod Update Date...", ephemeral: true);
-
-            string[] ids = Array.Empty<string>();
-
-            var tools = new Tools();
-
-            string configFilePath = tools.GetServerIniPath(_botConfig.ServerName);
-            if (!File.Exists(configFilePath))
-            {
-                await FollowupAsync($"Failed to Get {configFilePath} File...");
-                return;
-            }
-            string workshopString = tools.GetValueFromIni(configFilePath, "WorkshopItems");
-            ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
-
-            var modDetails = await _steamApi.GetWorkshopItemDetails(ids);
-
-            if (modDetails == null || modDetails.Count == 0)
-            {
-                await FollowupAsync("Failed to Fetch Mod Data...", ephemeral: true);
-                return;
-            }
-
-            var sb = new StringBuilder();
-            sb.AppendLine($"**[Mod Update Check Result - Total {modDetails.Count}]**");
-
-            var sortedMods = modDetails.OrderByDescending(m => m.TimeUpdated).ToList();
-
-            foreach (var mod in sortedMods.Take(10))
-            {
-                DateTime lastUpdate = DateTimeOffset.FromUnixTimeSeconds(mod.TimeUpdated).LocalDateTime;
-
-                sb.AppendLine($"- **{mod.Title}** (ID: {mod.PublishedFileId})");
-                sb.AppendLine($"  Last Update Date: {lastUpdate:yyyy-MM-dd HH:mm:ss}");
-            }
-
-            if (sortedMods.Count > 10)
-            {
-                sb.AppendLine($"...{sortedMods.Count - 10} Mods and so more...");
-            }
-
-            await FollowupAsync(sb.ToString());
-        }
-
-        [SlashCommand("grant_auth", "grant user permission to command")]
+        [SlashCommand("grant_auth", "Grant user permission to command")]
         public async Task GrantAuth(IUser user)
         {
             if (_botConfig.AuthorizedUsers.Contains(user.Id))
             {
-                await RespondAsync(Messages.Get("slash_grant_already_exists").KeyFormat(("user", user.Username)), ephemeral: true);
+                await RespondAsync(Messages.Get("slash_grant_already_exists").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
                 return;
             }
 
             _botConfig.AuthorizedUsers.Add(user.Id);
             await _botConfig.Save();
 
-            await RespondAsync(Messages.Get("slash_grant").KeyFormat(("user", user.Username)), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_grant").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
         }
 
-        [SlashCommand("revoke_auth", "grant user permission to command")]
+        [SlashCommand("revoke_auth", "Revoke user permission to command")]
         public async Task RevokeAuth(IUser user)
         {
             var appInfo = await Context.Client.GetApplicationInfoAsync();
@@ -210,14 +159,57 @@ namespace DotNETCoreDiscordBot
 
             if (!_botConfig.AuthorizedUsers.Contains(user.Id))
             {
-                await RespondAsync(Messages.Get("slash_revoke_already_exists").KeyFormat(("user", user.Username)), ephemeral: true);
+                await RespondAsync(Messages.Get("slash_revoke_already_exists").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
                 return;
             }
 
             _botConfig.AuthorizedUsers.Remove(user.Id);
             await _botConfig.Save();
 
-            await RespondAsync(Messages.Get("slash_revoke").KeyFormat(("user", user.Username)), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_revoke").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
+        }
+
+        [SlashCommand("show_auth", "Show granted users who can use commands")]
+        public async Task ShowAuth()
+        {
+            await DeferAsync();
+
+            var sb = new StringBuilder();
+            sb.AppendLine(Messages.Get("slash_show_granted_title"));
+
+            sb.AppendLine("```");
+            foreach (ulong id in _botConfig.AuthorizedUsers)
+            {
+                // Get user data from bot cache
+                IUser user = Context.Client.GetUser(id);
+
+                // If not, get user by rest api
+                if (user == null)
+                {
+                    user = await Context.Client.Rest.GetUserAsync(id);
+                }
+                sb.AppendLine($"{user} ({id})");
+            }
+            sb.AppendLine("```");
+
+            await FollowupAsync(sb.ToString(), ephemeral: true);
+        }
+
+        [SlashCommand("get_cpu_ram", "Get server's cpu and ram usage")]
+        public async Task GetUsage()
+        {
+            await DeferAsync();
+
+            double[] result = await _serverService.GetUsage();
+
+            var sb = new StringBuilder();
+            sb.AppendLine(Messages.Get("slash_get_usage_title"));
+            sb.AppendLine("```");
+            sb.AppendLine($"CPU: {String.Format("{0:N2}", result[0])}%");
+            sb.AppendLine($"RAM: {String.Format("{0:N2}", result[1])}%");
+            sb.AppendLine("```");
+
+            await FollowupAsync(sb.ToString(), ephemeral: true);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace DotNETCoreDiscordBot
 {
     public class ServerProcessFactory
     {
-        public static ServerProcess Create(BotConfig botConfig)
+        public IServerProcess Create(BotConfig botConfig)
         {
 
             string windowsLoc = botConfig.ServerProcessSettings.WindowsServerFile;

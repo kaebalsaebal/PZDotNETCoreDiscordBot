@@ -16,16 +16,18 @@ namespace DotNETCoreDiscordBot
 
     public class RconManager : IRconManager
     {
-        private readonly BotConfig _config;
+        private readonly BotConfig _botConfig;
+        private readonly ILogFile _logFile;
 
-        public RconManager(BotConfig config)
+		public RconManager(BotConfig config, ILogFile logFile)
         {
-            _config = config;
+            _botConfig = config;
+            _logFile = logFile;
         }
 
         public async Task LoadRCONConfig()
         {
-            string serverName = _config.ServerName;
+            string serverName = _botConfig.ServerName;
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string iniFile = Path.Combine(homePath, "Zomboid", "Server", $"{serverName}.ini");
 
@@ -37,20 +39,20 @@ namespace DotNETCoreDiscordBot
             string tempPassword = tools.GetValueFromIni(iniFile, "RCONPassword");
 
             if (ushort.TryParse(tempPort, out ushort port))
-                _config.RCONSettings.Port = port;
+                _botConfig.RCONSettings.Port = port;
 
-            _config.RCONSettings.Password = tempPassword ?? "";
+            _botConfig.RCONSettings.Password = tempPassword ?? "";
 
-            await _config.Save();
+            await _botConfig.Save(_logFile);
         }
 
         public async Task<string> SendCommandAsync(string command)
         {
             try
             {
-                IPAddress tempIP = IPAddress.Parse(_config.RCONSettings.IP);
-                ushort tempPort = _config.RCONSettings.Port;
-                string tempPwd = _config.RCONSettings.Password;
+                IPAddress tempIP = IPAddress.Parse(_botConfig.RCONSettings.IP);
+                ushort tempPort = _botConfig.RCONSettings.Port;
+                string tempPwd = _botConfig.RCONSettings.Password;
 
                 using (var rcon = new RCON(tempIP, tempPort, tempPwd))
                 {
@@ -61,7 +63,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                LogFile.WriteLine(Messages.Get("rcon_error").KeyFormat(("error", e.Message)));
+                _logFile.WriteLine(Messages.Get("rcon_error").KeyFormat(("error", e.Message)));
                 throw new Exception(e.Message);
             }
         }

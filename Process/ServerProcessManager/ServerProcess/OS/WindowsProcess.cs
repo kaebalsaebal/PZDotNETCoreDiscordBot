@@ -10,7 +10,7 @@ namespace DotNETCoreDiscordBot
 {
     public class WindowsProcess : ServerProcess
     {
-        public WindowsProcess(BotConfig botConfig, string scriptPath) : base(botConfig, scriptPath)
+        public WindowsProcess(BotConfig botConfig, string scriptPath, ILogFile logFile) : base(botConfig, scriptPath, logFile)
         {
         }
 

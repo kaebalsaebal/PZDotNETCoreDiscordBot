@@ -16,72 +16,46 @@ namespace DotNETCoreDiscordBot
     public static class Application
     {
 
-        private static DiscordSocketClient _discordSocketClient;
-        private static CommandService _commandService;
-        private static InteractionService _interactionService;
-        private static IServiceProvider _services;
-
         private static bool _botReady = false;
 
         public static void Main(string[] _) => MainAsync(_).GetAwaiter().GetResult();
         private static async Task MainAsync(string[] param)
         {
-            var botConfig = new BotConfig();
+            BotConfig botConfig = new BotConfig();
             botConfig.Linuxparams = param;
 
-            // Load Config File
-            try
-            {
-                LogFile.WriteLine(Messages.Get("load_config"));
-
-                if (File.Exists(botConfig.GetConfLocation()))
-                {
-                    botConfig = JsonConvert.DeserializeObject<BotConfig>(
-                                    File.ReadAllText(botConfig.GetConfLocation()),
-                                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
-                }
-
-            } catch(Exception e)
-            {
-                LogFile.WriteLine(Messages.Get("load_config_error").KeyFormat(("error", e.Message)));
-            }
-
-
-            // Initialise Discord Client
-            var config = new DiscordSocketConfig()
+            // Initialize discord components
+            var discordConfig = new DiscordSocketConfig()
             {
                 GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
             };
+            var client = new DiscordSocketClient(discordConfig);
 
-            _discordSocketClient = new DiscordSocketClient(config);
-            _discordSocketClient.Log += DiscordLog;
-
-            _commandService = new CommandService(new CommandServiceConfig
+            var commandService = new CommandService(new CommandServiceConfig
             {
                 LogLevel = LogSeverity.Info,
                 CaseSensitiveCommands = false
             });
-            _commandService.Log += DiscordLog;
-            LogFile.WriteLine(Messages.Get("load_command_log"));
-
-            _interactionService = new InteractionService(_discordSocketClient, new InteractionServiceConfig
+            var interactionService = new InteractionService(client, new InteractionServiceConfig
             {
                 LogLevel = LogSeverity.Info,
                 DefaultRunMode = Discord.Interactions.RunMode.Async
             });
-            _interactionService.Log += DiscordLog;
-            LogFile.WriteLine(Messages.Get("load_interaction_log"));
 
-            // Add Services to do Singleton
+            // Add instances to ServiceCollection
             var servicesCollection = new ServiceCollection();
 
             // discord
-            servicesCollection.AddSingleton(_discordSocketClient);
-            servicesCollection.AddSingleton(_commandService);
-            servicesCollection.AddSingleton(_interactionService);
+            servicesCollection.AddSingleton(client);
+            servicesCollection.AddSingleton(commandService);
+            servicesCollection.AddSingleton(interactionService);
+            servicesCollection.AddSingleton<DiscordHandler>();
+
+            // config, log
+            servicesCollection.AddSingleton(botConfig);
+            servicesCollection.AddSingleton<ILogFile, LogFile>();
 
             // process
-            servicesCollection.AddSingleton<BotConfig>(botConfig);
             servicesCollection.AddSingleton<IServerProcessManager, ServerProcessManager>();
             servicesCollection.AddSingleton<IServerServiceManager, ServerServiceManager>();
 
@@ -93,101 +67,115 @@ namespace DotNETCoreDiscordBot
             servicesCollection.AddHttpClient<ISteamWebAPI, SteamWebAPI>();
             servicesCollection.AddSingleton<IRconManager, RconManager>();
 
-            _services = servicesCollection.BuildServiceProvider();
-            LogFile.LoadService(_services);
-            LogFile.WriteLine(Messages.Get("load_services_collection"));
+            var service = servicesCollection.BuildServiceProvider();
+            ILogFile logFile = service.GetRequiredService<ILogFile>();
+            logFile.WriteLine(Messages.Get("load_services_collection"));
 
-            // Stop Program If Force Stop
-            AppDomain.CurrentDomain.ProcessExit += async (sender, eventArgs) =>
+            // Load Config File
+            try
             {
-                LogFile.WriteLine(Messages.Get("kill_process"));
-                var processManager = _services.GetRequiredService<IServerProcessManager>();
-                processManager.KillServerProcess();
-            };
+                logFile.WriteLine(Messages.Get("load_config"));
 
-            Console.CancelKeyPress += async (sender, eventArgs) =>
+                if (File.Exists(botConfig.GetConfLocation()))
+                {
+                    /*
+                    botConfig = JsonConvert.DeserializeObject<BotConfig>(
+                                    File.ReadAllText(botConfig.GetConfLocation()),
+                                    new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                    */
+                    JsonConvert.PopulateObject(File.ReadAllText(botConfig.GetConfLocation()), botConfig);
+                }
+
+            }
+            catch (Exception e)
             {
-                LogFile.WriteLine(Messages.Get("kill_process"));
-                var processManager = _services.GetRequiredService<IServerProcessManager>();
-                processManager.KillServerProcess();
-                eventArgs.Cancel = false;
-            };
+                logFile.WriteLine(Messages.Get("load_config_error").KeyFormat(("error", e.Message)));
+                return;
+            }
 
-            _commandService = _services.GetRequiredService<CommandService>();
-            _interactionService = _services.GetRequiredService<InteractionService>();
-
-            await _commandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
-            await _interactionService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: _services);
-
-            // Receive Command/Slash Command
-            _discordSocketClient.MessageReceived += HandleCommand;
-            _discordSocketClient.InteractionCreated += HandleInteraction;
+            var commandHandler = service.GetRequiredService<DiscordHandler>();
+            await commandHandler.Initialize();
+            logFile.WriteLine(Messages.Get("discord_service_init"));
 
             // Load Discord Token
             try
             {
-                string token = Token.GetToken();
+                string token = new DiscordToken().GetToken();
                 if (string.IsNullOrEmpty(token)) return;
 
                 // Start If discordSocketClient has been logined and started
-                _discordSocketClient.Ready += async () =>
+                client.Ready += async () =>
                 {
                     try
                     {
                         // add Interaction Service to All Guilds
-                        await _interactionService.RegisterCommandsGloballyAsync();
-                        // Handle Slash Command Result
-                        _interactionService.SlashCommandExecuted += HandleInteractionResult;
+                        await interactionService.RegisterCommandsGloballyAsync();
 
                         // Background Service Run
                         _ = Task.Run(async () =>
                         {
                             try
                             {
-                                await GrantFirstAuth(botConfig);
+                                await GrantFirstAuth(botConfig, client, logFile);
                                 #if !DEBUG
-                                await CheckBotInitCondition(botConfig);
+                                await CheckBotInitCondition(botConfig, service, client, logFile);
                                 #endif
                             }
                             catch (Exception e)
                             {
-                                LogFile.WriteLine(Messages.Get("init_condition_error").KeyFormat(("error", e.Message)));
+                                logFile.WriteLine(Messages.Get("init_condition_error").KeyFormat(("error", e.Message)));
                             }
                         });
                     } catch(Exception e)
                     {
-                        LogFile.WriteLine(Messages.Get("ready_handler_error").KeyFormat(("error", e.Message)));
+                        logFile.WriteLine(Messages.Get("ready_handler_error").KeyFormat(("error", e.Message)));
                     }
 
                     await Task.CompletedTask;
                 };
 
-                await _discordSocketClient.LoginAsync(TokenType.Bot, token);
-                await _discordSocketClient.StartAsync();
+                await client.LoginAsync(TokenType.Bot, token);
+                await client.StartAsync();
 
                 await Task.Delay(-1);
             }
             catch (Exception e)
             {
-                LogFile.WriteLine(Messages.Get("discord_token_error").KeyFormat(("error", e.Message)));
+                logFile.WriteLine(Messages.Get("discord_token_error").KeyFormat(("error", e.Message)));
             }
+
+            // Stop Program If Force Stop
+            AppDomain.CurrentDomain.ProcessExit += async (sender, eventArgs) =>
+            {
+                logFile.WriteLine(Messages.Get("kill_process"));
+                var processManager = service.GetRequiredService<IServerProcessManager>();
+                processManager.KillServerProcess();
+            };
+
+            Console.CancelKeyPress += async (sender, eventArgs) =>
+            {
+                logFile.WriteLine(Messages.Get("kill_process"));
+                var processManager = service.GetRequiredService<IServerProcessManager>();
+                processManager.KillServerProcess();
+                eventArgs.Cancel = false;
+            };
         }
 
         // Grant command interaction authority to bot owner
-        public static async Task GrantFirstAuth(BotConfig botConfig)
+        public static async Task GrantFirstAuth(BotConfig botConfig, DiscordSocketClient client, ILogFile logFile)
         {
-            var appInfo = await _discordSocketClient.GetApplicationInfoAsync();
+            var appInfo = await client.GetApplicationInfoAsync();
             ulong ownerId = appInfo.Owner.Id;
 
             if (!botConfig.AuthorizedUsers.Contains(ownerId))
             {
                 botConfig.AuthorizedUsers.Add(ownerId);
-                await botConfig.Save();
+                await botConfig.Save(logFile);
 
             }
         }
 
-        public static async Task CheckBotInitCondition(BotConfig botConfig)
+        public static async Task CheckBotInitCondition(BotConfig botConfig, IServiceProvider service, DiscordSocketClient client, ILogFile logFile)
         {
             if (botConfig.PublicChannelId != 0 &&
                 botConfig.CommandChannelId != 0 &&
@@ -196,120 +184,21 @@ namespace DotNETCoreDiscordBot
                 if (_botReady) return;
                 _botReady = true;
 
-                LogFile.WriteLine(Messages.Get("init_condition_ready"), botConfig.LogChannelId);
+                logFile.WriteLine(Messages.Get("init_condition_ready"), botConfig.LogChannelId);
 
-                var serverService = _services.GetRequiredService<IServerServiceManager>();
-                var schedulerService = _services.GetRequiredService<ISchedulerService>();
-                
-                await serverService.StartServer(_discordSocketClient, botConfig.PublicChannelId);
+                var serverService = service.GetRequiredService<IServerServiceManager>();
+                var schedulerService = service.GetRequiredService<ISchedulerService>();
+
+                await serverService.StartServer(client, botConfig.PublicChannelId);
                 await schedulerService.StartAll();
             }
             else
             {
-                LogFile.WriteLine(Messages.Get("bot_config_incomplete"));
+                logFile.WriteLine(Messages.Get("bot_config_incomplete"));
 
-                var bot = await _discordSocketClient.GetApplicationInfoAsync();
+                var bot = await client.GetApplicationInfoAsync();
                 await bot.Owner.SendMessageAsync(Messages.Get("bot_config_incomplete"));
             }
         }
-
-        private static async Task HandleCommand(SocketMessage socketMessage)
-        {
-            try
-            {
-                var message = socketMessage as SocketUserMessage;
-                if (message == null) return;
-
-                int argPos = 0;
-
-                if (!(message.HasCharPrefix('!', ref argPos)
-                    || message.HasMentionPrefix(_discordSocketClient.CurrentUser, ref argPos))
-                    || message.Author.IsBot) return;
-
-                var context = new SocketCommandContext(_discordSocketClient, message);
-
-                var result = await _commandService.ExecuteAsync(
-                    context: context,
-                    argPos: argPos,
-                    services: _services);
-
-                if (!result.IsSuccess)
-                {
-                    if (result.Error != CommandError.UnknownCommand)
-                    {
-                        LogFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), context.Channel.Id);
-                    }
-
-                }
-            }
-            catch (Exception e)
-            {
-                LogFile.WriteLine(Messages.Get("unknown_error").KeyFormat(("error", e.Message)));
-            }
-        }
-
-        // Send slash command to discord
-        private static async Task HandleInteraction(SocketInteraction interaction)
-        {
-            var context = new SocketInteractionContext(_discordSocketClient, interaction);
-
-            await _interactionService.ExecuteCommandAsync(
-                context: context,
-                services: _services);
-
-        }
-
-        // Get slash command result from discord(divided get/set methods because of interaction's async mechanism)
-        private static async Task HandleInteractionResult(SlashCommandInfo info, IInteractionContext context, Discord.Interactions.IResult result)
-        {
-            if (result.IsSuccess) return;
-
-            try
-            {
-                if (result.Error == InteractionCommandError.UnmetPrecondition)
-                {
-                    await RespondOrFollowup(context.Interaction, Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
-
-                    LogFile.WriteLine(Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
-                }
-                if (result.Error == InteractionCommandError.Exception)
-                {
-                    await RespondOrFollowup(context.Interaction, Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
-
-                    LogFile.WriteLine(Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
-                }
-                if (result.Error != InteractionCommandError.UnknownCommand)
-                {
-                    await RespondOrFollowup(context.Interaction, Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
-
-                    LogFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
-                }
-
-            } catch(Exception e)
-            {
-                LogFile.WriteLine(Messages.Get("unknown_error").KeyFormat(("error", e.Message)));
-            }
-
-            
-        }
-        private static async Task RespondOrFollowup(IDiscordInteraction interaction, string message)
-        {
-            if (interaction.HasResponded)
-            {
-                await interaction.FollowupAsync(message, ephemeral: true);
-            }
-            else
-            {
-                await interaction.RespondAsync(message, ephemeral: true);
-            }
-        }
-
-        private static Task DiscordLog(LogMessage msg)
-        {
-            LogFile.WriteLine(Messages.Get("discord_log").KeyFormat(("log", $"{msg.Message ?? msg.Exception?.Message}")));
-
-            return Task.CompletedTask;
-        }
-
     }
 }

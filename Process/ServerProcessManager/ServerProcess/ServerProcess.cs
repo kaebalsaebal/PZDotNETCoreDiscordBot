@@ -23,13 +23,15 @@ namespace DotNETCoreDiscordBot
     {
         protected readonly string _scriptPath;
         protected readonly BotConfig _botConfig;
+        protected readonly ILogFile _logFile;
 
         private string _basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Zomboid");
 
-        protected ServerProcess(BotConfig botConfig, string scriptPath)
+        protected ServerProcess(BotConfig botConfig, string scriptPath, ILogFile logFile)
         {
             _botConfig = botConfig;
             _scriptPath = scriptPath;
+            _logFile = logFile;
         }
 
         public string GetDirectory()
@@ -64,7 +66,7 @@ namespace DotNETCoreDiscordBot
             if (needModify)
             {
                 await File.WriteAllLinesAsync(_scriptPath, newLines);
-                LogFile.WriteLine(Messages.Get("parse_script_modify"));
+                _logFile.WriteLine(Messages.Get("parse_script_modify"));
             }
         }
 
@@ -79,7 +81,7 @@ namespace DotNETCoreDiscordBot
                 {
                     _basePath = Path.Combine(_basePath, "Zomboid");
                 }
-                LogFile.WriteLine(Messages.Get("custom_location_found").KeyFormat(("location", _basePath)));
+                _logFile.WriteLine(Messages.Get("custom_location_found").KeyFormat(("location", _basePath)));
             }
         }
 

@@ -9,7 +9,7 @@ namespace DotNETCoreDiscordBot
 {
     public class LinuxProcess : ServerProcess
     {
-        public LinuxProcess(BotConfig botConfig, string scriptPath) : base(botConfig, scriptPath)
+        public LinuxProcess(BotConfig botConfig, string scriptPath, ILogFile logFile) : base(botConfig, scriptPath, logFile)
         {
         }
 

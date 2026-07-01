@@ -82,7 +82,7 @@ namespace DotNETCoreDiscordBot
 
         public ServerProcessSettings ServerProcessSettings = new ServerProcessSettings();
 
-        public async Task Save()
+        public async Task Save(ILogFile logFile)
         {
             await _saveLock.WaitAsync();
 
@@ -93,7 +93,7 @@ namespace DotNETCoreDiscordBot
             }
             finally
             {
-                LogFile.WriteLine($"[BotConfig] Config File has been saved...");
+                logFile.WriteLine($"[BotConfig] Config File has been saved...");
                 _saveLock.Release();
             }
         }

@@ -14,11 +14,13 @@ namespace DotNETCoreDiscordBot
 
         private readonly IServerServiceManager _serverService;
         private readonly BotConfig _botConfig;
+        private readonly ILogFile _logFile;
 
-        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig)
+        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig, ILogFile logFile)
         {
             _serverService = serverService;
             _botConfig = botConfig;
+            _logFile = logFile;
         }
 
         [SlashCommand("ping", "Do you like watching me")]
@@ -74,7 +76,7 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            await _botConfig.Save();
+            await _botConfig.Save(_logFile);
             await RespondAsync(Messages.Get("slash_modal_updated"), ephemeral: true);
         }
 
@@ -142,7 +144,7 @@ namespace DotNETCoreDiscordBot
             }
 
             _botConfig.AuthorizedUsers.Add(user.Id);
-            await _botConfig.Save();
+            await _botConfig.Save(_logFile);
 
             await RespondAsync(Messages.Get("slash_grant").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
         }
@@ -164,7 +166,7 @@ namespace DotNETCoreDiscordBot
             }
 
             _botConfig.AuthorizedUsers.Remove(user.Id);
-            await _botConfig.Save();
+            await _botConfig.Save(_logFile);
 
             await RespondAsync(Messages.Get("slash_revoke").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
         }

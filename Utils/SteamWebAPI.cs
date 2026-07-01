@@ -67,11 +67,13 @@ namespace DotNETCoreDiscordBot
         }
 
         private readonly HttpClient _client;
+        private readonly ILogFile _logFile;
         private readonly string _baseAPIURL = "https://api.steampowered.com/";
 
-        public SteamWebAPI(HttpClient client)
+        public SteamWebAPI(HttpClient client, ILogFile logFile)
         {
             _client = client;
+            _logFile = logFile;
         }
 
         public async Task<List<Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList)
@@ -112,7 +114,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                LogFile.WriteLine(Messages.Get("steam_api_error").KeyFormat(("error", e.Message)));
+                _logFile.WriteLine(Messages.Get("steam_api_error").KeyFormat(("error", e.Message)));
                 return new List<Model.WorkshopItemDetails>();
             }
         }

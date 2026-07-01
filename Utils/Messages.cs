@@ -20,8 +20,7 @@ namespace DotNETCoreDiscordBot
             // Program
             {"load_config", "[Program] Loading config file..." },
             {"load_config_error", "[Program] Config file load error: {error}" },
-            {"load_command_log", "[Program] Loaded command logging"},
-            {"load_interaction_log", "[Program] Loaded interaction logging" },
+            {"discord_service_init", "[Program] Initialized discord client components"},
             {"load_services_collection", "[Program] Loaded services collection" },
             {"kill_process", "[Program] Process has been killed" },
             {"init_condition_error", "[Program] Check bot initialize condition error: {error}" },

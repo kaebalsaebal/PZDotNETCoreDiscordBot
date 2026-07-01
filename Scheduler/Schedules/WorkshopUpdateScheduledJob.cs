@@ -12,6 +12,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
         private readonly DiscordSocketClient _client;
         private readonly BotConfig _botConfig;
+        private readonly ILogFile _logFile;
         private readonly IServerServiceManager _serverService;
         private readonly ISteamWebAPI _steamApi;
 
@@ -19,10 +20,11 @@ namespace DotNETCoreDiscordBot.Scheduler
         private readonly string _location = Path.Combine(AppContext.BaseDirectory, "needupdatefile.txt");
         private static readonly SemaphoreSlim _workshopLock = new SemaphoreSlim(1, 1);
 
-        public WorkshopUpdateScheduledJob(DiscordSocketClient client, BotConfig botConfig, IServerServiceManager serverService, ISteamWebAPI steamApi)
+        public WorkshopUpdateScheduledJob(DiscordSocketClient client, BotConfig botConfig, ILogFile logFile, IServerServiceManager serverService, ISteamWebAPI steamApi)
         {
             _client = client;
             _botConfig = botConfig;
+            _logFile = logFile;
             _serverService = serverService;
             _steamApi = steamApi;
         }
@@ -34,7 +36,7 @@ namespace DotNETCoreDiscordBot.Scheduler
             TimeSpan interval = TimeSpan.FromMilliseconds(intervalMs);
 
             using var timer = new PeriodicTimer(interval);
-            LogFile.WriteLine(Messages.Get("workshop_scheduler_running"));
+            _logFile.WriteLine(Messages.Get("workshop_scheduler_running"));
 
             try
             {
@@ -70,7 +72,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
                     if (updateFound)
                     {
-                        LogFile.WriteLine(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))));
+                        _logFile.WriteLine(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))));
 
                         await _workshopLock.WaitAsync();
 
@@ -98,11 +100,11 @@ namespace DotNETCoreDiscordBot.Scheduler
             }
             catch (OperationCanceledException)
             {
-                LogFile.WriteLine(Messages.Get("workshop_scheduler_stop"));
+                _logFile.WriteLine(Messages.Get("workshop_scheduler_stop"));
             }
             catch (Exception e)
             {
-                LogFile.WriteLine(Messages.Get("workshop_scheduler_error").KeyFormat(("error", e.Message)));
+                _logFile.WriteLine(Messages.Get("workshop_scheduler_error").KeyFormat(("error", e.Message)));
             }
         }
     }

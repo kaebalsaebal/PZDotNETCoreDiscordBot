@@ -26,6 +26,7 @@ namespace DotNETCoreDiscordBot
     {
         private readonly IServerProcessManager _serverProcess;
         private readonly BotConfig _botConfig;
+        private readonly ILogFile _logFile;
         private readonly IRconManager _rconManager;
 
         // Token for Cancel Commands
@@ -33,10 +34,11 @@ namespace DotNETCoreDiscordBot
         // Semaphore for Preventing Race Condition on SaveServer
         private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
-        public ServerServiceManager(IServerProcessManager serverProcess, BotConfig botConfig, IRconManager rconManager)
+        public ServerServiceManager(IServerProcessManager serverProcess, BotConfig botConfig, ILogFile logFile, IRconManager rconManager)
         {
             _serverProcess = serverProcess;
             _botConfig = botConfig;
+            _logFile = logFile;
             _rconManager = rconManager;
         }
 
@@ -129,7 +131,7 @@ namespace DotNETCoreDiscordBot
 
                     if (RestartTimesCount == 0)
                     {
-                        LogFile.WriteLine(Messages.Get("restart_config_error"), channelId);
+                        _logFile.WriteLine(Messages.Get("restart_config_error"), channelId);
                         return;
                     }
 
@@ -140,7 +142,7 @@ namespace DotNETCoreDiscordBot
 
                         int countdown = (int)(RestartTimers[i] / 60000);
 
-                        LogFile.WriteLine(Messages.Get("restart_server_notification").KeyFormat(("minutes",  countdown)), channelId);
+                        _logFile.WriteLine(Messages.Get("restart_server_notification").KeyFormat(("minutes",  countdown)), channelId);
                         await _rconManager.SendCommandAsync("servermsg \""+Messages.Get("restart_server_notification_rcon").KeyFormat(("minutes", countdown))+"\"");
 
                         // if RestartTimes is [600000,60000], send messages and wait for [600000-60000=540000] miliseconds
@@ -155,13 +157,13 @@ namespace DotNETCoreDiscordBot
                     }
 
                     await ShutdownServer(client, channelId);
-                    LogFile.WriteLine(Messages.Get("restart_server"), channelId);
+                    _logFile.WriteLine(Messages.Get("restart_server"), channelId);
                     await StartServer(client, channelId);
 
                 }
                 catch (OperationCanceledException)
                 {
-                    LogFile.WriteLine(Messages.Get("restart_server_canceled"), channelId);
+                    _logFile.WriteLine(Messages.Get("restart_server_canceled"), channelId);
                     await _rconManager.SendCommandAsync("servermsg \""+Messages.Get("restart_server_canceled_rcon")+"\"");
                 }
                 finally
@@ -207,7 +209,7 @@ namespace DotNETCoreDiscordBot
 
                     await Task.Delay(3000);
 
-                    LogFile.WriteLine(Messages.Get("shutdown_server"), channelId);
+                    _logFile.WriteLine(Messages.Get("shutdown_server"), channelId);
                     await _rconManager.SendCommandAsync("quit");
                     await Task.Delay(6000);
 

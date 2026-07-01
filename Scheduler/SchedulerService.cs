@@ -15,16 +15,18 @@ namespace DotNETCoreDiscordBot.Scheduler
     public class SchedulerService: ISchedulerService
     {
         private readonly IEnumerable<IScheduledJob> _jobs;
-        private readonly CancellationTokenSource _token = new CancellationTokenSource();
+		private readonly ILogFile _logFile;
+		private readonly CancellationTokenSource _token = new CancellationTokenSource();
 
-        public SchedulerService(IEnumerable<IScheduledJob> jobs)
+        public SchedulerService(IEnumerable<IScheduledJob> jobs, ILogFile logFile)
         {
             _jobs = jobs;
+            _logFile = logFile;
         }
 
         public async Task StartAll()
         {
-            LogFile.WriteLine(Messages.Get("init_scheduler"));
+            _logFile.WriteLine(Messages.Get("init_scheduler"));
 
             foreach (var job in _jobs)
             {
@@ -35,7 +37,7 @@ namespace DotNETCoreDiscordBot.Scheduler
         public async Task StopAll()
         {
             _token.Cancel();
-            LogFile.WriteLine(Messages.Get("stop_scheduler"));
+            _logFile.WriteLine(Messages.Get("stop_scheduler"));
         }
     }
 }

@@ -26,6 +26,7 @@ namespace DotNETCoreDiscordBot
     public class ServerProcessManager : IServerProcessManager
     {
         private readonly BotConfig _botConfig;
+        private readonly ILogFile _logFile;
         private Process? _serverProcess = null;
         private IServerProcess _curOS;
 
@@ -40,9 +41,10 @@ namespace DotNETCoreDiscordBot
             return _serverSaved.Task;
         }
 
-        public ServerProcessManager(BotConfig botConfig)
+        public ServerProcessManager(BotConfig botConfig, ILogFile logFile)
         {
             _botConfig = botConfig;
+            _logFile = logFile;
         }
 
         public async Task StartServerProcess()
@@ -50,19 +52,19 @@ namespace DotNETCoreDiscordBot
 
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
-                LogFile.WriteLine(Messages.Get("server_already_started"));
+                _logFile.WriteLine(Messages.Get("server_already_started"));
                 return;
             }
 
             try
             {
                 var factory = new ServerProcessFactory();
-                _curOS = factory.Create(_botConfig);
+                _curOS = factory.Create(_botConfig, _logFile);
 
                 await _curOS.ParseServerScript();
 
-                LogFile.WriteLine(Messages.Get("servername_configured").KeyFormat(("servername", _botConfig.ServerName)), _botConfig.LogChannelId);
-                await _botConfig.Save();
+                _logFile.WriteLine(Messages.Get("servername_configured").KeyFormat(("servername", _botConfig.ServerName)), _botConfig.LogChannelId);
+                await _botConfig.Save(_logFile);
 
                 _serverProcess = new Process();
 
@@ -82,7 +84,7 @@ namespace DotNETCoreDiscordBot
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                     {
-                        LogFile.WriteLine($"[PZ_SERVER] {e.Data}");
+                        _logFile.WriteLine($"[PZ_SERVER] {e.Data}");
 
                         if (e.Data.Contains("SERVER STARTED"))
                         {
@@ -99,7 +101,7 @@ namespace DotNETCoreDiscordBot
                 _serverProcess.ErrorDataReceived += async (sender, e) =>
                 {
                     if (!string.IsNullOrEmpty(e.Data))
-                        LogFile.WriteLine($"[PZ_ERROR] {e.Data}");
+                        _logFile.WriteLine($"[PZ_ERROR] {e.Data}");
                 };
 
                 _serverProcess.Start();
@@ -108,7 +110,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                LogFile.WriteLine(Messages.Get("process_manager_error").KeyFormat(("error", e.Message)));
+                _logFile.WriteLine(Messages.Get("process_manager_error").KeyFormat(("error", e.Message)));
                 throw;
             }
         }
@@ -130,7 +132,7 @@ namespace DotNETCoreDiscordBot
                 }
                 catch (Exception e)
                 {
-                    LogFile.WriteLine(Messages.Get("process_manager_error").KeyFormat(("error", e.Message)));
+                    _logFile.WriteLine(Messages.Get("process_manager_error").KeyFormat(("error", e.Message)));
                     throw;
                 }
             }

@@ -13,39 +13,56 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class LogFile
+    public interface ILogFile
     {
-        private static string _location
-        {
-            get
-            {
-                string logDate = DateTime.Now.ToString("yyMMdd");
+        void WriteLine(string log, ulong? channelId = null);
+    }
 
-                return Path.Combine(AppContext.BaseDirectory, "PZBot_Logs", $"PZBot_log_{logDate}.txt");
-            }
+    public class LogFile: ILogFile
+    {
+        private readonly SemaphoreSlim _logLock = new SemaphoreSlim(1, 1);
+
+        private readonly BotConfig _config;
+        private readonly DiscordSocketClient _client;
+
+        public LogFile(BotConfig config, DiscordSocketClient client)
+        {
+            _config = config;
+            _client = client;
         }
 
-        private static readonly SemaphoreSlim _logLock = new SemaphoreSlim(1, 1);
-
-        private static IServiceProvider _services;
-
-        public static void LoadService(IServiceProvider services)
+        private string GetLocation()
         {
-            _services = services;
+            string logDate = DateTime.Now.ToString("ddMMyy");
+            return Path.Combine(AppContext.BaseDirectory, "PZBot_Logs", $"PZBot_log_{logDate}.txt");
         }
 
-        public static string GetDateTime()
+        private string GetDateTime()
         {
             return DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
         }
 
-        public static void WriteLine(string log, ulong? channelId = null)
+        private async Task SendLogToDiscord(string log, ulong channelId)
+        {
+            try
+            {
+                if (_client.GetChannel(channelId) is IMessageChannel channel)
+                {
+                    await channel.SendMessageAsync($"📝 `{GetDateTime()}` {log}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(Messages.Get("logfile_error").KeyFormat(("error", e.Message)));
+            }
+        }
+
+        public void WriteLine(string log, ulong? channelId = null)
         {
             var msg = "(" + GetDateTime() + ") " + log;
             Console.WriteLine(msg);
 
-            var config = _services?.GetService<BotConfig>();
-            bool isSaveAsFile = (config != null) ? config.SaveAsFile : true;
+            bool isSaveAsFile = _config != null ? _config.SaveAsFile : true;
 
             if (isSaveAsFile)
             {
@@ -55,14 +72,15 @@ namespace DotNETCoreDiscordBot
 
                     try
                     {
-                        string logPath = Path.GetDirectoryName(_location);
+                        string location = GetLocation();
+                        string logPath = Path.GetDirectoryName(location);
 
                         if (!string.IsNullOrEmpty(logPath))
                         {
                             Directory.CreateDirectory(logPath);
                         }
 
-                        using (var file = File.AppendText(_location))
+                        using (var file = File.AppendText(location))
                         {
                             await file.WriteLineAsync(msg);
                         }
@@ -76,33 +94,12 @@ namespace DotNETCoreDiscordBot
                         _logLock.Release();
                     }
 
-                    if (_services != null && channelId.HasValue)
+                    if (_client != null && channelId.HasValue && channelId.Value != 0)
                     {
-                        _ = SendLogToDiscord(log, channelId.Value);
+                        await SendLogToDiscord(log, channelId.Value);
                     }
                 });
                 
-            }
-        }
-
-        private static async Task SendLogToDiscord(string log, ulong channelId)
-        {
-            try
-            {
-                var client = _services.GetService<DiscordSocketClient>();
-
-                if (client != null && channelId != 0)
-                {
-                    var channel = client.GetChannel(channelId) as IMessageChannel;
-                    if (channel != null)
-                    {
-                        await channel.SendMessageAsync($"📝 `{GetDateTime()}` {log}");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(Messages.Get("logfile_error").KeyFormat(("error", e.Message)));
             }
         }
     }

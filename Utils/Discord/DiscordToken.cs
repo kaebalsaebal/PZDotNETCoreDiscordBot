@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    public static class Token
+    public class DiscordToken
     {
-        private static readonly string tokenFile = Path.Combine(AppContext.BaseDirectory, "bot_token.txt");
-        private static string? token = null;
+        private readonly string tokenFile = Path.Combine(AppContext.BaseDirectory, "bot_token.txt");
+        private string? token = null;
 
-        public static string GetToken()
+        public string GetToken()
         {
             if (!string.IsNullOrEmpty(token)){
                 return token;

@@ -21,11 +21,12 @@ namespace DotNETCoreDiscordBot
         bool CancelRestart(DiscordSocketClient client, ulong channelId);
         Task ShutdownServer(DiscordSocketClient client, ulong channelId);
         Task<double[]> GetUsage();
+
+        Task ServerMsg(string msg);
     }
     public class ServerServiceManager: IServerServiceManager
     {
         private readonly IServerProcessManager _serverProcess;
-        private readonly BotConfig _botConfig;
         private readonly ILogFile _logFile;
         private readonly IRconManager _rconManager;
 
@@ -34,10 +35,9 @@ namespace DotNETCoreDiscordBot
         // Semaphore for Preventing Race Condition on SaveServer
         private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
-        public ServerServiceManager(IServerProcessManager serverProcess, BotConfig botConfig, ILogFile logFile, IRconManager rconManager)
+        public ServerServiceManager(IServerProcessManager serverProcess, ILogFile logFile, IRconManager rconManager)
         {
             _serverProcess = serverProcess;
-            _botConfig = botConfig;
             _logFile = logFile;
             _rconManager = rconManager;
         }
@@ -231,6 +231,18 @@ namespace DotNETCoreDiscordBot
                 return result;
 
             } catch(Exception e)
+            {
+                throw;
+            }
+        }
+
+        public async Task ServerMsg(string msg)
+        {
+            try
+            {
+                await _rconManager.SendCommandAsync("servermsg \"" + msg + "\"");
+            }
+            catch(Exception e)
             {
                 throw;
             }

@@ -213,5 +213,15 @@ namespace DotNETCoreDiscordBot
 
             await FollowupAsync(sb.ToString(), ephemeral: true);
         }
+
+        [SlashCommand("server_msg", "Send global message in server")]
+        public async Task ServerMsg(string msg)
+        {
+            await DeferAsync();
+
+            await _serverService.ServerMsg(msg);
+
+            await FollowupAsync(Messages.Get("slash_server_msg").KeyFormat(("msg", msg)), ephemeral: true);
+        }
     }
 }

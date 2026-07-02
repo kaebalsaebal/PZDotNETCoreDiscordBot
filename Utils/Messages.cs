@@ -80,6 +80,8 @@ namespace DotNETCoreDiscordBot
             {"slash_workshop_no_mods", "There is no mods in your server." },
             {"slash_workshop_title", "**💎[Workshop Mods in {servername} - Total {count}]💎**" },
 
+            {"slash_server_msg", "Sent message to server: {msg}"},
+
             //ChannelSlashCommands
             {"slash_public_channel", "Set Public Channel to {channel}"},
             {"slash_command_channel", "Set Command Channel to {channel}"},

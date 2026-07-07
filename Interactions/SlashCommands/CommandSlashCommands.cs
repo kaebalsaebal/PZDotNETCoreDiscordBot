@@ -32,14 +32,15 @@ namespace DotNETCoreDiscordBot
         [SlashCommand("set_configs", "Configures other settings")]
         public async Task SetConfigs()
         {
-            var current = _botConfig;
+            var curConf = _botConfig;
 
             var modal = new BotSetupModal
             {
-                SaveAsFile = current.SaveAsFile.ToString().ToLower(),
-                RestartTimer = current.ServerScheduleSettings.RestartTimer.ToString(),
-                WorkshopInterval = current.ServerScheduleSettings.WorkshopItemUpdateSchedule.ToString(),
-            };
+                SaveAsFile = curConf.SaveAsFile.ToString().ToLower(),
+                RestartTimer = curConf.ServerScheduleSettings.RestartTimer.ToString(),
+                WorkshopUpdateInterval = curConf.ServerScheduleSettings.WorkshopUpdateSchedule.ToString(),
+				BotUpdateInterval = curConf.ServerScheduleSettings.BotUpdateSchedule.ToString()
+			};
 
             await RespondWithModalAsync<BotSetupModal>("set_configs", modal);
         }
@@ -66,9 +67,9 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            if (uint.TryParse(modal.WorkshopInterval, out uint parsedInterval))
+            if (uint.TryParse(modal.WorkshopUpdateInterval, out uint parsedWorkshopUpdateInterval))
             {
-                _botConfig.ServerScheduleSettings.WorkshopItemUpdateSchedule = parsedInterval;
+                _botConfig.ServerScheduleSettings.WorkshopUpdateSchedule = parsedWorkshopUpdateInterval;
             }
             else
             {
@@ -76,7 +77,17 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            await _botConfig.Save(_logFile);
+			if (uint.TryParse(modal.BotUpdateInterval, out uint parsedBotUpdateInterval))
+			{
+				_botConfig.ServerScheduleSettings.BotUpdateSchedule = parsedBotUpdateInterval;
+			}
+			else
+			{
+				await RespondAsync(Messages.Get("slash_modal_value_error3"), ephemeral: true);
+				return;
+			}
+
+			await _botConfig.Save(_logFile);
             await RespondAsync(Messages.Get("slash_modal_updated"), ephemeral: true);
         }
 

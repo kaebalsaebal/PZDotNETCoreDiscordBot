@@ -60,11 +60,11 @@ namespace DotNETCoreDiscordBot
             servicesCollection.AddSingleton<IServerServiceManager, ServerServiceManager>();
 
             // scheduler
-            servicesCollection.AddTransient<IScheduledJob, WorkshopUpdateScheduledJob>();
+            servicesCollection.AddTransient<IScheduledJob, BotUpdateScheduledJob>();
             servicesCollection.AddSingleton<ISchedulerService, SchedulerService>();
 
             // utils
-            servicesCollection.AddHttpClient<ISteamWebAPI, SteamWebAPI>();
+            servicesCollection.AddHttpClient<IWebAPIManager, WebAPIManager>();
             servicesCollection.AddSingleton<IRconManager, RconManager>();
 
             var service = servicesCollection.BuildServiceProvider();

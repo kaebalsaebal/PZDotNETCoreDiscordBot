@@ -6,16 +6,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    public interface ISteamWebAPI
+    public interface IWebAPIManager
     {
-        Task<List<SteamWebAPI.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
+        Task<List<WebAPIManager.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
+        Task<Version> GetBotVersion(string curVersion);
     }
-    public class SteamWebAPI : ISteamWebAPI
+    public class WebAPIManager : IWebAPIManager
     {
         public static class Model
         {
@@ -68,9 +72,9 @@ namespace DotNETCoreDiscordBot
 
         private readonly HttpClient _client;
         private readonly ILogFile _logFile;
-        private readonly string _baseAPIURL = "https://api.steampowered.com/";
+        private string _apiEndPoint;
 
-        public SteamWebAPI(HttpClient client, ILogFile logFile)
+        public WebAPIManager(HttpClient client, ILogFile logFile)
         {
             _client = client;
             _logFile = logFile;
@@ -78,7 +82,7 @@ namespace DotNETCoreDiscordBot
 
         public async Task<List<Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList)
         {
-            string apiEndPoint = "ISteamRemoteStorage/GetPublishedFileDetails/v1/";
+            _apiEndPoint = "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/";
 
             var parameters = new List<KeyValuePair<string, string>>
             {
@@ -93,13 +97,7 @@ namespace DotNETCoreDiscordBot
             var content = new FormUrlEncodedContent(parameters);
             try
             {
-                var response = await _client.PostAsync(_baseAPIURL + apiEndPoint, content);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"[SteamWebAPI] Error: {response.StatusCode}");
-                    return new List<Model.WorkshopItemDetails>();
-                }
+                var response = await _client.PostAsync(_apiEndPoint, content);
 
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 JObject parsedJson = JObject.Parse(jsonResponse);
@@ -109,14 +107,42 @@ namespace DotNETCoreDiscordBot
                 {
                     return detailsToken.ToObject<List<Model.WorkshopItemDetails>>();
                 }
-
-                return new List<Model.WorkshopItemDetails>();
             }
             catch (Exception e)
             {
-                _logFile.WriteLine(Messages.Get("steam_api_error").KeyFormat(("error", e.Message)));
-                return new List<Model.WorkshopItemDetails>();
+                _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
             }
+
+            return new List<Model.WorkshopItemDetails>();
+        }
+
+        public async Task<Version> GetBotVersion(string curVersion)
+        {
+            _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/releases/latest";
+
+            _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("PZDotNETCoreDiscordBot", curVersion));
+            
+            try
+            {
+                var response = await _client.GetAsync(_apiEndPoint);
+
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                JObject parsedJson = JObject.Parse(jsonResponse);
+                JToken tagToken = parsedJson["tag_name"];
+                string tagName = tagToken?.ToString();
+                
+                if(Regex.IsMatch(tagName, @"^[\d+\.]*\d+$") && Version.TryParse(tagName, out Version? latestVersion))
+                {
+                    return latestVersion;
+                }
+
+            }
+            catch (Exception e)
+            {
+                _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
+            }
+
+            return null;
         }
     }
 }

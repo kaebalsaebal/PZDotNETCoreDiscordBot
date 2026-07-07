@@ -14,24 +14,24 @@ namespace DotNETCoreDiscordBot.Scheduler
         private readonly BotConfig _botConfig;
         private readonly ILogFile _logFile;
         private readonly IServerServiceManager _serverService;
-        private readonly ISteamWebAPI _steamApi;
+        private readonly IWebAPIManager _webApi;
 
         private DateTime _lastCheckTime = DateTime.UtcNow;
         private readonly string _location = Path.Combine(AppContext.BaseDirectory, "needupdatefile.txt");
         private static readonly SemaphoreSlim _workshopLock = new SemaphoreSlim(1, 1);
 
-        public WorkshopUpdateScheduledJob(DiscordSocketClient client, BotConfig botConfig, ILogFile logFile, IServerServiceManager serverService, ISteamWebAPI steamApi)
+        public WorkshopUpdateScheduledJob(DiscordSocketClient client, BotConfig botConfig, ILogFile logFile, IServerServiceManager serverService, IWebAPIManager webApi)
         {
             _client = client;
             _botConfig = botConfig;
             _logFile = logFile;
             _serverService = serverService;
-            _steamApi = steamApi;
+            _webApi = webApi;
         }
 
         public async Task ExecuteAsync(CancellationToken token)
         {
-            uint intervalMs = _botConfig.ServerScheduleSettings.WorkshopItemUpdateSchedule;
+            uint intervalMs = _botConfig.ServerScheduleSettings.WorkshopUpdateSchedule;
             uint RestartTimer = _botConfig.ServerScheduleSettings.RestartTimer;
             TimeSpan interval = TimeSpan.FromMilliseconds(intervalMs);
 
@@ -50,7 +50,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
                     if (ids.Length == 0) continue;
 
-                    var modDetails = await _steamApi.GetWorkshopItemDetails(ids);
+                    var modDetails = await _webApi.GetWorkshopItemDetails(ids);
                     if (modDetails == null || modDetails.Count == 0) continue;
 
                     bool updateFound = false;
@@ -72,7 +72,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
                     if (updateFound)
                     {
-                        _logFile.WriteLine(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))));
+                        _logFile.WriteLine(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))), _botConfig.LogChannelId);
 
                         await _workshopLock.WaitAsync();
 
@@ -89,12 +89,7 @@ namespace DotNETCoreDiscordBot.Scheduler
                             _workshopLock.Release();
                         }
 
-                        var channel = _serverService.GetChannel(_client, _botConfig.LogChannelId);
-                        if (channel != null)
-                        {
-                            await channel.SendMessageAsync(Messages.Get("workshop_scheduler_update_found").KeyFormat(("mods", string.Join(", ", updatedModNames))));
-                            await _serverService.RestartServer(_client, channel.Id, RestartTimer);
-                        }
+                        await _serverService.RestartServer(_client, _botConfig.LogChannelId, RestartTimer);
                     }
                 }
             }

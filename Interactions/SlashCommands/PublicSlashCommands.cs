@@ -12,13 +12,13 @@ namespace DotNETCoreDiscordBot
     {
 
         private readonly IRconManager _rconManager;
-        private readonly ISteamWebAPI _steamApi;
+        private readonly IWebAPIManager _webApi;
         private readonly BotConfig _botConfig;
 
-        public PublicSlashCommands(IRconManager rconManager, ISteamWebAPI steamApi, BotConfig botConfig)
+        public PublicSlashCommands(IRconManager rconManager, IWebAPIManager webApi, BotConfig botConfig)
         {
             _rconManager = rconManager;
-            _steamApi = steamApi;
+            _webApi = webApi;
             _botConfig = botConfig;
         }
 
@@ -48,7 +48,7 @@ namespace DotNETCoreDiscordBot
             string workshopString = tools.GetValueFromIni(configFilePath, "WorkshopItems");
             ids = workshopString.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
-            var modDetails = await _steamApi.GetWorkshopItemDetails(ids);
+            var modDetails = await _webApi.GetWorkshopItemDetails(ids);
 
             if (modDetails == null)
             {

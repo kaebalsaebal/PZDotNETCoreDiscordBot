@@ -18,8 +18,8 @@ namespace DotNETCoreDiscordBot
     {
         public uint RestartTimer = Convert.ToUInt32(TimeSpan.FromMinutes(10).TotalMilliseconds);
         public uint ServerRestartSchedule = Convert.ToUInt32(TimeSpan.FromHours(6).TotalMilliseconds);
-        public uint WorkshopItemUpdateSchedule = Convert.ToUInt32(TimeSpan.FromMinutes(15).TotalMilliseconds);
-        //public uint WorkshopItemUpdateRestartTimer = Convert.ToUInt32(TimeSpan.FromMinutes(15).TotalMilliseconds);
+        public uint WorkshopUpdateSchedule = Convert.ToUInt32(TimeSpan.FromMinutes(15).TotalMilliseconds);
+        public uint BotUpdateSchedule = Convert.ToUInt32(TimeSpan.FromMinutes(15).TotalMilliseconds);
         public string ServerRestartScheduleType = "Interval";
         public List<string> ServerRestartTimes = new List<string> { "03:00" };
 

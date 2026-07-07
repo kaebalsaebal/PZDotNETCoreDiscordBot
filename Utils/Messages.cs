@@ -58,7 +58,7 @@ namespace DotNETCoreDiscordBot
             //CommandSlashCommands
             {"slash_modal_value_error1", "SaveAsFile value must be 'true' or 'false'"},
             {"slash_modal_value_error2", "RestartTimer value must be consisted of digits" },
-            {"slash_modal_value_error3", "WorkshopInterval value must be consisted of digits" },
+            {"slash_modal_value_error3", "Interval value must be consisted of digits" },
             {"slash_modal_updated", "Config has been Updated" },
 
             {"slash_grant_already_exists","{user} has already been granted."},
@@ -102,14 +102,20 @@ namespace DotNETCoreDiscordBot
             {"workshop_scheduler_stop", "[Workshop Update Check Scheduler] Scheduler has been canceled." },
             {"workshop_scheduler_error", "[Workshop Update Check Scheduler] Error: {error}" },
 
+            //BotUpdateScheduledJob
+            {"bot_scheduler_running", "[Bot Update Check Scheduler] Running..." },
+			{"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! ({version})" },
+			{"bot_scheduler_stop", "[Bot Update Check Scheduler] Scheduler has been canceled." },
+			{"bot_scheduler_error", "[Bot Update Check Scheduler] Error: {error}" },
+
             //LogFile
             {"logfile_error", "[LogFile] Error: {error}"},
 
             //RconManager
             {"rcon_error",  "[RconManager] Error: {error}"},
 
-            //SteamWebAPI
-            {"steam_api_error", "[SteamWebAPI] Error: {error}"},
+            //WebAPIManager
+            {"web_api_error", "[WebAPIManager] Error: {error}"},
 
             //tokenfile
             {"token_not_found", "Token not found.  Make sure to locate bot_token.txt file on the game directory."},

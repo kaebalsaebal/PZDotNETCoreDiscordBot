@@ -130,8 +130,10 @@ namespace DotNETCoreDiscordBot
                 JObject parsedJson = JObject.Parse(jsonResponse);
                 JToken tagToken = parsedJson["tag_name"];
                 string tagName = tagToken?.ToString();
-                
-                if(Regex.IsMatch(tagName, @"^[\d+\.]*\d+$") && Version.TryParse(tagName, out Version? latestVersion))
+
+                // Version tag example: vx.x.x
+                if (Regex.IsMatch(tagName, @"^v?\d+(\.\d+)*$", RegexOptions.IgnoreCase) &&
+                    Version.TryParse(tagName.TrimStart('v'), out Version? latestVersion))
                 {
                     return latestVersion;
                 }

@@ -55,6 +55,12 @@ namespace DotNETCoreDiscordBot
             {"parse_script_modify", "[ServerProcess] Removed pause/read in Server Script File" },
             {"custom_location_found", "[ServerProcess] Custom Location Found: {location}" },
 
+            //PublicSlashCommands
+            {"help_title", "📋[PZDotNETCoreDiscordBot Commands List]📋"},
+            {"help_parameters", "Parameters:"},
+            {"help_public_commands", "Public commands: Anyone can use them in Public/Command channels"},
+            {"help_authed_commands", "Admin commands: Only authorized users can use them in the Command channel."},
+
             //CommandSlashCommands
             {"slash_modal_value_error1", "SaveAsFile value must be 'true' or 'false'"},
             {"slash_modal_value_error2", "RestartTimer value must be consisted of digits" },
@@ -66,19 +72,19 @@ namespace DotNETCoreDiscordBot
             {"slash_revoke_owner", "Revoking bot owner is not allowed." },
             {"slash_revoke_already_exists", "```{user}``` has already been revoked." },
             {"slash_revoke", "Revoked command permission to {user}" },
-            {"slash_show_granted_title","**✔️[Command Channel Granted User List]✔️**" },
+            {"slash_show_granted_title","✔️[Command Channel Granted User List]✔️" },
 
             {"slash_restart_server", "Restarting server after {minutes} minutes..." },
             {"slash_restart_canceled", "Scheduled restart cancelled"},
             {"slash_no_restart", "There is no scheduled restart." },
             {"slash_shutdown_server", "Server has shut down." },
 
-            {"slash_get_usage_title", "**💻[CPU and Memory Current Usage]🖥️**"},
+            {"slash_get_usage_title", "💻[CPU and Memory Current Usage]🖥️"},
 
             {"slash_workshop_file_failed", "Failed to Get {config} File..."},
             {"slash_workshop_api_failed", "Failed to get workshop mods info by SteamAPI..." },
             {"slash_workshop_no_mods", "There is no mods in your server." },
-            {"slash_workshop_title", "**💎[Workshop Mods in {servername} - Total {count}]💎**" },
+            {"slash_workshop_title", "💎[Workshop Mods in {servername} - Total {count}]💎" },
 
             {"slash_server_msg", "Sent message to server: {msg}"},
 
@@ -104,7 +110,7 @@ namespace DotNETCoreDiscordBot
 
             //BotUpdateScheduledJob
             {"bot_scheduler_running", "[Bot Update Check Scheduler] Running..." },
-			{"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! ({version})\nYou'd better to get a new version at https://github.com/kaebalsaebal/PZDotNETCoreDiscordBot/releases" },
+			{"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! (Version: {version}, Release: {name})\nYou'd better to get a new version at {url}" },
 			{"bot_scheduler_stop", "[Bot Update Check Scheduler] Scheduler has been canceled." },
 			{"bot_scheduler_error", "[Bot Update Check Scheduler] Error: {error}" },
 

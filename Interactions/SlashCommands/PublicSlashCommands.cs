@@ -1,4 +1,5 @@
-﻿using Discord.Interactions;
+﻿using Discord;
+using Discord.Interactions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,24 @@ using System.Threading.Tasks;
 
 namespace DotNETCoreDiscordBot
 {
-    [RequirePublicChannel]
+    //[RequirePublicChannel]
     public class PublicSlashCommands : InteractionModuleBase<SocketInteractionContext>
     {
-
+        private readonly IServerServiceManager _serverService;
         private readonly IRconManager _rconManager;
         private readonly IWebAPIManager _webApi;
         private readonly BotConfig _botConfig;
+        private readonly InteractionService _interactionService;
+        private readonly Tools _tools;
 
-        public PublicSlashCommands(IRconManager rconManager, IWebAPIManager webApi, BotConfig botConfig)
+        public PublicSlashCommands(IServerServiceManager serverService, IRconManager rconManager, IWebAPIManager webApi, BotConfig botConfig, InteractionService interactionService)
         {
+            _serverService = serverService;
             _rconManager = rconManager;
             _webApi = webApi;
             _botConfig = botConfig;
+            _interactionService = interactionService;
+            _tools = new Tools();
         }
 
         [SlashCommand("players", "Gets players joined")]
@@ -30,8 +36,8 @@ namespace DotNETCoreDiscordBot
             await RespondAsync($"```\n{result}\n```");
         }
 
-        [SlashCommand("check_workshop_mods", "Workshop mods in your server")]
-        public async Task CheckWorkshopItems([Summary("items", "Show mods top n descending by update")] uint items = 0)
+        [SlashCommand("check_workshop_mods", "Get workshop mods in your server")]
+        public async Task CheckWorkshopItems([Summary("items", "Show mods top n descending by update")] int items = -1)
         {
             await DeferAsync();
 
@@ -61,29 +67,96 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
-            if (items == 0) items = (uint)modDetails.Count;
+            if (items == -1) items = modDetails.Count;
 
             var sb = new StringBuilder();
-            sb.AppendLine(Messages.Get("slash_workshop_title").KeyFormat(("servername", _botConfig.ServerName), ("count", $"**{modDetails.Count}**")));
+            sb.AppendLine($"**{Messages.Get("slash_workshop_title").KeyFormat(("servername", _botConfig.ServerName), ("count", $"{modDetails.Count}"))}**");
 
             var sortedMods = modDetails.OrderByDescending(m => m.TimeUpdated).ToList();
 
-            sb.AppendLine("```");
             foreach (var mod in sortedMods.Take((int)items))
             {
                 DateTime lastUpdate = DateTimeOffset.FromUnixTimeSeconds(mod.TimeUpdated).LocalDateTime;
 
-                sb.AppendLine($"- {mod.Title} (ID: {mod.PublishedFileId})");
-                sb.AppendLine($"  Last Updated Date: {lastUpdate:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine($"- **{mod.Title}** (ID: `{mod.PublishedFileId}`)\nLast Updated Date: `{lastUpdate:yyyy-MM-dd HH:mm:ss}`");
             }
-            sb.AppendLine("```");
 
             if (sortedMods.Count > items)
             {
                 sb.AppendLine($"...**{sortedMods.Count - items}** Mods and so more...");
             }
 
+            List<StringBuilder> sbList = _tools.SplitSB(sb);
+
+            foreach(StringBuilder sbItem in sbList)
+            {
+                await FollowupAsync(sbItem.ToString(), ephemeral: true);
+            }
+        }
+
+        [SlashCommand("get_cpu_ram", "Get server's cpu and ram usage")]
+        public async Task GetUsage()
+        {
+            await DeferAsync();
+
+            double[] result = await _serverService.GetUsage();
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"**{Messages.Get("slash_get_usage_title")}**");
+            sb.AppendLine("```");
+            sb.AppendLine($"CPU: {String.Format("{0:N2}", result[0])}%");
+            sb.AppendLine($"RAM: {String.Format("{0:N2}", result[1])}%");
+            sb.AppendLine("```");
+
             await FollowupAsync(sb.ToString(), ephemeral: true);
+        }
+
+        [SlashCommand("help", "Commands and description")]
+        public async Task Help()
+        {
+            await DeferAsync();
+
+            var sb = new StringBuilder();
+            var commandSB = new StringBuilder();
+            var publicSB = new StringBuilder();
+
+            foreach (var module in _interactionService.Modules)
+            {
+                foreach(var cmd in module.SlashCommands)
+                {
+                    if (cmd.Name == "help") continue;
+
+                    string commandLine = $"• `/{cmd.Name}` - {cmd.Description}\n";
+
+                    if (module.Name.Contains("Public"))
+                    {
+                        publicSB.Append(commandLine);
+                    }
+                    else if(module.Name.Contains("Command") || module.Name.Contains("Channel"))
+                    {
+                        commandSB.Append(commandLine);
+                    }
+                }
+            }
+
+            sb.AppendLine($"**{Messages.Get("help_title")}**\n");
+            if (publicSB.Length > 0)
+            {
+                sb.AppendLine($"**{Messages.Get("help_public_commands")}**");
+                sb.Append(publicSB.ToString());
+            }
+            if (commandSB.Length > 0)
+            {
+                sb.AppendLine($"\n**{Messages.Get("help_authed_commands")}**");
+                sb.Append(commandSB.ToString());
+            }
+
+            List<StringBuilder> sbList = _tools.SplitSB(sb);
+
+            foreach (StringBuilder sbItem in sbList)
+            {
+                await FollowupAsync(sbItem.ToString(), ephemeral: true);
+            }
         }
     }
 }

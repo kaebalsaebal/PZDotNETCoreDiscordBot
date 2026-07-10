@@ -11,13 +11,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static DotNETCoreDiscordBot.WebAPIManager;
 
 namespace DotNETCoreDiscordBot
 {
     public interface IWebAPIManager
     {
         Task<List<WebAPIManager.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
-        Task<Version> GetBotVersion(string curVersion);
+        Task<Model.ReleaseDetails> GetLatestBotDetails();
     }
     public class WebAPIManager : IWebAPIManager
     {
@@ -68,6 +69,13 @@ namespace DotNETCoreDiscordBot
                 public int Views;
                 public List<Tag> Tags;
             }
+            public class ReleaseDetails
+            {
+                public string Name;
+                public string HtmlUrl;
+                public string TagName;
+                public Version Version;
+            }
         }
 
         private readonly HttpClient _client;
@@ -116,26 +124,34 @@ namespace DotNETCoreDiscordBot
             return new List<Model.WorkshopItemDetails>();
         }
 
-        public async Task<Version> GetBotVersion(string curVersion)
+        public async Task<Model.ReleaseDetails> GetLatestBotDetails()
         {
             _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/releases/latest";
 
-            _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("PZDotNETCoreDiscordBot", curVersion));
+            Model.ReleaseDetails result = null;
             
             try
             {
                 var response = await _client.GetAsync(_apiEndPoint);
-
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 JObject parsedJson = JObject.Parse(jsonResponse);
-                JToken tagToken = parsedJson["tag_name"];
-                string tagName = tagToken?.ToString();
 
-                // Version tag example: vx.x.x
-                if (Regex.IsMatch(tagName, @"^v?\d+(\.\d+)*$", RegexOptions.IgnoreCase) &&
-                    Version.TryParse(tagName.TrimStart('v'), out Version? latestVersion))
+                JToken detailsToken = parsedJson["id"];
+
+                if (detailsToken != null)
                 {
-                    return latestVersion;
+                    result = new Model.ReleaseDetails();
+
+                    result.Name = parsedJson["name"].ToString();
+                    result.TagName = parsedJson["tag_name"].ToString();
+                    result.HtmlUrl = parsedJson["html_url"].ToString();
+
+                    // Version tag example: vx.x.x
+                    if (Regex.IsMatch(result.TagName, @"^v?\d+(\.\d+)*$", RegexOptions.IgnoreCase) &&
+                        Version.TryParse(result.TagName.TrimStart('v'), out Version? version))
+                    {
+                        result.Version = version;
+                    }
                 }
 
             }
@@ -144,7 +160,7 @@ namespace DotNETCoreDiscordBot
                 _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
             }
 
-            return null;
+            return result;
         }
     }
 }

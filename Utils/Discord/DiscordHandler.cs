@@ -102,21 +102,36 @@ namespace DotNETCoreDiscordBot
             {
                 if (result.Error == InteractionCommandError.UnmetPrecondition)
                 {
-                    await RespondOrFollowup(context.Interaction, Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                    await RespondOrFollowup(context.Interaction, Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), true);
 
                     _logFile.WriteLine(Messages.Get("precondition_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
                 }
-                if (result.Error == InteractionCommandError.Exception)
+                else if (result.Error == InteractionCommandError.Exception)
                 {
-                    await RespondOrFollowup(context.Interaction, Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                    string msg = Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}"));
 
-                    _logFile.WriteLine(Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                    var execResult = result as Discord.Interactions.ExecuteResult?;
+
+
+                    if (execResult != null && execResult.Value.Exception != null)
+                    {
+                        msg += $"\n{execResult.Value.Exception.InnerException.Message}";
+                    }
+
+                    await RespondOrFollowup(context.Interaction, msg, true);
+                    _logFile.WriteLine(msg);
                 }
-                if (result.Error != InteractionCommandError.UnknownCommand)
+                else if (result.Error == InteractionCommandError.UnknownCommand)
                 {
-                    await RespondOrFollowup(context.Interaction, Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                    await RespondOrFollowup(context.Interaction, Messages.Get("exception_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), true);
 
                     _logFile.WriteLine(Messages.Get("command_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
+                }
+                else
+                {
+                    await RespondOrFollowup(context.Interaction, Messages.Get("interaction_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")), true);
+
+                    _logFile.WriteLine(Messages.Get("unknown_error").KeyFormat(("error", $"{context.User.Username}\n{result.ErrorReason}")));
                 }
 
             }
@@ -124,19 +139,17 @@ namespace DotNETCoreDiscordBot
             {
                 _logFile.WriteLine(Messages.Get("unknown_error").KeyFormat(("error", e.Message)));
             }
-
-
         }
 
-        private async Task RespondOrFollowup(IDiscordInteraction interaction, string message)
+        private async Task RespondOrFollowup(IDiscordInteraction interaction, string message, bool ephemeral)
         {
             if (interaction.HasResponded)
             {
-                await interaction.FollowupAsync(message, ephemeral: true);
+                await interaction.FollowupAsync(message, ephemeral: ephemeral);
             }
             else
             {
-                await interaction.RespondAsync(message, ephemeral: true);
+                await interaction.RespondAsync(message, ephemeral: ephemeral);
             }
         }
 

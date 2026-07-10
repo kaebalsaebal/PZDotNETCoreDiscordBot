@@ -12,6 +12,9 @@ namespace DotNETCoreDiscordBot
     {
         public WindowsProcess(BotConfig botConfig, string scriptPath, ILogFile logFile) : base(botConfig, scriptPath, logFile)
         {
+            #if DEBUG
+            _scriptPath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Project Zomboid Dedicated Server\\server.bat";
+            #endif
         }
 
         protected override void ExtractOSParams(string line)

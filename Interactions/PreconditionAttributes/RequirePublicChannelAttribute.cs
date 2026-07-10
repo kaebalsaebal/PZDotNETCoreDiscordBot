@@ -16,8 +16,9 @@ namespace DotNETCoreDiscordBot
         {
             var botConfig = services.GetRequiredService<BotConfig>();
             ulong pubChannelId = botConfig.PublicChannelId;
+            ulong cmdChannelId = botConfig.CommandChannelId;
 
-            if (pubChannelId == 0 || context.Channel.Id == pubChannelId)
+            if (pubChannelId == 0 || context.Channel.Id == pubChannelId || context.Channel.Id == cmdChannelId)
             {
                 return Task.FromResult(PreconditionResult.FromSuccess());
             }

@@ -21,7 +21,7 @@ namespace DotNETCoreDiscordBot
 
     public abstract class ServerProcess: IServerProcess
     {
-        protected readonly string _scriptPath;
+        protected string _scriptPath;
         protected readonly BotConfig _botConfig;
         protected readonly ILogFile _logFile;
 

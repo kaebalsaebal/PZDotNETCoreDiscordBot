@@ -188,7 +188,7 @@ namespace DotNETCoreDiscordBot
             await DeferAsync();
 
             var sb = new StringBuilder();
-            sb.AppendLine(Messages.Get("slash_show_granted_title"));
+            sb.AppendLine($"**{Messages.Get("slash_show_granted_title")}**");
 
             sb.AppendLine("```");
             foreach (ulong id in _botConfig.AuthorizedUsers)
@@ -208,23 +208,6 @@ namespace DotNETCoreDiscordBot
             await FollowupAsync(sb.ToString(), ephemeral: true);
         }
 
-        [SlashCommand("get_cpu_ram", "Get server's cpu and ram usage")]
-        public async Task GetUsage()
-        {
-            await DeferAsync();
-
-            double[] result = await _serverService.GetUsage();
-
-            var sb = new StringBuilder();
-            sb.AppendLine(Messages.Get("slash_get_usage_title"));
-            sb.AppendLine("```");
-            sb.AppendLine($"CPU: {String.Format("{0:N2}", result[0])}%");
-            sb.AppendLine($"RAM: {String.Format("{0:N2}", result[1])}%");
-            sb.AppendLine("```");
-
-            await FollowupAsync(sb.ToString(), ephemeral: true);
-        }
-
         [SlashCommand("server_msg", "Send global message in server")]
         public async Task ServerMsg(string msg)
         {
@@ -234,5 +217,6 @@ namespace DotNETCoreDiscordBot
 
             await FollowupAsync(Messages.Get("slash_server_msg").KeyFormat(("msg", msg)), ephemeral: true);
         }
+
     }
 }

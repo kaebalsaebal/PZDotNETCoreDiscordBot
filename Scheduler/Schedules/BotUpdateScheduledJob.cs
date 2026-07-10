@@ -47,7 +47,10 @@ namespace DotNETCoreDiscordBot.Scheduler
                     var assembly = Assembly.GetExecutingAssembly();
                     Version localVersion = assembly.GetName().Version;
 
-                    Version remoteVersion = await _webApi.GetBotVersion(localVersion.ToString());
+                    var releaseDetails = await _webApi.GetLatestBotDetails();
+                    if (releaseDetails == null) continue;
+
+                    Version remoteVersion = releaseDetails.Version;
 
                     if (remoteVersion > localVersion)
                     {
@@ -56,9 +59,12 @@ namespace DotNETCoreDiscordBot.Scheduler
 
                     if (updateFound)
                     {
-                        _logFile.WriteLine(Messages.Get("bot_scheduler_update_found").KeyFormat(("version", remoteVersion.ToString())), _botConfig.LogChannelId);
+                        string msg = Messages.Get("bot_scheduler_update_found")
+                                .KeyFormat(("version", releaseDetails.TagName), ("name", releaseDetails.Name), ("url", releaseDetails.HtmlUrl));
 
-                        await _serverService.ServerMsg(Messages.Get("bot_scheduler_update_found").KeyFormat(("version", remoteVersion.ToString())));
+                        _logFile.WriteLine(msg, _botConfig.LogChannelId);
+
+                        await _serverService.ServerMsg(msg);
                     }
                 }
             }

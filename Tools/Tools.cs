@@ -34,5 +34,39 @@ namespace DotNETCoreDiscordBot
             }
             return "";
         }
+
+        // Split long message to List because of 2000 limit of discord followup
+        public List<StringBuilder> SplitSB(StringBuilder sb)
+        {
+            var splitedSB = new List<StringBuilder>();
+            if (sb.Length == 0) return splitedSB;
+
+            int maxLength = 1900;
+
+            var tempSB = new StringBuilder();
+
+            using (var sr = new StringReader(sb.ToString()))
+            {
+                string line = sr.ReadLine();
+                while (line != null)
+                {
+                    if (tempSB.Length + line.Length + 1 > maxLength)
+                    {
+                        splitedSB.Add(tempSB);
+                        tempSB = new StringBuilder();
+                    }
+
+                    tempSB.AppendLine(line);
+                    line = sr.ReadLine();
+                }
+            }
+
+            if (tempSB.Length > 0)
+            {
+                splitedSB.Add(tempSB);
+            }
+
+            return splitedSB;
+        }
     }
 }

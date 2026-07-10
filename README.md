@@ -26,7 +26,7 @@ So many functions on original bot has not been implemented. I'll try my best to 
 | **/get_cpu_ram** | | Show server's CPU and memory usage | public |
 | **/players** | | Show players logged in | public |
 | **/check_workshop_mods** | item | Show last (item) update mods in your server | public |
-| **/help** | item | Show all commands | public |
+| **/help** | | Show all commands | public |
 
 Commands in ```command``` channel can be used **only for granted user**.
 

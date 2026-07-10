@@ -104,7 +104,7 @@ namespace DotNETCoreDiscordBot
 
             //BotUpdateScheduledJob
             {"bot_scheduler_running", "[Bot Update Check Scheduler] Running..." },
-			{"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! ({version})" },
+			{"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! ({version})\nYou'd better to get a new version at https://github.com/kaebalsaebal/PZDotNETCoreDiscordBot/releases" },
 			{"bot_scheduler_stop", "[Bot Update Check Scheduler] Scheduler has been canceled." },
 			{"bot_scheduler_error", "[Bot Update Check Scheduler] Error: {error}" },
 

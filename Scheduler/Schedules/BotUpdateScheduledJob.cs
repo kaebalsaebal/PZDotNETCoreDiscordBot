@@ -58,7 +58,7 @@ namespace DotNETCoreDiscordBot.Scheduler
                     {
                         _logFile.WriteLine(Messages.Get("bot_scheduler_update_found").KeyFormat(("version", remoteVersion.ToString())), _botConfig.LogChannelId);
 
-                        await _serverService.RestartServer(_client, _botConfig.LogChannelId, RestartTimer);
+                        await _serverService.ServerMsg(Messages.Get("bot_scheduler_update_found").KeyFormat(("version", remoteVersion.ToString())));
                     }
                 }
             }

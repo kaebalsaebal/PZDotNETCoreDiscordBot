@@ -23,10 +23,10 @@ So many functions on original bot has not been implemented. I'll try my best to 
 | **/grant_auth** | user | Grant user a permission to execute commands in command channel | command |
 | **/revoke_auth** | user | Revoke user a permission to execute commands in command channel | command |
 | **/show_auth** | user | Show users who can execute commands in command channel | command |
-| **/get_cpu_ram** | | Show server's CPU and memory usage | command |
+| **/get_cpu_ram** | | Show server's CPU and memory usage | public |
 | **/players** | | Show players logged in | public |
 | **/check_workshop_mods** | item | Show last (item) update mods in your server | public |
-
+| **/help** | item | Show all commands | public |
 
 Commands in ```command``` channel can be used **only for granted user**.
 

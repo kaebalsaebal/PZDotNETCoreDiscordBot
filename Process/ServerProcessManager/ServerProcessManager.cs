@@ -122,14 +122,14 @@ namespace DotNETCoreDiscordBot
             await _serverProcess.WaitForExitAsync();
         }
 
-        public async void KillServerProcess()
+        public void KillServerProcess()
         {
             if (_serverProcess != null && !_serverProcess.HasExited)
             {
                 try
                 {
                     _serverProcess.Kill(true);
-                    await _serverProcess.WaitForExitAsync();
+                    _serverProcess.WaitForExit();
                 }
                 catch (Exception e)
                 {

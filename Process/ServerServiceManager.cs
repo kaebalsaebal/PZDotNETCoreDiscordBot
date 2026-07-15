@@ -26,7 +26,7 @@ namespace DotNETCoreDiscordBot
     }
     public class ServerServiceManager: IServerServiceManager
     {
-        private readonly IServerProcessManager _serverProcess;
+        private readonly IServerProcessManager _serverProcessManager;
         private readonly ILogFile _logFile;
         private readonly IRconManager _rconManager;
 
@@ -35,9 +35,9 @@ namespace DotNETCoreDiscordBot
         // Semaphore for Preventing Race Condition on SaveServer
         private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
-        public ServerServiceManager(IServerProcessManager serverProcess, ILogFile logFile, IRconManager rconManager)
+        public ServerServiceManager(IServerProcessManager serverProcessManager, ILogFile logFile, IRconManager rconManager)
         {
-            _serverProcess = serverProcess;
+            _serverProcessManager = serverProcessManager;
             _logFile = logFile;
             _rconManager = rconManager;
         }
@@ -57,11 +57,20 @@ namespace DotNETCoreDiscordBot
 
                 if (channel != null)
                 {
-                    await _serverProcess.StartServerProcess();
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _serverProcessManager.StartServerProcess();
 
-                    await _serverProcess.WaitForServerStart();
+                            await _serverProcessManager.WaitForServerStart();
 
-                    await channel.SendMessageAsync(Messages.Get("server_started_notification"));
+                            await channel.SendMessageAsync(Messages.Get("server_started_notification"));
+                        } catch(Exception e)
+                        {
+                            throw;
+                        }
+                    });
                 }
             } catch(Exception e)
             {
@@ -87,7 +96,7 @@ namespace DotNETCoreDiscordBot
 
                         await _rconManager.SendCommandAsync("save");
 
-                        await _serverProcess.WaitForServerSave();
+                        await _serverProcessManager.WaitForServerSave();
 
                         await channel.SendMessageAsync(Messages.Get("server_saved_notification"));
                     }
@@ -213,7 +222,7 @@ namespace DotNETCoreDiscordBot
                     await _rconManager.SendCommandAsync("quit");
                     await Task.Delay(6000);
 
-                    await _serverProcess.WaitForExitAsync();
+                    await _serverProcessManager.WaitForExitAsync();
 
                 }
             } catch (Exception e)
@@ -227,7 +236,7 @@ namespace DotNETCoreDiscordBot
         {
             try
             {
-                double[] result = await _serverProcess.GetProcessUsage();
+                double[] result = await _serverProcessManager.GetProcessUsage();
                 return result;
 
             } catch(Exception e)

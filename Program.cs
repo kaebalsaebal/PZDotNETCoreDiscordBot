@@ -60,6 +60,7 @@ namespace DotNETCoreDiscordBot
             servicesCollection.AddSingleton<IServerServiceManager, ServerServiceManager>();
 
             // scheduler
+            servicesCollection.AddTransient<IScheduledJob, WorkshopUpdateScheduledJob>();
             servicesCollection.AddTransient<IScheduledJob, BotUpdateScheduledJob>();
             servicesCollection.AddSingleton<ISchedulerService, SchedulerService>();
 
@@ -111,21 +112,18 @@ namespace DotNETCoreDiscordBot
                         // add Interaction Service to All Guilds
                         await interactionService.RegisterCommandsGloballyAsync();
 
-                        // Background Service Run
-                        _ = Task.Run(async () =>
+                        try
                         {
-                            try
-                            {
-                                await GrantFirstAuth(botConfig, client, logFile);
-                                #if !DEBUG
-                                await CheckBotInitCondition(botConfig, service, client, logFile);
-                                #endif
-                            }
-                            catch (Exception e)
-                            {
-                                logFile.WriteLine(Messages.Get("init_condition_error").KeyFormat(("error", e.Message)));
-                            }
-                        });
+                            await GrantFirstAuth(botConfig, client, logFile);
+                            #if !DEBUG
+                            await CheckBotInitCondition(botConfig, service, client, logFile);
+                            #endif
+                        }
+                        catch (Exception e)
+                        {
+                            logFile.WriteLine(Messages.Get("init_condition_error").KeyFormat(("error", e.Message)));
+                        }
+
                     } catch(Exception e)
                     {
                         logFile.WriteLine(Messages.Get("ready_handler_error").KeyFormat(("error", e.Message)));
@@ -137,7 +135,6 @@ namespace DotNETCoreDiscordBot
                 await client.LoginAsync(TokenType.Bot, token);
                 await client.StartAsync();
 
-                await Task.Delay(-1);
             }
             catch (Exception e)
             {
@@ -145,20 +142,22 @@ namespace DotNETCoreDiscordBot
             }
 
             // Stop Program If Force Stop
-            AppDomain.CurrentDomain.ProcessExit += async (sender, eventArgs) =>
+            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
             {
                 logFile.WriteLine(Messages.Get("kill_process"));
                 var processManager = service.GetRequiredService<IServerProcessManager>();
                 processManager.KillServerProcess();
             };
 
-            Console.CancelKeyPress += async (sender, eventArgs) =>
+            Console.CancelKeyPress += (sender, eventArgs) =>
             {
                 logFile.WriteLine(Messages.Get("kill_process"));
                 var processManager = service.GetRequiredService<IServerProcessManager>();
                 processManager.KillServerProcess();
                 eventArgs.Cancel = false;
             };
+
+            await Task.Delay(-1);
         }
 
         // Grant command interaction authority to bot owner

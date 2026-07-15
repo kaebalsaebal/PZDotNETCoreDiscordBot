@@ -30,7 +30,7 @@ namespace DotNETCoreDiscordBot.Scheduler
 
             foreach (var job in _jobs)
             {
-                _ = Task.Run(() => job.ExecuteAsync(_token.Token));
+                _ = Task.Run(async () => await job.ExecuteAsync(_token.Token));
             }
         }
 

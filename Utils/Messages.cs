@@ -14,12 +14,13 @@ namespace DotNETCoreDiscordBot
 
     public static class Messages
     {
-        public static Dictionary<string, string>? LocalizedMessages = null;
-        public static List<string> LanguageList = new List<string>();
+        public static Dictionary<string, string>? TranslatedMessages = null;
+        public static Dictionary<string, string>? TranslationMetadata = null;
 
         private static readonly Dictionary<string, string> _defaultMessages = new Dictionary<string, string>
         {
             {"language_code", "en_US" },
+            {"language_name", "English(United States)" },
             {"date_format", "MM/dd/yy" },
 
             // Program
@@ -134,22 +135,22 @@ namespace DotNETCoreDiscordBot
 
             //Translations
             {"translations_language_set", "[Translations] Bot language is now: {lang}" },
-            {"translations_language_not_found", "[Translations] Failed to load language file. Using built-in en-US data..."},
+            {"translations_using_default", "[Translations] Failed to load language file. Using built-in English data..."},
             {"translations_language_unavilable", "[Translations] This language is not supported: {lang}" }
         };
 
         public static string Get(string key)
         {
-            if (LocalizedMessages != null && LocalizedMessages.ContainsKey(key))
+            if (TranslatedMessages != null && TranslatedMessages.ContainsKey(key))
             {
-                return LocalizedMessages[key];
+                return TranslatedMessages[key];
             }
             else if (_defaultMessages.ContainsKey(key))
             {
                 return _defaultMessages[key];
             }
             else {
-                return $"🚫 Message error: {key}";
+                return $"[Translations] Message not exists: {key}";
             }
         }
 

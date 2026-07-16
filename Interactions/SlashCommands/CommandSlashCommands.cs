@@ -223,18 +223,18 @@ namespace DotNETCoreDiscordBot
         [SlashCommand("set_language", "Set language")]
         public async Task SetLanguage([Summary("langCode", "(Country Code)_(Language Code)")][Autocomplete(typeof(SetLanguageAutocompleteHandler))] string langCode)
         {
-            if (!Messages.LanguageList.Contains(langCode))
+            if (Messages.TranslationMetadata[langCode] == null)
             {
-                await RespondAsync($"🚫 유효하지 않은 언어 코드입니다. 목록에서 선택해 주세요.", ephemeral: true);
+                await RespondAsync(Messages.Get("translations_language_unavilable").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])), ephemeral: true);
                 return;
             }
 
             _botConfig.Language = langCode;
             await _botConfig.Save(_logFile);
 
-            Messages.LocalizedMessages = await _webAPIManager.GetLocalization(langCode);
+            Messages.TranslatedMessages = await _webAPIManager.GetTranslations(langCode);
 
-            await RespondAsync(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.LocalizedMessages["language_name"])), ephemeral: true);
+            await RespondAsync(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])), ephemeral: true);
         }
     }
 }

@@ -20,8 +20,7 @@ namespace DotNETCoreDiscordBot
     {
         Task<List<WebAPIManager.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
         Task<Model.ReleaseDetails> GetLatestBotDetails();
-        Task<Dictionary<string, string>> GetLocalization(string langCode);
-        Task<List<string>> GetLanguageList();
+        Task<Dictionary<string, string>> GetTranslations(string? langCode = "meta");
     }
     public class WebAPIManager : IWebAPIManager
     {
@@ -168,35 +167,11 @@ namespace DotNETCoreDiscordBot
             return result;
         }
 
-        public async Task<Dictionary<string, string>> GetLocalization(string langCode)
+        // When called with parameters(langCode), return language data matching langCode
+        // Unless return metadata({(language_code): (language_name), ...})
+        public async Task<Dictionary<string, string>> GetTranslations(string? langCode = "meta")
         {
-            Dictionary<string, string> result = new Dictionary<string, string>
-            {
-                {"language_name", "" },
-                {"date_format", "dd/MM/yy" },
-            };
-            _apiEndPoint = $"https://raw.githubusercontent.com/kaebalsaebal/PZDotNETCoreDiscordBot/master/Translations/{langCode}.json";
-
-            try
-            {
-                var response = await _client.GetAsync(_apiEndPoint);
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                JObject parsedJson = JObject.Parse(jsonResponse);
-
-                if (parsedJson["language_name"] != null) result = parsedJson.ToObject<Dictionary<string, string>>();
-            }
-            catch (Exception e)
-            {
-                _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
-            }
-
-
-            return result;
-        }
-
-        public async Task<List<string>> GetLanguageList()
-        {
-            List<string> result = new List<string>();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 
             _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/contents/Translations?ref=master";
 
@@ -214,10 +189,28 @@ namespace DotNETCoreDiscordBot
                     foreach (var file in files)
                     {
                         string fileName = file["name"]?.ToString();
+                        string downloadUrl = file["download_url"]?.ToString();
+
 
                         if (!string.IsNullOrEmpty(fileName) && fileName.EndsWith(".json"))
                         {
-                            result.Add(fileName.Replace(".json", ""));
+                            var subres = await _client.GetAsync(downloadUrl);
+                            if (subres.IsSuccessStatusCode)
+                            {
+                                string jsonSubres = await subres.Content.ReadAsStringAsync();
+                                JObject parsedJson = JObject.Parse(jsonResponse);
+
+                                if(langCode != "meta" && parsedJson["language_code"].ToString() == langCode)
+                                {
+                                    result = parsedJson.ToObject<Dictionary<string, string>>();
+                                    break;
+                                }
+
+                                if (parsedJson["language_name"] != null && parsedJson["language_code"] != null)
+                                {
+                                    result[parsedJson["language_code"].ToString()] = parsedJson["language_name"].ToString();
+                                }
+                            }
                         }
                     }
                 }

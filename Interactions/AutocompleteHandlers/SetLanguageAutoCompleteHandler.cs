@@ -18,9 +18,9 @@ namespace DotNETCoreDiscordBot
         {
             string userInput = autocompleteInteraction.Data.Current.Value.ToString();
 
-            IEnumerable<AutocompleteResult> results = Messages.LanguageList
-                .Where(lang => lang.StartsWith(userInput, StringComparison.OrdinalIgnoreCase))
-                .Select(lang => new AutocompleteResult(lang, lang))
+            IEnumerable<AutocompleteResult> results = Messages.TranslationMetadata
+                .Where(lang => lang.Key.StartsWith(userInput, StringComparison.OrdinalIgnoreCase))
+                .Select(lang => new AutocompleteResult(lang.Key, lang.Value))
                 .Take(25);
 
             return AutocompletionResult.FromSuccess(results);

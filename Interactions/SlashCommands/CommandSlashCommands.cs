@@ -15,14 +15,12 @@ namespace DotNETCoreDiscordBot
         private readonly IServerServiceManager _serverService;
         private readonly BotConfig _botConfig;
         private readonly ILogFile _logFile;
-        private readonly IWebAPIManager _webAPIManager;
 
-        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig, ILogFile logFile, IWebAPIManager webAPIManager)
+        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig, ILogFile logFile)
         {
             _serverService = serverService;
             _botConfig = botConfig;
             _logFile = logFile;
-            _webAPIManager = webAPIManager;
         }
 
         [SlashCommand("ping", "Do you like watching me")]
@@ -232,7 +230,7 @@ namespace DotNETCoreDiscordBot
             _botConfig.Language = langCode;
             await _botConfig.Save(_logFile);
 
-            Messages.TranslatedMessages = await _webAPIManager.GetTranslations(langCode);
+            Messages.SetLanguage(langCode);
 
             await RespondAsync(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])), ephemeral: true);
         }

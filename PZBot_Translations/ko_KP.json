@@ -1,11 +1,11 @@
 ﻿{
     "language_name": "조선말",
-    "language_code": "ko_KP",
     "date_format": "yy/MM/dd",
 
     // Program
-    "load_config": "[Program] 설정파일을 불러오는중...",
-    "load_config_error": "[Program] 설정파일 불러오기오류: {error}",
+    "update_translations": "[Program] 언어자료를 갱신하는중...",
+    "load_config": "[Program] 설정자료를 불러오는중...",
+    "load_config_error": "[Program] 설정자료 불러오기오류: {error}",
     "discord_service_init": "[Program] 디스코드 클라이언트 구성요소 초기화완료",
     "load_services_collection": "[Program] 봉사등록체계 불러오기완료",
     "kill_process": "[Program] 프로그람을 강제로 종료했습니다.",
@@ -67,7 +67,7 @@
 
     "slash_get_usage_title": "💻[현재 콤퓨터 및 기억장치 리용량]🖥️",
 
-    "slash_workshop_file_failed": "{config} 파일을 불러오는데 실패했습니다...",
+    "slash_workshop_file_failed": "{config} 자료를 불러오는데 실패했습니다...",
     "slash_workshop_api_failed": "스팀 API를 통하여 창작마당 모드정보를 가져오는데 실패했습니다...",
     "slash_workshop_no_mods": "써버에 설치된 모드가 없습니다.",
     "slash_workshop_title": "💎[{servername} 창작마당 모드목록 - 모두{count}개]💎",
@@ -110,8 +110,8 @@
     "web_api_error": "[WebAPIManager] 오류: {error}",
 
     // TokenFile
-    "token_not_found": "토큰을 찾을수 없습니다. 콤퓨터오락 디렉토리에 bot_token.txt 파일이 있는지 확인하십시오.",
-    "token_read_failed": "bot_token.txt 파일을 읽는데 실패했습니다.",
+    "token_not_found": "토큰을 찾을수 없습니다. 콤퓨터오락 디렉토리에 bot_token.txt 자료이 있는지 확인하십시오.",
+    "token_read_failed": "bot_token.txt 자료를 읽는데 실패했습니다.",
 
     // Translations
     "translations_language_set": "[Translations] 언어가 {lang}으로 설정되였습니다.",

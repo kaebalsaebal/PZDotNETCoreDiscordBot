@@ -1,9 +1,9 @@
 ﻿{
     "language_name": "Ikirundi",
-    "language_code": "rn_BI",
     "date_format": "dd/MM/yy",
 
     // Program
+    "update_translations": "[Program] Kuvugurura dosiye y'ubuhinduzi...",
     "load_config": "[Program] Turiko turasoma dosiye ya config...",
     "load_config_error": "[Program] Ikosa ryo gusoma dosiye ya config: {error}",
     "discord_service_init": "[Program] Twatanguje ibice bya Discord client",

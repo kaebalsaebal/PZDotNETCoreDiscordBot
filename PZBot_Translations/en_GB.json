@@ -1,15 +1,15 @@
 ﻿{
-    "language_name": "English(United States)",
-    "language_code": "en_US",
-    "date_format": "MM/dd/yy",
+    "language_name": "English(United Kingdom)",
+    "date_format": "dd/MM/yy",
 
     // Program
+    "update_translations":  "[Program] Updating translation file...",
     "load_config": "[Program] Loading config file...",
     "load_config_error": "[Program] Config file load error: {error}",
-    "discord_service_init": "[Program] Initialized discord client components",
+    "discord_service_init": "[Program] Initialised discord client components",
     "load_services_collection": "[Program] Loaded services collection",
     "kill_process": "[Program] Process has been killed",
-    "init_condition_error": "[Program] Check bot initialize condition error: {error}",
+    "init_condition_error": "[Program] Check bot initialise condition error: {error}",
     "ready_handler_error": "[Program] Discord ready handler error: {error}",
     "discord_token_error": "[Program] Discord token error: {error}",
     "init_condition_ready": "[Program] Bot is ready! Starting server process and schedulers...",
@@ -28,8 +28,8 @@
     "restart_server_notification": "[ServerServiceManager] Restarting server in {minutes} minutes",
     "restart_server_notification_rcon": "Server will restart in {minutes} minute(s). Please find a safe place.",
     "restart_server": "[ServerServiceManager] Restarting server. Wait patiently",
-    "restart_server_canceled": "[ServerServiceManager] Restart task has been canceled",
-    "restart_server_canceled_rcon": "The scheduled server restart has been canceled.",
+    "restart_server_canceled": "[ServerServiceManager] Restart task has been cancelled",
+    "restart_server_canceled_rcon": "The scheduled server restart has been cancelled.",
     "shutdown_server": "[ServerServiceManager] Shutting down server",
 
     // ServerProcessManager
@@ -45,7 +45,7 @@
     "help_title": "📋[PZDotNETCoreDiscordBot Commands List]📋",
     "help_parameters": "Parameters:",
     "help_public_commands": "Public commands: Anyone can use them in Public/Command channels",
-    "help_authed_commands": "Admin commands: Only authorized users can use them in the Command channel.",
+    "help_authed_commands": "Admin commands: Only authorised users can use them in the Command channel.",
 
     // CommandSlashCommands
     "slash_modal_value_error1": "SaveAsFile value must be 'true' or 'false'",
@@ -61,7 +61,7 @@
     "slash_show_granted_title": "✔️[Command Channel Granted User List]✔️",
 
     "slash_restart_server": "Restarting server after {minutes} minutes...",
-    "slash_restart_canceled": "Scheduled restart canceled",
+    "slash_restart_canceled": "Scheduled restart cancelled",
     "slash_no_restart": "There is no scheduled restart.",
     "slash_shutdown_server": "Server has shut down.",
 
@@ -80,24 +80,24 @@
     "slash_log_channel": "Set Log Channel to {channel}",
 
     // Preconditions
-    "auth_user_only": "This command is limited to authorized users",
+    "auth_user_only": "This command is limited to authorised users",
     "command_channel_only": "This command is limited to command channel",
     "public_channel_only": "This command is limited to public channel",
 
     // SchedulerService
-    "init_scheduler": "[SchedulerService] Initializing background schedules...",
-    "stop_scheduler": "[SchedulerService] All schedules have been canceled",
+    "init_scheduler": "[SchedulerService] Initialising background schedules...",
+    "stop_scheduler": "[SchedulerService] All schedules have been cancelled",
 
     // WorkshopUpdateScheduledJob
     "workshop_scheduler_running": "[Workshop Update Check Scheduler] Running...",
     "workshop_scheduler_update_found": "[Workshop Update Check Scheduler] Mod update found!!! ({mods})",
-    "workshop_scheduler_stop": "[Workshop Update Check Scheduler] Scheduler has been canceled.",
+    "workshop_scheduler_stop": "[Workshop Update Check Scheduler] Scheduler has been cancelled.",
     "workshop_scheduler_error": "[Workshop Update Check Scheduler] Error: {error}",
 
     // BotUpdateScheduledJob
     "bot_scheduler_running": "[Bot Update Check Scheduler] Running...",
     "bot_scheduler_update_found": "[Bot Update Check Scheduler] Bot update found!!! (Version: {version}, Release: {name})\nYou'd better get a new version at {url}",
-    "bot_scheduler_stop": "[Bot Update Check Scheduler] Scheduler has been canceled.",
+    "bot_scheduler_stop": "[Bot Update Check Scheduler] Scheduler has been cancelled.",
     "bot_scheduler_error": "[Bot Update Check Scheduler] Error: {error}",
 
     // LogFile

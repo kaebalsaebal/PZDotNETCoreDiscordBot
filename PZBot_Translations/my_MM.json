@@ -1,9 +1,9 @@
 ﻿{
     "language_name": "ဗမာလူမျိုး",
-    "language_code": "my_MM",
     "date_format": "dd/MM/yy",
 
     // Program
+    "update_translations": "[Program] Uဘာသာပြန်ဖိုင်ကို အပ်ဒိတ်လုပ်နေသည်...",
     "load_config": "[Program] ကွန်ဖစ်ဖိုင်ကို ဖတ်နေသည်...",
     "load_config_error": "[Program] ကွန်ဖစ်ဖိုင် ဖတ်ရခြင်း အမှား: {error}",
     "discord_service_init": "[Program] Discord client အစိတ်အပိုင်းများကို စတင်ပြင်ဆင်ပြီးပါပြီ",

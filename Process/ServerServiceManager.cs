@@ -29,17 +29,19 @@ namespace DotNETCoreDiscordBot
         private readonly IServerProcessManager _serverProcessManager;
         private readonly ILogFile _logFile;
         private readonly IRconManager _rconManager;
+        private readonly BotConfig _botConfig;
 
         // Token for Cancel Commands
         private CancellationTokenSource? _restartCts;
         // Semaphore for Preventing Race Condition on SaveServer
         private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
-        public ServerServiceManager(IServerProcessManager serverProcessManager, ILogFile logFile, IRconManager rconManager)
+        public ServerServiceManager(IServerProcessManager serverProcessManager, ILogFile logFile, IRconManager rconManager, BotConfig botConfig)
         {
             _serverProcessManager = serverProcessManager;
             _logFile = logFile;
             _rconManager = rconManager;
+            _botConfig = botConfig;
         }
 
         public IMessageChannel? GetChannel(DiscordSocketClient client, ulong channelId)
@@ -167,7 +169,7 @@ namespace DotNETCoreDiscordBot
 
                     await ShutdownServer(client, channelId);
                     _logFile.WriteLine(Messages.Get("restart_server"), channelId);
-                    await StartServer(client, channelId);
+                    await StartServer(client, _botConfig.PublicChannelId);
 
                 }
                 catch (OperationCanceledException)

@@ -20,7 +20,7 @@ namespace DotNETCoreDiscordBot
     {
         Task<List<WebAPIManager.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
         Task<Model.ReleaseDetails> GetLatestBotDetails();
-        Task<Dictionary<string, string>> GetTranslations(string? langCode = "meta");
+        Task UpdateTranslations();
     }
     public class WebAPIManager : IWebAPIManager
     {
@@ -167,13 +167,10 @@ namespace DotNETCoreDiscordBot
             return result;
         }
 
-        // When called with parameters(langCode), return language data matching langCode
-        // Unless return metadata({(language_code): (language_name), ...})
-        public async Task<Dictionary<string, string>> GetTranslations(string? langCode = "meta")
+        public async Task UpdateTranslations()
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
 
-            _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/contents/Translations?ref=master";
+            _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/contents/PZBot_Translations?ref=master";
 
             try
             {
@@ -198,18 +195,9 @@ namespace DotNETCoreDiscordBot
                             if (subres.IsSuccessStatusCode)
                             {
                                 string jsonSubres = await subres.Content.ReadAsStringAsync();
-                                JObject parsedJson = JObject.Parse(jsonResponse);
+                                string localFilePath = Path.Combine(Messages.GetLocation(), fileName);
 
-                                if(langCode != "meta" && parsedJson["language_code"].ToString() == langCode)
-                                {
-                                    result = parsedJson.ToObject<Dictionary<string, string>>();
-                                    break;
-                                }
-
-                                if (parsedJson["language_name"] != null && parsedJson["language_code"] != null)
-                                {
-                                    result[parsedJson["language_code"].ToString()] = parsedJson["language_name"].ToString();
-                                }
+                                await File.WriteAllTextAsync(localFilePath, jsonSubres);
                             }
                         }
                     }
@@ -219,8 +207,6 @@ namespace DotNETCoreDiscordBot
             {
                 _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
             }
-
-            return result;
         }
     }
 }

@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<None Update="Translations\*.json">
+	<None Update="PZBot_Translations\*.json">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
   </ItemGroup>

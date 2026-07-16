@@ -20,7 +20,7 @@ namespace DotNETCoreDiscordBot
 
             IEnumerable<AutocompleteResult> results = Messages.TranslationMetadata
                 .Where(lang => lang.Key.StartsWith(userInput, StringComparison.OrdinalIgnoreCase))
-                .Select(lang => new AutocompleteResult(lang.Key, lang.Value))
+                .Select(lang => new AutocompleteResult(lang.Value, lang.Key))
                 .Take(25);
 
             return AutocompletionResult.FromSuccess(results);

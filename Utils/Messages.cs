@@ -1,6 +1,7 @@
 ﻿using Discord.Interactions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
@@ -17,13 +18,15 @@ namespace DotNETCoreDiscordBot
         public static Dictionary<string, string>? TranslatedMessages = null;
         public static Dictionary<string, string>? TranslationMetadata = null;
 
+        private static readonly string _folderPath = Path.Combine(AppContext.BaseDirectory, "PZBot_Translations");
+
         private static readonly Dictionary<string, string> _defaultMessages = new Dictionary<string, string>
         {
-            {"language_code", "en_US" },
             {"language_name", "English(United States)" },
             {"date_format", "MM/dd/yy" },
 
             // Program
+            {"update_translations", "[Program] Updating translation file..." },
             {"load_config", "[Program] Loading config file..." },
             {"load_config_error", "[Program] Config file load error: {error}" },
             {"discord_service_init", "[Program] Initialized discord client components"},
@@ -138,6 +141,47 @@ namespace DotNETCoreDiscordBot
             {"translations_using_default", "[Translations] Failed to load language file. Using built-in English data..."},
             {"translations_language_unavilable", "[Translations] This language is not supported: {lang}" }
         };
+
+        public static string GetLocation()
+        {
+            return _folderPath;
+        }
+
+        public static void MakeMetadata()
+        {
+            TranslationMetadata = new Dictionary<string, string>();
+
+            if (Directory.Exists(_folderPath))
+            {
+                List<string> jsonFiles = Directory.GetFiles(_folderPath, "*.json", SearchOption.TopDirectoryOnly).ToList();
+
+                foreach(string jsonFile in jsonFiles)
+                {
+                    string jsonString = File.ReadAllText(jsonFile);
+                    JObject parsedJson = JObject.Parse(jsonString);
+
+                    if (parsedJson["language_name"] != null && Path.GetFileName(jsonFile) != null)
+                    {
+                        TranslationMetadata[Path.GetFileName(jsonFile).ToString()] = parsedJson["language_name"].ToString();
+                    }
+                }
+            }
+
+        }
+
+        public static void SetLanguage(string langCode)
+        {
+            TranslatedMessages = new Dictionary<string, string>();
+
+            string filePath = Path.Combine(_folderPath, $"{langCode}.json");
+
+            if (File.Exists(filePath))
+            {
+                string jsonString = File.ReadAllText(filePath);
+                JObject parsedJson = JObject.Parse(jsonString);
+                TranslatedMessages = parsedJson.ToObject<Dictionary<string, string>>();
+            }
+        }
 
         public static string Get(string key)
         {

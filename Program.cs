@@ -87,17 +87,22 @@ namespace DotNETCoreDiscordBot
                 }
 
                 // Get Localization
-                var webAPIManager = service.GetRequiredService<IWebAPIManager>();
-                Messages.TranslationMetadata = await webAPIManager.GetTranslations();
                 if (botConfig.Language != null)
                 {
-                    Messages.TranslatedMessages = await webAPIManager.GetTranslations(botConfig.Language);
+                    Messages.SetLanguage(botConfig.Language);
                     logFile.WriteLine(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])));
                 }
                 else
                 {
                     logFile.WriteLine(Messages.Get("translations_using_default"));
                 }
+
+                // Update translation files from repository
+                logFile.WriteLine(Messages.Get("update_translations"));
+                var webAPIManager = service.GetRequiredService<IWebAPIManager>();
+                await webAPIManager.UpdateTranslations();
+
+                Messages.MakeMetadata();
 
             }
             catch (Exception e)

@@ -1,11 +1,11 @@
 ﻿{
     "language_name": "한국어",
-    "language_code": "ko_KR",
     "date_format": "yy/MM/dd",
 
     // Program
-    "load_config": "[Program] 설정 파일을 불러오는 중...",
-    "load_config_error": "[Program] 설정 파일 로드 오류: {error}",
+    "update_translations": "[Program] 언어파일을 업데이트하는 중...",
+    "load_config": "[Program] 설정 자료를 불러오는 중...",
+    "load_config_error": "[Program] 설정 자료 로드 오류: {error}",
     "discord_service_init": "[Program] 디스코드 클라이언트 컴포넌트 초기화 완료",
     "load_services_collection": "[Program] 서비스 컬렉션 로드 완료",
     "kill_process": "[Program] 프로세스가 강제 종료되었습니다.",
@@ -38,7 +38,7 @@
     "process_manager_error": "[ServerProcessManager] 오류: {error}",
 
     // ServerProcess
-    "parse_script_modify": "[ServerProcess] 서버 스크립트 파일에서 pause/read 구문을 제거했습니다.",
+    "parse_script_modify": "[ServerProcess] 서버 스크립트 자료에서 pause/read 구문을 제거했습니다.",
     "custom_location_found": "[ServerProcess] 사용자 정의 경로를 찾았습니다: {location}",
 
     // PublicSlashCommands
@@ -67,7 +67,7 @@
 
     "slash_get_usage_title": "💻[현재 CPU 및 메모리 사용량]🖥️",
 
-    "slash_workshop_file_failed": "{config} 파일을 가져오는데 실패했습니다...",
+    "slash_workshop_file_failed": "{config} 자료를 가져오는데 실패했습니다...",
     "slash_workshop_api_failed": "SteamAPI를 통해 창작마당 모드 정보를 가져오는데 실패했습니다...",
     "slash_workshop_no_mods": "서버에 설치된 모드가 없습니다.",
     "slash_workshop_title": "💎[{servername} 창작마당 모드 목록 - 총 {count}개]💎",
@@ -110,8 +110,8 @@
     "web_api_error": "[WebAPIManager] 오류: {error}",
 
     // tokenfile
-    "token_not_found": "토큰을 찾을 수 없습니다. 게임 디렉터리에 bot_token.txt 파일이 있는지 확인해 주세요.",
-    "token_read_failed": "bot_token.txt 파일을 읽는데 실패했습니다.",
+    "token_not_found": "토큰을 찾을 수 없습니다. 게임 디렉터리에 bot_token.txt 자료이 있는지 확인해 주세요.",
+    "token_read_failed": "bot_token.txt 자료를 읽는데 실패했습니다.",
 
     // Translations
     "translations_language_set": "[Translations] 언어가 {lang}으로 설정되었습니다.",

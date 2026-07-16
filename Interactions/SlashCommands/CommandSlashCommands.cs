@@ -15,12 +15,14 @@ namespace DotNETCoreDiscordBot
         private readonly IServerServiceManager _serverService;
         private readonly BotConfig _botConfig;
         private readonly ILogFile _logFile;
+        private readonly IWebAPIManager _webAPIManager;
 
-        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig, ILogFile logFile)
+        public CommandSlashCommands(IServerServiceManager serverService, BotConfig botConfig, ILogFile logFile, IWebAPIManager webAPIManager)
         {
             _serverService = serverService;
             _botConfig = botConfig;
             _logFile = logFile;
+            _webAPIManager = webAPIManager;
         }
 
         [SlashCommand("ping", "Do you like watching me")]
@@ -218,5 +220,21 @@ namespace DotNETCoreDiscordBot
             await FollowupAsync(Messages.Get("slash_server_msg").KeyFormat(("msg", msg)), ephemeral: true);
         }
 
+        [SlashCommand("set_language", "Set language")]
+        public async Task SetLanguage([Summary("langCode", "(Country Code)_(Language Code)")][Autocomplete(typeof(SetLanguageAutocompleteHandler))] string langCode)
+        {
+            if (!Messages.LanguageList.Contains(langCode))
+            {
+                await RespondAsync($"🚫 유효하지 않은 언어 코드입니다. 목록에서 선택해 주세요.", ephemeral: true);
+                return;
+            }
+
+            _botConfig.Language = langCode;
+            await _botConfig.Save(_logFile);
+
+            Messages.LocalizedMessages = await _webAPIManager.GetLocalization(langCode);
+
+            await RespondAsync(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.LocalizedMessages["language_name"])), ephemeral: true);
+        }
     }
 }

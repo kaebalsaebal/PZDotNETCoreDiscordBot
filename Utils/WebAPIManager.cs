@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -19,6 +20,8 @@ namespace DotNETCoreDiscordBot
     {
         Task<List<WebAPIManager.Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList);
         Task<Model.ReleaseDetails> GetLatestBotDetails();
+        Task<Dictionary<string, string>> GetLocalization(string langCode);
+        Task<List<string>> GetLanguageList();
     }
     public class WebAPIManager : IWebAPIManager
     {
@@ -80,12 +83,14 @@ namespace DotNETCoreDiscordBot
 
         private readonly HttpClient _client;
         private readonly ILogFile _logFile;
+        private readonly BotConfig _botConfig;
         private string _apiEndPoint;
 
-        public WebAPIManager(HttpClient client, ILogFile logFile)
+        public WebAPIManager(HttpClient client, ILogFile logFile, BotConfig botConfig)
         {
             _client = client;
             _logFile = logFile;
+            _botConfig = botConfig;
         }
 
         public async Task<List<Model.WorkshopItemDetails>> GetWorkshopItemDetails(string[] idList)
@@ -154,6 +159,68 @@ namespace DotNETCoreDiscordBot
                     }
                 }
 
+            }
+            catch (Exception e)
+            {
+                _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
+            }
+
+            return result;
+        }
+
+        public async Task<Dictionary<string, string>> GetLocalization(string langCode)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>
+            {
+                {"language_name", "" },
+                {"date_format", "dd/MM/yy" },
+            };
+            _apiEndPoint = $"https://raw.githubusercontent.com/kaebalsaebal/PZDotNETCoreDiscordBot/master/Localization/{langCode}.json";
+
+            try
+            {
+                var response = await _client.GetAsync(_apiEndPoint);
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                JObject parsedJson = JObject.Parse(jsonResponse);
+
+                if (parsedJson["language_name"] != null) result = parsedJson.ToObject<Dictionary<string, string>>();
+            }
+            catch (Exception e)
+            {
+                _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
+            }
+
+
+            return result;
+        }
+
+        public async Task<List<string>> GetLanguageList()
+        {
+            List<string> result = new List<string>();
+
+            _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/contents/Localization?ref=master";
+
+            try
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, _apiEndPoint);
+                request.Headers.Add("User-Agent", "PZDotNETCoreDiscordBot");
+                var response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    JArray files = JArray.Parse(jsonResponse);
+
+                    foreach (var file in files)
+                    {
+                        string fileName = file["name"]?.ToString();
+
+                        if (!string.IsNullOrEmpty(fileName) && fileName.EndsWith(".json"))
+                        {
+                            result.Add(fileName.Replace(".json", ""));
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {

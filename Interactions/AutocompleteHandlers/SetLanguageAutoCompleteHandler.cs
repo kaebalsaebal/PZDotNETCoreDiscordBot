@@ -1,0 +1,29 @@
+﻿using Discord;
+using Discord.Interactions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DotNETCoreDiscordBot
+{
+    public class SetLanguageAutocompleteHandler : AutocompleteHandler
+    {
+        public override async Task<AutocompletionResult> GenerateSuggestionsAsync(
+            IInteractionContext context,
+            IAutocompleteInteraction autocompleteInteraction,
+            IParameterInfo parameter,
+            IServiceProvider services)
+        {
+            string userInput = autocompleteInteraction.Data.Current.Value.ToString();
+
+            IEnumerable<AutocompleteResult> results = Messages.LanguageList
+                .Where(lang => lang.StartsWith(userInput, StringComparison.OrdinalIgnoreCase))
+                .Select(lang => new AutocompleteResult(lang, lang))
+                .Take(25);
+
+            return AutocompletionResult.FromSuccess(results);
+        }
+    }
+}

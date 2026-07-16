@@ -1,0 +1,118 @@
+﻿{
+    "language_name": "조선말",
+    "date_format": "yy/MM/dd",
+
+    // Program
+    "load_config": "[Program] 설정파일을 불러오는중...",
+    "load_config_error": "[Program] 설정파일 불러오기오류: {error}",
+    "discord_service_init": "[Program] 디스코드 클라이언트 구성요소 초기화완료",
+    "load_services_collection": "[Program] 봉사등록체계 불러오기완료",
+    "kill_process": "[Program] 프로그람을 강제로 종료했습니다.",
+    "init_condition_error": "[Program] 봇 초기화조건 검사오류: {error}",
+    "ready_handler_error": "[Program] 디스코드 대기처리기오류: {error}",
+    "discord_token_error": "[Program] 디스코드 토큰오류: {error}",
+    "init_condition_ready": "[Program] 봇 준비완료! 써버프로그람와 일정관리기를 시작합니다...",
+    "bot_config_incomplete": "✨봇설정이 완전하지 않습니다. 디스코드 대화방에서 다음 명령을 실행하십시오.\n`/set_public_channel`\n`/set_command_channel`\n`/set_log_channel`✨",
+    "command_error": "🚫 명령실행오류: {error}",
+    "precondition_error": "🚫 전제조건오류: {error}",
+    "exception_error": "🚫 예외오류: {error}",
+    "unknown_error": "🚫 알수없는오류: {error}",
+    "discord_log": "[Discord] {log}",
+
+    // ServerServiceManager
+    "server_started_notification": "@everyone 🔥 써버가 시작되였습니다!",
+    "save_server_notification": "💾 써버자료를 저장하는중...",
+    "server_saved_notification": "💾 저장완료",
+    "restart_config_error": "[ServerServiceManager] 오류: RestartTime(재시작시간)이 설정되지 않았습니다.",
+    "restart_server_notification": "[ServerServiceManager] {minutes}분 후 써버를 재시작합니다.",
+    "restart_server_notification_rcon": "써버가 {minutes}분 후 재시작됩니다. 안전한 곳으로 대피하십시오.",
+    "restart_server": "[ServerServiceManager] 써버를 재시작하는중입니다. 잠시 기다려주십시오.",
+    "restart_server_canceled": "[ServerServiceManager] 재시작작업이 취소되였습니다.",
+    "restart_server_canceled_rcon": "예정된 써버재시작이 취소되였습니다.",
+    "shutdown_server": "[ServerServiceManager] 써버를 종료하는중입니다.",
+
+    // ServerProcessManager
+    "server_already_started": "[ServerProcessManager] 써버가 이미 시작되였습니다.",
+    "servername_configured": "[ServerProcessManager] 써버이름이 설정되였습니다: {servername}",
+    "process_manager_error": "[ServerProcessManager] 오류: {error}",
+
+    // ServerProcess
+    "parse_script_modify": "[ServerProcess] 써버스크립트에서 pause/read 구문을 제거했습니다.",
+    "custom_location_found": "[ServerProcess] 사용자지정경로를 발견했습니다: {location}",
+
+    // PublicSlashCommands
+    "help_title": "📋[PZDotNETCoreDiscordBot 명령목록]📋",
+    "help_parameters": "매개변수:",
+    "help_public_commands": "일반명령: 공개대화방과 명령대화방에서 누구나 사용할수 있습니다.",
+    "help_authed_commands": "관리자명령: 권한을 부여받은 리용자만 명령대화방에서 사용할수 있습니다.",
+
+    // CommandSlashCommands
+    "slash_modal_value_error1": "SaveAsFile 값은 반드시 'true' 또는 'false'여야 합니다.",
+    "slash_modal_value_error2": "RestartTimer 값은 수자로만 이루어져야 합니다.",
+    "slash_modal_value_error3": "Interval 값은 수자로만 이루어져야 합니다.",
+    "slash_modal_updated": "설정이 갱신되였습니다.",
+
+    "slash_grant_already_exists": "{user}님은 이미 권한을 부여받았습니다.",
+    "slash_grant": "{user}님에게 명령실행권한을 부여했습니다.",
+    "slash_revoke_owner": "봇소유자의 권한은 회수할수 없습니다.",
+    "slash_revoke_already_exists": "{user}님은 이미 권한이 회수된 상태입니다.",
+    "slash_revoke": "{user}님의 명령실행권한을 회수했습니다.",
+    "slash_show_granted_title": "✔️[명령대화방 권한부여 리용자목록]✔️",
+
+    "slash_restart_server": "{minutes}분 후 써버를 재시작합니다...",
+    "slash_restart_canceled": "예정된 재시작이 취소되였습니다.",
+    "slash_no_restart": "예정된 재시작일정이 없습니다.",
+    "slash_shutdown_server": "써버가 종료되였습니다.",
+
+    "slash_get_usage_title": "💻[현재 콤퓨터 및 기억장치 리용량]🖥️",
+
+    "slash_workshop_file_failed": "{config} 파일을 불러오는데 실패했습니다...",
+    "slash_workshop_api_failed": "스팀 API를 통하여 창작마당 모드정보를 가져오는데 실패했습니다...",
+    "slash_workshop_no_mods": "써버에 설치된 모드가 없습니다.",
+    "slash_workshop_title": "💎[{servername} 창작마당 모드목록 - 모두{count}개]💎",
+
+    "slash_server_msg": "써버에 통보문을 전송했습니다: {msg}",
+
+    // ChannelSlashCommands
+    "slash_public_channel": "공개대화방을 {channel} 대화방로 설정했습니다.",
+    "slash_command_channel": "명령대화방을 {channel} 대화방로 설정했습니다.",
+    "slash_log_channel": "기록대화방을 {channel} 대화방로 설정했습니다.",
+
+    // Preconditions
+    "auth_user_only": "이 명령은 권한을 부여받은 리용자만 사용할수 있습니다.",
+    "command_channel_only": "이 명령은 명령대화방에서만 사용할수 있습니다.",
+    "public_channel_only": "이 명령은 공개대화방에서만 사용할수 있습니다.",
+
+    // SchedulerService
+    "init_scheduler": "[SchedulerService] 일정관리기를 초기화하는중...",
+    "stop_scheduler": "[SchedulerService] 모든 일정이 취소되였습니다.",
+
+    // WorkshopUpdateScheduledJob
+    "workshop_scheduler_running": "[Workshop Update Check Scheduler] 동작중...",
+    "workshop_scheduler_update_found": "[Workshop Update Check Scheduler] 모드갱신을 발견했습니다! ({mods})",
+    "workshop_scheduler_stop": "[Workshop Update Check Scheduler] 일정관리기 동작이 중지되였습니다.",
+    "workshop_scheduler_error": "[Workshop Update Check Scheduler] 오류: {error}",
+
+    // BotUpdateScheduledJob
+    "bot_scheduler_running": "[Bot Update Check Scheduler] 동작중...",
+    "bot_scheduler_update_found": "[Bot Update Check Scheduler] 새판을 발견했습니다! (판본: {version}, 발표: {name})\n{url} 옴페지에서 새로운 판을 내려받으십시오.",
+    "bot_scheduler_stop": "[Bot Update Check Scheduler] 일정관리기 동작이 중지되였습니다.",
+    "bot_scheduler_error": "[Bot Update Check Scheduler] 오류: {error}",
+
+    // LogFile
+    "logfile_error": "[LogFile] 오류: {error}",
+
+    // RconManager
+    "rcon_error": "[RconManager] 오류: {error}",
+
+    // WebAPIManager
+    "web_api_error": "[WebAPIManager] 오류: {error}",
+
+    // TokenFile
+    "token_not_found": "토큰을 찾을수 없습니다. 콤퓨터오락 디렉토리에 bot_token.txt 파일이 있는지 확인하십시오.",
+    "token_read_failed": "bot_token.txt 파일을 읽는데 실패했습니다.",
+
+    // Translations
+    "translations_language_set": "[Translations] 언어가 {lang}으로 설정되였습니다.",
+    "translations_language_unavilable": "[Translations] {lang} 언어는 지원하지 않습니다."
+}

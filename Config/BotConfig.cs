@@ -82,6 +82,8 @@ namespace DotNETCoreDiscordBot
 
         public ServerProcessSettings ServerProcessSettings = new ServerProcessSettings();
 
+        public string Language;
+
         public async Task Save(ILogFile logFile)
         {
             await _saveLock.WaitAsync();

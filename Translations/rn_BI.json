@@ -1,0 +1,118 @@
+﻿{
+    "language_name": "Ikirundi",
+    "date_format": "dd/MM/yy",
+
+    // Program
+    "load_config": "[Program] Turiko turasoma dosiye ya config...",
+    "load_config_error": "[Program] Ikosa ryo gusoma dosiye ya config: {error}",
+    "discord_service_init": "[Program] Twatanguje ibice bya Discord client",
+    "load_services_collection": "[Program] Twasomye urutonde rwa services",
+    "kill_process": "[Program] Igikorwa (Process) cahagaritswe",
+    "init_condition_error": "[Program] Ikosa ryo gusuzuma uko Bot itangura: {error}",
+    "ready_handler_error": "[Program] Ikosa rya Discord ready handler: {error}",
+    "discord_token_error": "[Program] Ikosa rya Discord token: {error}",
+    "init_condition_ready": "[Program] Bot iriteguye! Turiko turatangura igikorwa ca server na schedulers...",
+    "bot_config_incomplete": "✨Config ya Bot ntiyuzuye. Koresha command \n `/set_public_channel`, \n `/set_command_channel`, \n `/set_log_channel` \n muri server yawe ya Discord✨",
+    "command_error": "🚫 Ikosa rya command: {error}",
+    "precondition_error": "🚫 Ikosa rya precondition: {error}",
+    "exception_error": "🚫 Ikosa ridasanzwe (Exception): {error}",
+    "unknown_error": "🚫 Ikosa ritazwi: {error}",
+    "discord_log": "[Discord] {log}",
+
+    // ServerServiceManager
+    "server_started_notification": "@everyone 🔥 Server yatanguye!!!",
+    "save_server_notification": "💾 Turiko turabika server...",
+    "server_saved_notification": "💾 Kubika biheze",
+    "restart_config_error": "[ServerServiceManager] Ikosa: Igihe co gusubira gutangura (RestartTime) nticashizweho",
+    "restart_server_notification": "[ServerServiceManager] Server irasubira gutangura mu minota {minutes}",
+    "restart_server_notification_rcon": "Server irasubira gutangura mu minota {minutes}. Turabasavye kurondera ikibanza gitekanye.",
+    "restart_server": "[ServerServiceManager] Turiko turasubira gutangura server. Turabasavye kwihangana",
+    "restart_server_canceled": "[ServerServiceManager] Igikorwa co gusubira gutangura cahagaritswe",
+    "restart_server_canceled_rcon": "Igikorwa co gusubira gutangura server cahagaritswe.",
+    "shutdown_server": "[ServerServiceManager] Turiko turazima server",
+
+    // ServerProcessManager
+    "server_already_started": "[ServerProcessManager] Server yamaze gutangura",
+    "servername_configured": "[ServerProcessManager] Izina rya server ryashizweho: {servername}",
+    "process_manager_error": "[ServerProcessManager] Ikosa: {error}",
+
+    // ServerProcess
+    "parse_script_modify": "[ServerProcess] Twakuyeho pause/read muri dosiye ya Server Script",
+    "custom_location_found": "[ServerProcess] Ikibanza kihariye cabonetse: {location}",
+
+    // PublicSlashCommands
+    "help_title": "📋[Urutonde rwa Command za PZDotNETCoreDiscordBot]📋",
+    "help_parameters": "Ibisabwa (Parameters):",
+    "help_public_commands": "Command rusangi: Umuntu wese arashobora kuzikoresha muri channels rusangi/command",
+    "help_authed_commands": "Command z'abajejwe intwaro (Admin): Ababikwiriye gusa nibo bashobora kuzikoresha muri channel ya Command.",
+
+    // CommandSlashCommands
+    "slash_modal_value_error1": "Agaciro ka SaveAsFile gategerezwa kuba 'true' canke 'false'",
+    "slash_modal_value_error2": "Agaciro ka RestartTimer gategerezwa kuba ibiharuro gusa",
+    "slash_modal_value_error3": "Agaciro ka Interval gategerezwa kuba ibiharuro gusa",
+    "slash_modal_updated": "Config yavuguruwe",
+
+    "slash_grant_already_exists": "{user} yamaze guhabwa uburenganzira.",
+    "slash_grant": "Uburenganzira bwa command buhawe {user}.",
+    "slash_revoke_owner": "Kwambura uburenganzira nyene bot ntibirekuriwe.",
+    "slash_revoke_already_exists": "```{user}``` yamaze kwamburwa uburenganzira.",
+    "slash_revoke": "Uburenganzira bwa command bwambuwe {user}",
+    "slash_show_granted_title": "✔️[Urutonde rw'abafise uburenganzira muri Channel ya Command]✔️",
+
+    "slash_restart_server": "Turiko turasubira gutangura server inyuma y'iminota {minutes}...",
+    "slash_restart_canceled": "Igihe co gusubira gutangura cahagaritswe",
+    "slash_no_restart": "Nta gihe co gusubira gutangura gitegekanijwe.",
+    "slash_shutdown_server": "Server yazimijwe.",
+
+    "slash_get_usage_title": "💻[Ikoreshwa rya CPU n'Ububiko ubu]🖥️",
+
+    "slash_workshop_file_failed": "Ntivyashobotse kuronka dosiye ya {config}...",
+    "slash_workshop_api_failed": "Ntivyashobotse kuronka amakuru ya workshop mods binyuze kuri SteamAPI...",
+    "slash_workshop_no_mods": "Nta mods ziri kuri server yawe.",
+    "slash_workshop_title": "💎[Workshop Mods muri {servername} - Yose hamwe ni {count}]💎",
+
+    "slash_server_msg": "Ubutumwa bwarungitswe kuri server: {msg}",
+
+    // ChannelSlashCommands
+    "slash_public_channel": "Channel rusangi yashizwe kuri {channel}",
+    "slash_command_channel": "Channel ya Command yashizwe kuri {channel}",
+    "slash_log_channel": "Channel ya Log yashizwe kuri {channel}",
+
+    // Preconditions
+    "auth_user_only": "Iyi command igenewe gusa ababifitiye uburenganzira",
+    "command_channel_only": "Iyi command ikoreshwa gusa muri channel ya command",
+    "public_channel_only": "Iyi command ikoreshwa gusa muri channel rusangi",
+
+    // SchedulerService
+    "init_scheduler": "[SchedulerService] Turiko turatangura gahunda zinyuma (background schedules)...",
+    "stop_scheduler": "[SchedulerService] Gahunda zose zahagaritswe",
+
+    // WorkshopUpdateScheduledJob
+    "workshop_scheduler_running": "[Workshop Update Check Scheduler] Irikora...",
+    "workshop_scheduler_update_found": "[Workshop Update Check Scheduler] Habonetse ibishasha vya Mod!!! ({mods})",
+    "workshop_scheduler_stop": "[Workshop Update Check Scheduler] Scheduler yahagaritswe.",
+    "workshop_scheduler_error": "[Workshop Update Check Scheduler] Ikosa: {error}",
+
+    // BotUpdateScheduledJob
+    "bot_scheduler_running": "[Bot Update Check Scheduler] Irikora...",
+    "bot_scheduler_update_found": "[Bot Update Check Scheduler] Habonetse ibishasha vya Bot!!! (Version: {version}, Release: {name})\nVyoba vyiza urondeye version nshasha kuri {url}",
+    "bot_scheduler_stop": "[Bot Update Check Scheduler] Scheduler yahagaritswe.",
+    "bot_scheduler_error": "[Bot Update Check Scheduler] Ikosa: {error}",
+
+    // LogFile
+    "logfile_error": "[LogFile] Ikosa: {error}",
+
+    // RconManager
+    "rcon_error": "[RconManager] Ikosa: {error}",
+
+    // WebAPIManager
+    "web_api_error": "[WebAPIManager] Ikosa: {error}",
+
+    // tokenfile
+    "token_not_found": "Token ntiyabonetse. Raba neza ko dosiye ya bot_token.txt iri mu bubiko bw'urukino.",
+    "token_read_failed": "Ntivyashobotse gusoma dosiye ya bot_token.txt.",
+
+    // Translations
+    "translations_language_set": "[Translations] Ururimi rwa Bot ubu ni: {lang}",
+    "translations_language_unavilable": "[Translations] Ururimi ntirwemewe: {lang}"
+}

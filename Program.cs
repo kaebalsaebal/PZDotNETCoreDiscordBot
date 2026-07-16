@@ -70,7 +70,6 @@ namespace DotNETCoreDiscordBot
 
             var service = servicesCollection.BuildServiceProvider();
             ILogFile logFile = service.GetRequiredService<ILogFile>();
-            logFile.WriteLine(Messages.Get("load_services_collection"));
 
             // Load Config File
             try
@@ -87,12 +86,26 @@ namespace DotNETCoreDiscordBot
                     JsonConvert.PopulateObject(File.ReadAllText(botConfig.GetConfLocation()), botConfig);
                 }
 
+                // Get Localization
+                var webAPIManager = service.GetRequiredService<IWebAPIManager>();
+                Messages.LanguageList = await webAPIManager.GetLanguageList();
+                if (botConfig.Language != null)
+                {
+                    Messages.LocalizedMessages = await webAPIManager.GetLocalization(botConfig.Language);
+                    logFile.WriteLine(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.LocalizedMessages["language_name"])));
+                }
+                else
+                {
+                    logFile.WriteLine(Messages.Get("translations_language_not_found"));
+                }
+
             }
             catch (Exception e)
             {
                 logFile.WriteLine(Messages.Get("load_config_error").KeyFormat(("error", e.Message)));
                 return;
             }
+            logFile.WriteLine(Messages.Get("load_services_collection"));
 
             var commandHandler = service.GetRequiredService<DiscordHandler>();
             await commandHandler.Initialize();

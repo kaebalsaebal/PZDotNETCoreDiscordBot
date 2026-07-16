@@ -33,13 +33,13 @@ namespace DotNETCoreDiscordBot
 
         private string GetLocation()
         {
-            string logDate = DateTime.Now.ToString("ddMMyy");
+            string logDate = DateTime.Now.ToString(Messages.Get("date_format").Replace("/",""));
             return Path.Combine(AppContext.BaseDirectory, "PZBot_Logs", $"PZBot_log_{logDate}.txt");
         }
 
         private string GetDateTime()
         {
-            return DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            return DateTime.Now.ToString($"{Messages.Get("date_format")} HH:mm:ss");
         }
 
         private async Task SendLogToDiscord(string log, ulong channelId)

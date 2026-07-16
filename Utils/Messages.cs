@@ -14,9 +14,14 @@ namespace DotNETCoreDiscordBot
 
     public static class Messages
     {
-        private static Dictionary<string, string>? _messages = null;
+        public static Dictionary<string, string>? LocalizedMessages = null;
+        public static List<string> LanguageList = new List<string>();
+
         private static readonly Dictionary<string, string> _defaultMessages = new Dictionary<string, string>
         {
+            {"language_code", "en_US" },
+            {"date_format", "MM/dd/yy" },
+
             // Program
             {"load_config", "[Program] Loading config file..." },
             {"load_config_error", "[Program] Config file load error: {error}" },
@@ -43,7 +48,7 @@ namespace DotNETCoreDiscordBot
             {"restart_server_notification_rcon", "Server will restart in {minutes} minute(s). Please find a safe place."},
             {"restart_server", "[ServerServiceManager] Restarting server. Wait patiently" },
             {"restart_server_canceled", "[ServerServiceManager] Restart task has been canceled"},
-            {"restart_server_canceled_rcon", "The scheduled server restart has been cancelled." },
+            {"restart_server_canceled_rcon", "The scheduled server restart has been canceled." },
             {"shutdown_server", "[ServerServiceManager] Shutting down server"},
 
             // ServerProcessManager
@@ -63,8 +68,8 @@ namespace DotNETCoreDiscordBot
 
             //CommandSlashCommands
             {"slash_modal_value_error1", "SaveAsFile value must be 'true' or 'false'"},
-            {"slash_modal_value_error2", "RestartTimer value must be consisted of digits" },
-            {"slash_modal_value_error3", "Interval value must be consisted of digits" },
+            {"slash_modal_value_error2", "RestartTimer value must consist of digits" },
+            {"slash_modal_value_error3", "Interval value must consist of digits" },
             {"slash_modal_updated", "Config has been Updated" },
 
             {"slash_grant_already_exists","{user} has already been granted."},
@@ -75,7 +80,7 @@ namespace DotNETCoreDiscordBot
             {"slash_show_granted_title","✔️[Command Channel Granted User List]✔️" },
 
             {"slash_restart_server", "Restarting server after {minutes} minutes..." },
-            {"slash_restart_canceled", "Scheduled restart cancelled"},
+            {"slash_restart_canceled", "Scheduled restart canceled"},
             {"slash_no_restart", "There is no scheduled restart." },
             {"slash_shutdown_server", "Server has shut down." },
 
@@ -83,7 +88,7 @@ namespace DotNETCoreDiscordBot
 
             {"slash_workshop_file_failed", "Failed to Get {config} File..."},
             {"slash_workshop_api_failed", "Failed to get workshop mods info by SteamAPI..." },
-            {"slash_workshop_no_mods", "There is no mods in your server." },
+            {"slash_workshop_no_mods", "There are no mods on your server." },
             {"slash_workshop_title", "💎[Workshop Mods in {servername} - Total {count}]💎" },
 
             {"slash_server_msg", "Sent message to server: {msg}"},
@@ -100,7 +105,7 @@ namespace DotNETCoreDiscordBot
 
             //SchedulerService
             {"init_scheduler", "[SchedulerService] Initializing background schedules..." },
-            {"stop_scheduler", "[SchedulerService] All schedules has been canceled" },
+            {"stop_scheduler", "[SchedulerService] All schedules have been canceled" },
 
             //WorkshopUpdateScheduledJob
             {"workshop_scheduler_running", "[Workshop Update Check Scheduler] Running..." },
@@ -110,9 +115,9 @@ namespace DotNETCoreDiscordBot
 
             //BotUpdateScheduledJob
             {"bot_scheduler_running", "[Bot Update Check Scheduler] Running..." },
-			{"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! (Version: {version}, Release: {name})\nYou'd better to get a new version at {url}" },
-			{"bot_scheduler_stop", "[Bot Update Check Scheduler] Scheduler has been canceled." },
-			{"bot_scheduler_error", "[Bot Update Check Scheduler] Error: {error}" },
+            {"bot_scheduler_update_found", "[Bot Update Check Scheduler] Bot update found!!! (Version: {version}, Release: {name})\nYou'd better get a new version at {url}" },
+            {"bot_scheduler_stop", "[Bot Update Check Scheduler] Scheduler has been canceled." },
+            {"bot_scheduler_error", "[Bot Update Check Scheduler] Error: {error}" },
 
             //LogFile
             {"logfile_error", "[LogFile] Error: {error}"},
@@ -124,15 +129,20 @@ namespace DotNETCoreDiscordBot
             {"web_api_error", "[WebAPIManager] Error: {error}"},
 
             //tokenfile
-            {"token_not_found", "Token not found.  Make sure to locate bot_token.txt file on the game directory."},
+            {"token_not_found", "Token not found. Make sure to locate the bot_token.txt file in the game directory."},
             {"token_read_failed", "Failed to read bot_token.txt file."},
+
+            //Translations
+            {"translations_language_set", "[Translations] Bot language is now: {lang}" },
+            {"translations_language_not_found", "[Translations] Failed to load language file. Using built-in en-US data..."},
+            {"translations_language_unavilable", "[Translations] This language is not supported: {lang}" }
         };
 
         public static string Get(string key)
         {
-            if(_messages != null && _messages.ContainsKey(key))
+            if (LocalizedMessages != null && LocalizedMessages.ContainsKey(key))
             {
-                return _messages[key];
+                return LocalizedMessages[key];
             }
             else if (_defaultMessages.ContainsKey(key))
             {

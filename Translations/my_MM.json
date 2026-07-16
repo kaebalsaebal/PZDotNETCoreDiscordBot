@@ -1,0 +1,119 @@
+﻿{
+    "language_name": "ဗမာလူမျိုး",
+    "date_format": "dd/MM/yy",
+
+    // Program
+    "load_config": "[Program] ကွန်ဖစ်ဖိုင်ကို ဖတ်နေသည်...",
+    "load_config_error": "[Program] ကွန်ဖစ်ဖိုင် ဖတ်ရခြင်း အမှား: {error}",
+    "discord_service_init": "[Program] Discord client အစိတ်အပိုင်းများကို စတင်ပြင်ဆင်ပြီးပါပြီ",
+    "load_services_collection": "[Program] ဝန်ဆောင်မှုများ စုစည်းမှုကို ဖတ်ပြီးပါပြီ",
+    "kill_process": "[Program] လုပ်ငန်းစဉ် (Process) ကို ရပ်ဆိုင်းလိုက်ပါပြီ",
+    "init_condition_error": "[Program] Bot စတင်ခြင်း သတ်မှတ်ချက် စစ်ဆေးမှု အမှား: {error}",
+    "ready_handler_error": "[Program] Discord ready handler အမှား: {error}",
+    "discord_token_error": "[Program] Discord တိုကင် (Token) အမှား: {error}",
+    "init_condition_ready": "[Program] Bot အဆင်သင့်ဖြစ်ပါပြီ။ ဆာဗာလုပ်ငန်းစဉ်နှင့် စကရင်ဂျူလာများကို စတင်နေသည်...",
+    "bot_config_incomplete": "✨Bot ကွန်ဖစ် မပြည့်စုံသေးပါ။ သင်၏ Discord ဆာဗာတွင် \n `/set_public_channel`, \n `/set_command_channel`, \n `/set_log_channel` \n စသည့် command များကို လုပ်ဆောင်ပေးပါ✨",
+    "command_error": "🚫 Command အမှား: {error}",
+    "precondition_error": "🚫 ကြိုတင်သတ်မှတ်ချက် (Precondition) အမှား: {error}",
+    "exception_error": "🚫 ထူးခြားဖြစ်စဉ် (Exception) အမှား: {error}",
+    "unknown_error": "🚫 မသိရသော အမှား: {error}",
+    "discord_log": "[Discord] {log}",
+
+    // ServerServiceManager
+    "server_started_notification": "@everyone 🔥 ဆာဗာ စတင်လည်ပတ်နေပါပြီ!!!",
+    "save_server_notification": "💾 ဆာဗာကို သိမ်းဆည်းနေသည်...",
+    "server_saved_notification": "💾 သိမ်းဆည်းခြင်း ပြီးဆုံးပါပြီ",
+    "restart_config_error": "[ServerServiceManager] အမှား: RestartTime ကို သတ်မှတ်ထားခြင်းမရှိပါ",
+    "restart_server_notification": "[ServerServiceManager] ဆာဗာသည် {minutes} မိနစ်အတွင်း ပြန်လည်စတင် (Restart) ပါမည်",
+    "restart_server_notification_rcon": "ဆာဗာသည် {minutes} မိနစ်အတွင်း ပြန်လည်စတင်ပါမည်။ ကျေးဇူးပြု၍ ဘေးကင်းသောနေရာကို ရှာဖွေပါတောင်းဆိုအပ်ပါသည်။",
+    "restart_server": "[ServerServiceManager] ဆာဗာကို ပြန်လည်စတင်နေသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ",
+    "restart_server_canceled": "[ServerServiceManager] ပြန်လည်စတင်မည့် လုပ်ဆောင်ချက်ကို ပယ်ဖျက်လိုက်ပါပြီ",
+    "restart_server_canceled_rcon": "သတ်မှတ်ထားသော ဆာဗာပြန်လည်စတင်ခြင်းကို ပယ်ဖျက်လိုက်ပါပြီ။",
+    "shutdown_server": "[ServerServiceManager] ဆာဗာကို ပိတ်နေသည်",
+
+    // ServerProcessManager
+    "server_already_started": "[ServerProcessManager] ဆာဗာ စတင်ပြီးဖြစ်သည်",
+    "servername_configured": "[ServerProcessManager] ဆာဗာအမည်ကို သတ်မှတ်ပြီးပါပြီ: {servername}",
+    "process_manager_error": "[ServerProcessManager] အမှား: {error}",
+
+    // ServerProcess
+    "parse_script_modify": "[ServerProcess] ဆာဗာစကရစ်ဖိုင်ရှိ pause/read ကို ဖယ်ရှားပြီးပါပြီ",
+    "custom_location_found": "[ServerProcess] စိတ်ကြိုက်တည်နေရာကို တွေ့ရှိရသည်: {location}",
+
+    // PublicSlashCommands
+    "help_title": "📋[PZDotNETCoreDiscordBot Commands စာရင်း]📋",
+    "help_parameters": "သတ်မှတ်ချက်များ (Parameters):",
+    "help_public_commands": "အများသုံး command များ: မည်သူမဆို Public/Command ချန်နယ်များတွင် အသုံးပြုနိုင်သည်",
+    "help_authed_commands": "Admin command များ: ခွင့်ပြုချက်ရယူထားသော အသုံးပြုသူများသာ Command ချန်နယ်တွင် အသုံးပြုနိုင်သည်",
+
+    // CommandSlashCommands
+    "slash_modal_value_error1": "SaveAsFile တန်ဖိုးသည် 'true' သို့မဟုတ် 'false' ဖြစ်ရပါမည်",
+    "slash_modal_value_error2": "RestartTimer တန်ဖိုးသည် ဂဏန်းများသာ ဖြစ်ရပါမည်",
+    "slash_modal_value_error3": "Interval တန်ဖိုးသည် ဂဏန်းများသာ ဖြစ်ရပါမည်",
+    "slash_modal_updated": "ကွန်ဖစ်ကို အပ်ဒိတ်လုပ်ပြီးပါပြီ",
+
+    "slash_grant_already_exists": "{user} ကို ခွင့်ပြုချက် ပေးအပ်ပြီးဖြစ်သည်၊၊",
+    "slash_grant": "{user} ထံသို့ command အသုံးပြုခွင့် ပေးအပ်လိုက်ပါပြီ။",
+    "slash_revoke_owner": "Bot ပိုင်ရှင်၏ ခွင့်ပြုချက်ကို ပြန်လည်ရုပ်သိမ်း၍မရပါ၊၊",
+    "slash_revoke_already_exists": "```{user}``` သည် ခွင့်ပြုချက် ပြန်လည်ရုပ်သိမ်းပြီး ဖြစ်သည်၊၊",
+    "slash_revoke": "{user} ထံမှ command အသုံးပြုခွင့်ကို ပြန်လည်ရုပ်သိမ်းလိုက်ပါပြီ",
+    "slash_show_granted_title": "✔️[Command ချန်နယ် ခွင့်ပြုချက်ရရှိထားသူများ စာရင်း]✔️",
+
+    "slash_restart_server": "{minutes} မိနစ်အကြာတွင် ဆာဗာကို ပြန်လည်စတင်ပါမည်...",
+    "slash_restart_canceled": "သတ်မှတ်ထားသော ပြန်လည်စတင်ခြင်းကို ပယ်ဖျက်လိုက်ပါပြီ",
+    "slash_no_restart": "သတ်မှတ်ထားသော ပြန်လည်စတင်မည့် အစီအစဉ်မရှိပါ။",
+    "slash_shutdown_server": "ဆာဗာ ပိတ်သွားပါပြီ၊၊",
+
+    "slash_get_usage_title": "💻[လက်ရှိ CPU နှင့် Memory အသုံးပြုမှု]🖥️",
+
+    "slash_workshop_file_failed": "{config} ဖိုင်ကို ရယူရန် မအောင်မြင်ပါ...",
+    "slash_workshop_api_failed": "SteamAPI မှတစ်ဆင့် workshop mods အချက်အလက်ကို ရယူရန် မအောင်မြင်ပါ...",
+    "slash_workshop_no_mods": "သင့်ဆာဗာတွင် မည်သည့် mod မျှ မရှိပါ။",
+    "slash_workshop_title": "💎[{servername} ရှိ Workshop Mods များ - စုစုပေါင်း {count} ခု]💎",
+
+    "slash_server_msg": "ဆာဗာသို့ စာတိုပေးပို့ပြီးပါပြီ: {msg}",
+
+    // ChannelSlashCommands
+    "slash_public_channel": "Public ချန်နယ်ကို {channel} အဖြစ် သတ်မှတ်လိုက်ပါပြီ",
+    "slash_command_channel": "Command ချန်နယ်ကို {channel} အဖြစ် သတ်မှတ်လိုက်ပါပြီ",
+    "slash_log_channel": "Log ချန်နယ်ကို {channel} အဖြစ် သတ်မှတ်လိုက်ပါပြီ",
+
+    // Preconditions
+    "auth_user_only": "ဤ command ကို ခွင့်ပြုချက်ရယူထားသော အသုံးပြုသူများသာ ကန့်သတ်အသုံးပြုနိုင်သည်",
+    "command_channel_only": "ဤ command ကို command ချန်နယ်တွင်သာ ကန့်သတ်အသုံးပြုနိုင်သည်",
+    "public_channel_only": "ဤ command ကို public ချန်နယ်တွင်သာ ကန့်သတ်အသုံးပြုနိုင်သည်",
+
+    // SchedulerService
+    "init_scheduler": "[SchedulerService] နောက်ခံအလုပ်လုပ်မည့် စကရင်ဂျူးများကို စတင်ပြင်ဆင်နေသည်...",
+    "stop_scheduler": "[SchedulerService] စကရင်ဂျူးအားလုံးကို ပယ်ဖျက်လိုက်ပါပြီ",
+
+    // WorkshopUpdateScheduledJob
+    "workshop_scheduler_running": "[Workshop Update Check Scheduler] လည်ပတ်နေသည်...",
+    "workshop_scheduler_update_found": "[Workshop Update Check Scheduler] Mod အပ်ဒိတ်ကို တွေ့ရှိရသည်!!! ({mods})",
+    "workshop_scheduler_stop": "[Workshop Update Check Scheduler] စကရင်ဂျူလာကို ပယ်ဖျက်လိုက်ပါပြီ။",
+    "workshop_scheduler_error": "[Workshop Update Check Scheduler] အမှား: {error}",
+
+    // BotUpdateScheduledJob
+    "bot_scheduler_running": "[Bot Update Check Scheduler] လည်ပတ်နေသည်...",
+    "bot_scheduler_update_found": "[Bot Update Check Scheduler] Bot အပ်ဒိတ်ကို တွေ့ရှိရသည်!!! (ဗားရှင်း: {version}, ထုတ်လုပ်မှု: {name})\n{url} တွင် ဗားရှင်းအသစ်ကို ရယူရန် အကြံပြုအပ်ပါသည်",
+    "bot_scheduler_stop": "[Bot Update Check Scheduler] စကရင်ဂျူလာကို ပယ်ဖျက်လိုက်ပါပြီ။",
+    "bot_scheduler_error": "[Bot Update Check Scheduler] အမှား: {error}",
+
+    // LogFile
+    "logfile_error": "[LogFile] အမှား: {error}",
+
+    // RconManager
+    "rcon_error": "[RconManager] အမှား: {error}",
+
+    // WebAPIManager
+    "web_api_error": "[WebAPIManager] အမှား: {error}",
+
+    // tokenfile
+    "token_not_found": "တိုကင်ကို ရှာမတွေ့ပါ။ ဂိမ်းလမ်းညွှန် (Game Directory) ထဲတွင် bot_token.txt ဖိုင် ရှိမရှိ သေချာစွာ စစ်ဆေးပေးပါ၊၊",
+    "token_read_failed": "bot_token.txt ဖိုင်ကို ဖတ်ရန် မအောင်မြင်ပါ။",
+
+    // Translations
+    "translations_language_set": "[Translations] Bot ဘာသာစကားကို {lang} သို့ ပြောင်းလဲလိုက်ပါပြီ။",
+    "translations_language_unavilable": "[Translations] ဤဘာသာစကားကို မပံ့ပိုးပါ။: {lang}"
+
+}

@@ -175,7 +175,7 @@ namespace DotNETCoreDiscordBot
                 {"language_name", "" },
                 {"date_format", "dd/MM/yy" },
             };
-            _apiEndPoint = $"https://raw.githubusercontent.com/kaebalsaebal/PZDotNETCoreDiscordBot/master/Localization/{langCode}.json";
+            _apiEndPoint = $"https://raw.githubusercontent.com/kaebalsaebal/PZDotNETCoreDiscordBot/master/Translations/{langCode}.json";
 
             try
             {
@@ -198,7 +198,7 @@ namespace DotNETCoreDiscordBot
         {
             List<string> result = new List<string>();
 
-            _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/contents/Localization?ref=master";
+            _apiEndPoint = "https://api.github.com/repos/kaebalsaebal/PZDotNETCoreDiscordBot/contents/Translations?ref=master";
 
             try
             {

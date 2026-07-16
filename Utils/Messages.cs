@@ -157,12 +157,13 @@ namespace DotNETCoreDiscordBot
 
                 foreach(string jsonFile in jsonFiles)
                 {
+                    string fileName = Path.GetFileName(jsonFile).Replace(".json", "");
                     string jsonString = File.ReadAllText(jsonFile);
                     JObject parsedJson = JObject.Parse(jsonString);
 
                     if (parsedJson["language_name"] != null && Path.GetFileName(jsonFile) != null)
                     {
-                        TranslationMetadata[Path.GetFileName(jsonFile).ToString()] = parsedJson["language_name"].ToString();
+                        TranslationMetadata[fileName] = parsedJson["language_name"].ToString();
                     }
                 }
             }

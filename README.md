@@ -2,12 +2,14 @@
 
 This project is cross-platform Project Zomboid discord bot inspired by egebilecen's PZServerdiscordbot(https://github.com/egebilecen/PZServerDiscordBot)
 
-Since I was using PZServerdiscordbot and had a plan changing my host server platform from Windows to Rocky 9.8 Linux,
-but the bot is not supporting Linux(.NET Framework 4.7.2) so I made it.
+Since I was using egebilecen's bot and had a plan to change my host from Windows to Linux,
+but the bot doesn't support Linux(based in .NET Framework) so I made it.
 
-I focused on the original bot's workshop update scheduler, a feature that automatically restarts the server when workshop mod update is detected.
+When making this, I focused on the original bot's **workshop update scheduler**, 
+a feature that *automatically* restarts the server when workshop mod update is detected.
 
-So many functions on original bot has not been implemented. I'll try my best to implement the remaining features as well...
+Many functions on original bot has been not implemented yet. 
+I'll try my best to implement remaining features as well...
 
 # Bot Commands
 
@@ -111,7 +113,7 @@ If you set 'true' on /set_configs menu, the ```PZBot_Logs``` directory will be c
 
 ```/set_config``` modal example:
 
-<img width="480" height="490" alt="image" src="https://github.com/user-attachments/assets/81cec294-b38d-4e89-8627-86cd4ed65c60" />
+<img width="358" height="448" alt="image" src="https://github.com/user-attachments/assets/68e73940-4030-468d-8292-f4a1cf9f7fff" />
 
 ## Translation Guide
 

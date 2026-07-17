@@ -32,6 +32,7 @@ namespace DotNETCoreDiscordBot
         [SlashCommand("set_configs", "Configures other settings")]
         public async Task SetConfigs()
         {
+
             var curConf = _botConfig;
 
             var modal = new BotSetupModal
@@ -42,11 +43,13 @@ namespace DotNETCoreDiscordBot
 				BotUpdateInterval = curConf.ServerScheduleSettings.BotUpdateSchedule.ToString()
 			};
 
-            await RespondWithModalAsync<BotSetupModal>("set_configs", modal);
+            await RespondWithModalAsync<BotSetupModal>("set_configs_modal_submit", modal);
         }
-        [ModalInteraction("set_configs")]
+        [ModalInteraction("set_configs_modal_submit")]
         public async Task OnModalSubmit(BotSetupModal modal)
         {
+            await DeferAsync();
+
             if (bool.TryParse(modal.SaveAsFile.Trim(), out bool parsedSaveAsFile))
             {
                 _botConfig.SaveAsFile = parsedSaveAsFile;
@@ -88,7 +91,7 @@ namespace DotNETCoreDiscordBot
 			}
 
 			await _botConfig.Save(_logFile);
-            await RespondAsync(Messages.Get("slash_modal_updated"), ephemeral: true);
+            await FollowupAsync(Messages.Get("slash_modal_updated"), ephemeral: true);
         }
 
         [SlashCommand("save_server", "Saves Server")]

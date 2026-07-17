@@ -16,10 +16,11 @@ So many functions on original bot has not been implemented. I'll try my best to 
 | **/set_public_channel** | target channel | Set bot's public message channel | command |
 | **/set_command_channel** | target channel | Set bot's command message channel | command |
 | **/set_log_channel** | target channel | Set bot's log message channel | command |
-| **/set_configs** | | Configure your bot setting(see below) | command |
+| **/set_configs** | | Configure your bot setting(see below modal) | command |
 | **/save_server** | | Save current server state | command |
-| **/restart_server** | minutes | Restart server after param minutes | command |
+| **/restart_server** | minutes | Restart server after minutes | command |
 | **/restart_cancel** | | Cancel scheduled restart job | command |
+| **/shutdown_server** | | Save and shut down server immediately | command |
 | **/grant_auth** | user | Grant user a permission to execute commands in command channel | command |
 | **/revoke_auth** | user | Revoke user a permission to execute commands in command channel | command |
 | **/show_auth** | user | Show users who can execute commands in command channel | command |

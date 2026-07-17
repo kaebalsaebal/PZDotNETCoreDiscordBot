@@ -23,6 +23,8 @@ So many functions on original bot has not been implemented. I'll try my best to 
 | **/grant_auth** | user | Grant user a permission to execute commands in command channel | command |
 | **/revoke_auth** | user | Revoke user a permission to execute commands in command channel | command |
 | **/show_auth** | user | Show users who can execute commands in command channel | command |
+| **/server_msg** | message | Send announcement message to PZ server | command |
+| **/set_language** | language | Set bot language(default is English(US)) | command |
 | **/get_cpu_ram** | | Show server's CPU and memory usage | public |
 | **/players** | | Show players logged in | public |
 | **/check_workshop_mods** | item | Show last (item) update mods in your server | public |
@@ -110,6 +112,32 @@ If you set 'true' on /set_configs menu, the ```PZBot_Logs``` directory will be c
 
 <img width="480" height="490" alt="image" src="https://github.com/user-attachments/assets/81cec294-b38d-4e89-8627-86cd4ed65c60" />
 
+## Translation Guide
+
+<img width="1280" height="569" alt="image" src="https://github.com/user-attachments/assets/71e256d8-57cd-4f00-b407-ac13ace31c81" />
+
+After Alpha v0.1.2, the bot supports multilanguage, including
+
+* English(UK/US)
+* Korean(ROK/DPRK)
+* Burmese(machine translated)
+* Kirundi(machine translated)
+
+Even though this is just a small bot, for any kind-hearted volunteers reading this
+who might want to help with the translation, 
+let me explain how to create a translation file.
+
+First, please name the file **(file name).json.**
+The file name **should be formatted** as `lowercase country code_uppercase language code`.
+
+Also, please include the **language_name** and **date_format** two keys at the top.
+
+For `language_name`, use the name of the language in that language,
+and for `date_format`, enter the date format used in that country, separated by slashes (`/`).
+Please note that it’s **MM**, not mm since `mm` stands for minutes.
+
+For the rest, just refer to the existing JSON files.
+Keep the keys as they are, translate *only* the values!
 
 # Thanks to
 

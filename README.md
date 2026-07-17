@@ -18,7 +18,7 @@ I'll try my best to implement remaining features as well...
 | **/set_public_channel** | target channel | Set bot's public message channel | command |
 | **/set_command_channel** | target channel | Set bot's command message channel | command |
 | **/set_log_channel** | target channel | Set bot's log message channel | command |
-| **/set_configs** | | Configure your bot setting(see below modal) | command |
+| **/set_configs** | | Configure your bot setting(see `Miscellaneous` below) | command |
 | **/save_server** | | Save current server state | command |
 | **/restart_server** | minutes | Restart server after minutes | command |
 | **/restart_cancel** | | Cancel scheduled restart job | command |
@@ -44,7 +44,7 @@ first, create a discord bot. The guide is explained well in original bot page.
 
 make sure to create ```bot_token.txt``` file on zomboid dedicated server location and write your bot token to it.
 
-## create a discord channel
+## Create a discord channel
 
 <img width="433" height="210" alt="image" src="https://github.com/user-attachments/assets/5c895171-5787-4dc7-a90a-4a5f7f33f889" />
 

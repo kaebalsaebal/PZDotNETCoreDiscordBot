@@ -3,9 +3,7 @@
     "date_format": "dd/MM/yy",
 
     // Program
-    "update_translations": "[Program] Kuvugurura dosiye y'ubuhinduzi...",
-    "load_config": "[Program] Turiko turasoma dosiye ya config...",
-    "load_config_error": "[Program] Ikosa ryo gusoma dosiye ya config: {error}",
+    "load_config_error": "[Program] Ikosa ryo gutunganya canke guhindura dosiye: {error}",
     "discord_service_init": "[Program] Twatanguje ibice bya Discord client",
     "load_services_collection": "[Program] Twasomye urutonde rwa services",
     "kill_process": "[Program] Igikorwa (Process) cahagaritswe",
@@ -114,6 +112,6 @@
     "token_read_failed": "Ntivyashobotse gusoma dosiye ya bot_token.txt.",
 
     // Translations
-    "translations_language_set": "[Translations] Ururimi rwa Bot ubu ni: {lang}",
-    "translations_language_unavilable": "[Translations] Ururimi ntirwemewe: {lang}"
+    "translations_language_set": "[Program] Ururimi rwa Bot ubu ni: {lang}",
+    "translations_language_unavilable": "[Program] Ururimi ntirwemewe: {lang}"
 }

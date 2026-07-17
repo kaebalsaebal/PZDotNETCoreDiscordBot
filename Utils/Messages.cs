@@ -20,6 +20,7 @@ namespace DotNETCoreDiscordBot
 
         private static readonly string _folderPath = Path.Combine(AppContext.BaseDirectory, "PZBot_Translations");
 
+        /*
         private static readonly Dictionary<string, string> _defaultMessages = new Dictionary<string, string>
         {
             {"language_name", "English(United States)" },
@@ -137,10 +138,11 @@ namespace DotNETCoreDiscordBot
             {"token_read_failed", "Failed to read bot_token.txt file."},
 
             //Translations
-            {"translations_language_set", "[Translations] Bot language is now: {lang}" },
-            {"translations_using_default", "[Translations] Failed to load language file. Using built-in English data..."},
-            {"translations_language_unavilable", "[Translations] This language is not supported: {lang}" }
+            {"translations_language_set", "[Program] Bot language is now: {lang}" },
+            {"translations_using_default", "[Program] Failed to load language file. Using built-in English data..."},
+            {"translations_language_unavilable", "[Program] This language is not supported: {lang}" }
         };
+        */
 
         public static string GetLocation()
         {
@@ -190,12 +192,8 @@ namespace DotNETCoreDiscordBot
             {
                 return TranslatedMessages[key];
             }
-            else if (_defaultMessages.ContainsKey(key))
-            {
-                return _defaultMessages[key];
-            }
             else {
-                return $"[Translations] Message not exists: {key}";
+                return $"[Program] Message not exists: {key}";
             }
         }
 

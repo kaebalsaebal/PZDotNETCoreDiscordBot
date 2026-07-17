@@ -3,9 +3,7 @@
     "date_format": "yy/MM/dd",
 
     // Program
-    "update_translations": "[Program] 언어파일을 업데이트하는 중...",
-    "load_config": "[Program] 설정 자료를 불러오는 중...",
-    "load_config_error": "[Program] 설정 자료 로드 오류: {error}",
+    "load_config_error": "[Program] 설정 자료 및 언어 파일 로드 오류: {error}",
     "discord_service_init": "[Program] 디스코드 클라이언트 컴포넌트 초기화 완료",
     "load_services_collection": "[Program] 서비스 컬렉션 로드 완료",
     "kill_process": "[Program] 프로세스가 강제 종료되었습니다.",
@@ -114,6 +112,6 @@
     "token_read_failed": "bot_token.txt 자료를 읽는데 실패했습니다.",
 
     // Translations
-    "translations_language_set": "[Translations] 언어가 {lang}으로 설정되었습니다.",
-    "translations_language_unavilable": "[Translations] 지원하지 않는 언어입니다: {lang}"
+    "translations_language_set": "[Program] 언어가 {lang}으로 설정되었습니다.",
+    "translations_language_unavilable": "[Program] 지원하지 않는 언어입니다: {lang}"
 }

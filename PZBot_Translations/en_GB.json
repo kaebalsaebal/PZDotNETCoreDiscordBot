@@ -3,9 +3,7 @@
     "date_format": "dd/MM/yy",
 
     // Program
-    "update_translations":  "[Program] Updating translation file...",
-    "load_config": "[Program] Loading config file...",
-    "load_config_error": "[Program] Config file load error: {error}",
+    "load_config_error": "[Program] Config or translation file load error: {error}",
     "discord_service_init": "[Program] Initialised discord client components",
     "load_services_collection": "[Program] Loaded services collection",
     "kill_process": "[Program] Process has been killed",
@@ -114,6 +112,6 @@
     "token_read_failed": "Failed to read bot_token.txt file.",
 
     // Translations
-    "translations_language_set": "[Translations] Bot language is now: {lang}",
-    "translations_language_unavilable": "[Translations] This language is not supported: {lang}"
+    "translations_language_set": "[Program] Bot language is now: {lang}",
+    "translations_language_unavilable": "[Program] This language is not supported: {lang}"
 }

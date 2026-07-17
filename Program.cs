@@ -74,7 +74,7 @@ namespace DotNETCoreDiscordBot
             // Load Config File
             try
             {
-                logFile.WriteLine(Messages.Get("load_config"));
+                logFile.WriteLine("[Program] Loading config and translation file...");
 
                 if (File.Exists(botConfig.GetConfLocation()))
                 {
@@ -84,25 +84,24 @@ namespace DotNETCoreDiscordBot
                                     new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                     */
                     JsonConvert.PopulateObject(File.ReadAllText(botConfig.GetConfLocation()), botConfig);
-                }
 
-                // Get Localization
-                if (botConfig.Language != null)
-                {
-                    Messages.SetLanguage(botConfig.Language);
-                    logFile.WriteLine(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])));
-                }
-                else
-                {
-                    logFile.WriteLine(Messages.Get("translations_using_default"));
+                    // Default translation is en_US
+                    if (String.IsNullOrEmpty(botConfig.Language))
+                    {
+                        botConfig.Language = "en_US";
+                    }
                 }
 
                 // Update translation files from repository
-                logFile.WriteLine(Messages.Get("update_translations"));
+                logFile.WriteLine("[Program] Updating translation files from repository...");
                 var webAPIManager = service.GetRequiredService<IWebAPIManager>();
                 await webAPIManager.UpdateTranslations();
 
                 Messages.MakeMetadata();
+
+                // Set translations
+                Messages.SetLanguage(botConfig.Language);
+                logFile.WriteLine(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])));
 
             }
             catch (Exception e)

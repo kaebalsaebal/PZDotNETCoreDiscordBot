@@ -205,7 +205,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                _logFile.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
+                Console.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
             }
         }
     }

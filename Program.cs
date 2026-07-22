@@ -74,7 +74,7 @@ namespace DotNETCoreDiscordBot
             // Load Config File
             try
             {
-                logFile.WriteLine("[Program] Loading config and translation file...");
+                Console.WriteLine("[Program] Loading config and translation file...");
 
                 if (File.Exists(botConfig.GetConfLocation()))
                 {
@@ -93,7 +93,7 @@ namespace DotNETCoreDiscordBot
                 }
 
                 // Update translation files from repository
-                logFile.WriteLine("[Program] Updating translation files from repository...");
+                Console.WriteLine("[Program] Updating translation files from repository...");
                 var webAPIManager = service.GetRequiredService<IWebAPIManager>();
                 await webAPIManager.UpdateTranslations();
 

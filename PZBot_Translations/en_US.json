@@ -54,7 +54,7 @@
     "shutdown_server_desc": "Saves and shuts down the server immediately.",
     "grant_auth_desc": "Grants a user permission to issue commands in the command channel.",
     "revoke_auth_desc": "Revokes a user's permission to issue commands in the command channel.",
-    "shot_auth_desc": "Shows the list of users authorized to issue commands in the command channel.",
+    "show_auth_desc": "Shows the list of users authorized to issue commands in the command channel.",
     "server_msg_desc": "Sends a global announcement message to the running server.",
     "set_language_desc": "Sets the bot's display language.",
 

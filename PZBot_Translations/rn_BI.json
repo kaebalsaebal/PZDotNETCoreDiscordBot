@@ -54,7 +54,7 @@
     "shutdown_server_desc": "Ibika kandi ikazima server ubwo nyene.",
     "grant_auth_desc": "Itanga uburenganzira bwo gukoresha command muri channel ya command.",
     "revoke_auth_desc": "Yaka uburenganzira bwo gukoresha command muri channel ya command.",
-    "shot_auth_desc": "Yerekana urutonde rw'abafise uburenganzira bwo gukoresha command muri channel ya command.",
+    "show_auth_desc": "Yerekana urutonde rw'abafise uburenganzira bwo gukoresha command muri channel ya command.",
     "server_msg_desc": "Irungika ubutumwa bw'itangazo muri server yose iriko irakora.",
     "set_language_desc": "Ishiraho ururimi rwa Bot.",
 

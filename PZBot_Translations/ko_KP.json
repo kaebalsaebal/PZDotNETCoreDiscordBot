@@ -54,7 +54,7 @@
     "shutdown_server_desc": "서버를 저장하고 즉시 종료합니다.",
     "grant_auth_desc": "명령대화방에서 명령을 집행할수 있는 권한을 부여합니다.",
     "revoke_auth_desc": "명령대화방에서 명령권한을 회수합니다.",
-    "shot_auth_desc": "명령대화방에서 명령권한을 가진 리용자 목록을 보여줍니다.",
+    "show_auth_desc": "명령대화방에서 명령권한을 가진 리용자 목록을 보여줍니다.",
     "server_msg_desc": "실행중인 써버 전체에 통보문을 전송합니다.",
     "set_language_desc": "봇프로그람의 표시언어를 설정합니다.",
 

@@ -124,6 +124,8 @@ namespace DotNETCoreDiscordBot
             {
                 foreach(var cmd in module.SlashCommands)
                 {
+                    if (cmd.Name == "ping") continue;
+
                     string commandLine = $"• `/{cmd.Name}` - {Messages.Get($"{cmd.Name}_desc")}\n";
 
                     if (module.Name.Contains("Public"))

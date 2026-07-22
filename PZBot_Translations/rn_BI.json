@@ -39,6 +39,25 @@
     "parse_script_modify": "[ServerProcess] Twakuyeho pause/read muri dosiye ya Server Script",
     "custom_location_found": "[ServerProcess] Ikibanza kihariye cabonetse: {location}",
 
+    // CommandsDesc
+    "set_public_channel_desc": "Ishiraho channel rusangi.",
+    "set_command_channel_desc": "Ishiraho channel ya command.",
+    "set_log_channel_desc": "Ishiraho channel ya log.",
+    "players_desc": "Izana urutonde rw'abakinyi binjiye ubu.",
+    "check_workshop_mods_desc": "Izana urutonde rwa workshop mods ziri muri server iriko irakora.",
+    "get_cpu_ram_desc": "Izana ikoreshwa rya CPU na RAM rya server.",
+    "help_desc": "Izana urutonde rwa command n'insiguro zazo.",
+    "set_configs_desc": "Ihindura ibindi bintu bitandukanye vya config.",
+    "save_server_desc": "Ibika uko server imeze.",
+    "restart_server_desc": "Isubira gutangura server inyuma y'iminota wavuze.",
+    "restart_cancel_desc": "Ihagarika igikorwa co gusubira gutangura server gitegekanijwe.",
+    "shutdown_server_desc": "Ibika kandi ikazima server ubwo nyene.",
+    "grant_auth_desc": "Itanga uburenganzira bwo gukoresha command muri channel ya command.",
+    "revoke_auth_desc": "Yaka uburenganzira bwo gukoresha command muri channel ya command.",
+    "shot_auth_desc": "Yerekana urutonde rw'abafise uburenganzira bwo gukoresha command muri channel ya command.",
+    "server_msg_desc": "Irungika ubutumwa bw'itangazo muri server yose iriko irakora.",
+    "set_language_desc": "Ishiraho ururimi rwa Bot.",
+
     // PublicSlashCommands
     "help_title": "📋[Urutonde rwa Command za PZDotNETCoreDiscordBot]📋",
     "help_parameters": "Ibisabwa (Parameters):",

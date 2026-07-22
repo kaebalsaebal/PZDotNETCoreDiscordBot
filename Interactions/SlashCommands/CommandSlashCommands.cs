@@ -23,7 +23,7 @@ namespace DotNETCoreDiscordBot
             _logFile = logFile;
         }
 
-        [SlashCommand("ping", "Do you like watching me")]
+        [SlashCommand("ping", "Do You Like Watching Me")]
         public async Task Ping()
         {
             await RespondAsync("☠PONG☠", ephemeral: true);
@@ -91,7 +91,7 @@ namespace DotNETCoreDiscordBot
 			}
 
 			await _botConfig.Save(_logFile);
-            await FollowupAsync(Messages.Get("slash_modal_updated"), ephemeral: true);
+            await FollowupAsync(Messages.Get("slash_modal_updated"), ephemeral: false);
         }
 
         [SlashCommand("save_server", "Saves Server")]
@@ -106,7 +106,7 @@ namespace DotNETCoreDiscordBot
         }
 
         [SlashCommand("restart_server", "Restarts server after n minutes")]
-        public async Task RestartServer([Summary("minutes", "Restarts server after n minutes")] uint minutes)
+        public async Task RestartServer(uint minutes)
         {
             await DeferAsync();
 
@@ -160,7 +160,7 @@ namespace DotNETCoreDiscordBot
             _botConfig.AuthorizedUsers.Add(user.Id);
             await _botConfig.Save(_logFile);
 
-            await RespondAsync(Messages.Get("slash_grant").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_grant").KeyFormat(("user", $"**{user.Username}**")), ephemeral: false);
         }
 
         [SlashCommand("revoke_auth", "Revoke user permission to command")]
@@ -182,7 +182,7 @@ namespace DotNETCoreDiscordBot
             _botConfig.AuthorizedUsers.Remove(user.Id);
             await _botConfig.Save(_logFile);
 
-            await RespondAsync(Messages.Get("slash_revoke").KeyFormat(("user", $"**{user.Username}**")), ephemeral: true);
+            await RespondAsync(Messages.Get("slash_revoke").KeyFormat(("user", $"**{user.Username}**")), ephemeral: false);
         }
 
         [SlashCommand("show_auth", "Show granted users who can use commands")]
@@ -222,7 +222,7 @@ namespace DotNETCoreDiscordBot
         }
 
         [SlashCommand("set_language", "Set language")]
-        public async Task SetLanguage([Summary("langCode", "(Country Code)_(Language Code)")][Autocomplete(typeof(SetLanguageAutocompleteHandler))] string langCode)
+        public async Task SetLanguage([Autocomplete(typeof(SetLanguageAutocompleteHandler))] string langCode)
         {
             if (Messages.TranslationMetadata[langCode] == null)
             {
@@ -235,7 +235,7 @@ namespace DotNETCoreDiscordBot
 
             Messages.SetLanguage(langCode);
 
-            await RespondAsync(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])), ephemeral: true);
+            await RespondAsync(Messages.Get("translations_language_set").KeyFormat(("lang", Messages.TranslatedMessages["language_name"])), ephemeral: false);
         }
     }
 }

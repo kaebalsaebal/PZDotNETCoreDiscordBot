@@ -39,6 +39,25 @@
     "parse_script_modify": "[ServerProcess] Removed pause/read in Server Script File",
     "custom_location_found": "[ServerProcess] Custom Location Found: {location}",
 
+    // CommandsDesc
+    "set_public_channel_desc": "Sets the public channel.",
+    "set_command_channel_desc": "Sets the command channel.",
+    "set_log_channel_desc": "Sets the log channel.",
+    "players_desc": "Gets the list of currently joined players.",
+    "check_workshop_mods_desc": "Gets the list of workshop mods on the running server.",
+    "get_cpu_ram_desc": "Gets the CPU and RAM usage of the server host.",
+    "help_desc": "Gets the list of commands and their descriptions.",
+    "set_configs_desc": "Configures miscellaneous settings.",
+    "save_server_desc": "Saves the server state.",
+    "restart_server_desc": "Restarts the server after a specified number of minutes.",
+    "restart_cancel_desc": "Cancels a scheduled server restart.",
+    "shutdown_server_desc": "Saves and shuts down the server immediately.",
+    "grant_auth_desc": "Grants a user permission to issue commands in the command channel.",
+    "revoke_auth_desc": "Revokes a user's permission to issue commands in the command channel.",
+    "shot_auth_desc": "Shows the list of users authorised to issue commands in the command channel.",
+    "server_msg_desc": "Sends a global announcement message to the running server.",
+    "set_language_desc": "Sets the bot's display language.",
+
     // PublicSlashCommands
     "help_title": "📋[PZDotNETCoreDiscordBot Commands List]📋",
     "help_parameters": "Parameters:",

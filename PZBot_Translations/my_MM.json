@@ -39,6 +39,25 @@
     "parse_script_modify": "[ServerProcess] ဆာဗာစကရစ်ဖိုင်ရှိ pause/read ကို ဖယ်ရှားပြီးပါပြီ",
     "custom_location_found": "[ServerProcess] စိတ်ကြိုက်တည်နေရာကို တွေ့ရှိရသည်: {location}",
 
+    // CommandsDesc
+    "set_public_channel_desc": "Public ချန်နယ်ကို သတ်မှတ်သည်။",
+    "set_command_channel_desc": "Command ချန်နယ်ကို သတ်မှတ်သည်။",
+    "set_log_channel_desc": "Log ချန်နယ်ကို သတ်မှတ်သည်။",
+    "players_desc": "လက်ရှိချိတ်ဆက်ထားသော ကစားသမားစာရင်းကို ရယူသည်။",
+    "check_workshop_mods_desc": "လည်ပတ်နေသော ဆာဗာရှိ workshop mods စာရင်းကို ရယူသည်။",
+    "get_cpu_ram_desc": "ဆာဗာစက်၏ CPU နှင့် RAM အသုံးပြုမှုကို ရယူသည်။",
+    "help_desc": "Command များနှင့် ၎င်းတို့၏ ရှင်းလင်းချက်စာရင်းကို ရယူသည်။",
+    "set_configs_desc": "အထွေထွေ ဆက်တင်များကို ပြင်ဆင်သတ်မှတ်သည်။",
+    "save_server_desc": "ဆာဗာကို သိမ်းဆည်းသည်။",
+    "restart_server_desc": "သတ်မှတ်ထားသော မိနစ်အကြာတွင် ဆာဗာကို ပြန်လည်စတင်သည်။",
+    "restart_cancel_desc": "သတ်မှတ်ထားသော ဆာဗာပြန်လည်စတင်ခြင်းကို ပယ်ဖျက်သည်။",
+    "shutdown_server_desc": "ဆာဗာကို သိမ်းဆည်းပြီး ချက်ချင်းပိတ်သည်။",
+    "grant_auth_desc": "Command ချန်နယ်တွင် command များ အသုံးပြုရန် ခွင့်ပြုချက် ပေးအပ်သည်။",
+    "revoke_auth_desc": "Command ချန်နယ်တွင် command များ အသုံးပြုရန် ခွင့်ပြုချက်ကို ပြန်လည်ရုပ်သိမ်းသည်။",
+    "shot_auth_desc": "Command ချန်နယ်တွင် command များ အသုံးပြုနိုင်သော ခွင့်ပြုချက်ရရှိထားသူများ စာရင်းကို ပြသသည်။",
+    "server_msg_desc": "လည်ပတ်နေသော ဆာဗာသို့ အသိပေးချက် (Announcement) စာတိုပေးပို့သည်။",
+    "set_language_desc": "Bot ၏ ဘာသာစကားကို သတ်မှတ်သည်။",
+
     // PublicSlashCommands
     "help_title": "📋[PZDotNETCoreDiscordBot Commands စာရင်း]📋",
     "help_parameters": "သတ်မှတ်ချက်များ (Parameters):",

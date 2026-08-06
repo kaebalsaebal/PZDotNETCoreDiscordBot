@@ -67,6 +67,10 @@ namespace DotNETCoreDiscordBot
                 _logFile.WriteLine(Messages.Get("servername_configured").KeyFormat(("servername", _botConfig.ServerName)), _botConfig.LogChannelId);
                 await _botConfig.Save(_logFile);
 
+                //update workshop before server process starts
+                await _curOS.UpdateWorkshopMods();
+                _curOS.FixCaseSensitivity();
+
                 _serverProcess = new Process();
 
                 _curOS.SetupProcessStartInfo(

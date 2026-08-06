@@ -38,6 +38,22 @@
     // ServerProcess
     "parse_script_modify": "[ServerProcess] Removed pause/read in Server Script File",
     "custom_location_found": "[ServerProcess] Custom Location Found: {location}",
+    // LinuxProcess
+    "needupdate_not_found": "[ServerProcess] needupdatefile.txt not found. Skipping...",
+    "needupdate_not_required": "[ServerProcess] No mods need to be updated. Skipping...",
+    "steamcmd_not_found": "[ServerProcess] steamcmd.sh not found. Skipping...",
+    "steamcmd_update_mods": "[ServerProcess] Updating workshop mods via steamcmd process...",
+    "steamcmd_error": "[ServerProcess] Error occurred while running steamcmd: {error}",
+    "workshop_path_not_found": "[ServerProcess] Workshop path not found. Skipping...",
+    "no_mods_found": "[ServerProcess] No workshop mods found. Skipping...",
+    "make_lowercase_symlink_directory": "[ServerProcess] Making symbolic links for directories...",
+    "make_lowercase_symlink_file": "[ServerProcess] Making symbolic links for files...",
+    "make_lowercase_symlink_result": "[ServerProcess] Making symlinks result:",
+    "make_lowercase_symlink_error": "[ServerProcess] Error occurred while making symlinks: {error}",
+    "symlink_correct": "[ServerProcess] Symbolic link is already correct. Skipping...",
+    "symlink_not_required": "[ServerProcess] Real link already consists of lower case. Skipping...",
+    "create_symlink": "[ServerProcess] Creating symbolic link: {location}",
+    "create_symlink_failed": "[ServerProcess] Failed to create symbolic link: {location}",
 
     // CommandsDesc
     "set_public_channel_desc": "Sets the public channel.",

@@ -38,6 +38,22 @@
     // ServerProcess
     "parse_script_modify": "[ServerProcess] 서버 스크립트 자료에서 pause/read 구문을 제거했습니다.",
     "custom_location_found": "[ServerProcess] 사용자 정의 경로를 찾았습니다: {location}",
+    // LinuxProcess
+    "needupdate_not_found": "[ServerProcess] needupdatefile.txt 파일을 찾을 수 없습니다. 건너뜁니다...",
+    "needupdate_not_required": "[ServerProcess] 업데이트할 모드가 없습니다. 건너뜁니다...",
+    "steamcmd_not_found": "[ServerProcess] steamcmd.sh 파일을 찾을 수 없습니다. 건너뜁니다...",
+    "steamcmd_update_mods": "[ServerProcess] steamcmd 프로세스로 창작마당 모드를 업데이트하는 중...",
+    "steamcmd_error": "[ServerProcess] steamcmd 실행 중 오류 발생: {error}",
+    "workshop_path_not_found": "[ServerProcess] 창작마당 경로를 찾을 수 없습니다. 건너뜁니다...",
+    "no_mods_found": "[ServerProcess] 창작마당 모드를 찾을 수 없습니다. 건너뜁니다...",
+    "make_lowercase_symlink_directory": "[ServerProcess] 디렉터리에 대한 심볼릭 링크를 생성하는 중...",
+    "make_lowercase_symlink_file": "[ServerProcess] 파일에 대한 심볼릭 링크를 생성하는 중...",
+    "make_lowercase_symlink_result": "[ServerProcess] 심볼릭 링크 생성 결과:",
+    "make_lowercase_symlink_error": "[ServerProcess] 심볼릭 링크 생성 중 오류 발생: {error}",
+    "symlink_correct": "[ServerProcess] 심볼릭 링크가 이미 올바릅니다. 건너뜁니다...",
+    "symlink_not_required": "[ServerProcess] 실제 링크가 이미 소문자로만 구성되어 있습니다. 건너뜁니다...",
+    "create_symlink": "[ServerProcess] 심볼릭 링크 생성 중: {location}",
+    "create_symlink_failed": "[ServerProcess] 심볼릭 링크 생성 실패: {location}",
 
     // CommandsDesc
     "set_public_channel_desc": "퍼블릭 채널을 설정합니다.",

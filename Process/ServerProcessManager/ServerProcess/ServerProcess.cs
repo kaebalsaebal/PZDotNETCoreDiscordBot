@@ -17,6 +17,8 @@ namespace DotNETCoreDiscordBot
         void SetupProcessStartInfo(ProcessStartInfo startInfo, string serverName);
         Task<double> GetCPUUsage();
         double GetRAMUsage();
+        Task UpdateWorkshopMods();
+        void FixCaseSensitivity();
     }
 
     public abstract class ServerProcess: IServerProcess
@@ -90,5 +92,13 @@ namespace DotNETCoreDiscordBot
 
         public abstract Task<double> GetCPUUsage();
         public abstract double GetRAMUsage();
+        public virtual Task UpdateWorkshopMods()
+        {
+            return Task.CompletedTask;
+        }
+        public virtual void FixCaseSensitivity()
+        {
+            
+        }
     }
 }

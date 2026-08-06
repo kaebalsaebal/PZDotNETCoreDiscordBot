@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DotNETCoreDiscordBot
 {
@@ -84,12 +85,12 @@ namespace DotNETCoreDiscordBot
                                     new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                     */
                     JsonConvert.PopulateObject(File.ReadAllText(botConfig.GetConfLocation()), botConfig);
+                }
 
-                    // Default translation is en_US
-                    if (String.IsNullOrEmpty(botConfig.Language))
-                    {
-                        botConfig.Language = "en_US";
-                    }
+                // Default translation is en_US
+                if (string.IsNullOrEmpty(botConfig.Language))
+                {
+                    botConfig.Language = "en_US";
                 }
 
                 // Update translation files from repository
@@ -106,7 +107,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                logFile.WriteLine(Messages.Get("load_config_error").KeyFormat(("error", e.Message)));
+                Console.WriteLine($"[Program] Config or translation file load error: {e}");
                 return;
             }
             logFile.WriteLine(Messages.Get("load_services_collection"));

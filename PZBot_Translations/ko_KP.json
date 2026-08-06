@@ -38,6 +38,22 @@
     // ServerProcess
     "parse_script_modify": "[ServerProcess] 써버실행문에서 pause/read구문을 제거했습니다.",
     "custom_location_found": "[ServerProcess] 사용자지정경로를 발견했습니다: {location}",
+    // LinuxProcess
+    "needupdate_not_found": "[ServerProcess] needupdatefile.txt 자료를 찾을수 없습니다. 생략합니다...",
+    "needupdate_not_required": "[ServerProcess] 갱신할 모드가 없습니다. 생략합니다...",
+    "steamcmd_not_found": "[ServerProcess] steamcmd.sh 자료를 찾을수 없습니다. 생략합니다...",
+    "steamcmd_update_mods": "[ServerProcess] steamcmd로 창작마당 모드를 갱신하는중...",
+    "steamcmd_error": "[ServerProcess] steamcmd 실행중 오류발생: {error}",
+    "workshop_path_not_found": "[ServerProcess] 창작마당 경로를 찾을수 없습니다. 생략합니다...",
+    "no_mods_found": "[ServerProcess] 창작마당 모드를 찾을수 없습니다. 생략합니다...",
+    "make_lowercase_symlink_directory": "[ServerProcess] 모드자료보관함에 대한 상징연결(Symbolic link)을 만드는중...",
+    "make_lowercase_symlink_file": "[ServerProcess] 자료들에 대한 상징연결을 만드는중...",
+    "make_lowercase_symlink_result": "[ServerProcess] 상징연결 작성결과:",
+    "make_lowercase_symlink_error": "[ServerProcess] 상징연결 작성중 오류발생: {error}",
+    "symlink_correct": "[ServerProcess] 상징연결이 이미 정확합니다. 생략합니다...",
+    "symlink_not_required": "[ServerProcess] 실제 연결이 이미 소문자로만 구성되여있습니다. 생략합니다...",
+    "create_symlink": "[ServerProcess] 상징연결 작성중: {location}",
+    "create_symlink_failed": "[ServerProcess] 상징연결 작성실패: {location}",
 
     // CommandsDesc
     "set_public_channel_desc": "공개대화방을 설정합니다.",

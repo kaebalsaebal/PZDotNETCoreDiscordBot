@@ -183,6 +183,14 @@ namespace DotNETCoreDiscordBot
                     string jsonResponse = await response.Content.ReadAsStringAsync();
                     JArray files = JArray.Parse(jsonResponse);
 
+
+                    string translationPath = Messages.GetLocation();
+
+                    if (!string.IsNullOrEmpty(translationPath))
+                    {
+                        Directory.CreateDirectory(translationPath);
+                    }
+
                     foreach (var file in files)
                     {
                         string fileName = file["name"]?.ToString();
@@ -195,7 +203,7 @@ namespace DotNETCoreDiscordBot
                             if (subres.IsSuccessStatusCode)
                             {
                                 string jsonSubres = await subres.Content.ReadAsStringAsync();
-                                string localFilePath = Path.Combine(Messages.GetLocation(), fileName);
+                                string localFilePath = Path.Combine(translationPath, fileName);
 
                                 await File.WriteAllTextAsync(localFilePath, jsonSubres);
                             }
@@ -205,7 +213,7 @@ namespace DotNETCoreDiscordBot
             }
             catch (Exception e)
             {
-                Console.WriteLine(Messages.Get("web_api_error").KeyFormat(("error", e.Message)));
+                Console.WriteLine($"[WebAPIManager] Error: {e}");
             }
         }
     }

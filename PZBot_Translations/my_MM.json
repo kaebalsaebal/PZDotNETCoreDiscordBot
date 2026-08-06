@@ -38,6 +38,22 @@
     // ServerProcess
     "parse_script_modify": "[ServerProcess] ဆာဗာစကရစ်ဖိုင်ရှိ pause/read ကို ဖယ်ရှားပြီးပါပြီ",
     "custom_location_found": "[ServerProcess] စိတ်ကြိုက်တည်နေရာကို တွေ့ရှိရသည်: {location}",
+    // LinuxProcess
+    "needupdate_not_found": "[ServerProcess] needupdatefile.txt ကို ရှာမတွေ့ပါ။ ကျော်သွားမည်...",
+    "needupdate_not_required": "[ServerProcess] အပ်ဒိတ်လုပ်ရန် Mod မရှိပါ။ ကျော်သွားမည်...",
+    "steamcmd_not_found": "[ServerProcess] steamcmd.sh ကို ရှာမတွေ့ပါ။ ကျော်သွားမည်...",
+    "steamcmd_update_mods": "[ServerProcess] steamcmd လုပ်ငန်းစဉ်ဖြင့် workshop mods များကို အပ်ဒိတ်လုပ်နေသည်...",
+    "steamcmd_error": "[ServerProcess] steamcmd လည်ပတ်စဉ် အမှားဖြစ်ပွားခဲ့သည်: {error}",
+    "workshop_path_not_found": "[ServerProcess] Workshop လမ်းကြောင်းကို ရှာမတွေ့ပါ။ ကျော်သွားမည်...",
+    "no_mods_found": "[ServerProcess] Workshop mods များကို ရှာမတွေ့ပါ။ ကျော်သွားမည်...",
+    "make_lowercase_symlink_directory": "[ServerProcess] ဖိုင်တွဲ (Directory) များအတွက် symbolic links များကို ဖန်တီးနေသည်...",
+    "make_lowercase_symlink_file": "[ServerProcess] ဖိုင်များအတွက် symbolic links များကို ဖန်တီးနေသည်...",
+    "make_lowercase_symlink_result": "[ServerProcess] Symlinks ဖန်တီးမှု ရလဒ်:",
+    "make_lowercase_symlink_error": "[ServerProcess] Symlinks ဖန်တီးစဉ် အမှားဖြစ်ပွားခဲ့သည်: {error}",
+    "symlink_correct": "[ServerProcess] Symbolic link သည် မှန်ကန်နေပြီးဖြစ်သည်။ ကျော်သွားမည်...",
+    "symlink_not_required": "[ServerProcess] မူရင်း link သည် စာလုံးသေးများဖြင့်သာ ဖွဲ့စည်းထားပြီးဖြစ်သည်။ ကျော်သွားမည်...",
+    "create_symlink": "[ServerProcess] Symbolic link ဖန်တီးနေသည်: {location}",
+    "create_symlink_failed": "[ServerProcess] Symbolic link ဖန်တီးရန် မအောင်မြင်ပါ: {location}",
 
     // CommandsDesc
     "set_public_channel_desc": "Public ချန်နယ်ကို သတ်မှတ်သည်။",

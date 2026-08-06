@@ -38,6 +38,22 @@
     // ServerProcess
     "parse_script_modify": "[ServerProcess] Twakuyeho pause/read muri dosiye ya Server Script",
     "custom_location_found": "[ServerProcess] Ikibanza kihariye cabonetse: {location}",
+    // LinuxProcess
+    "needupdate_not_found": "[ServerProcess] Dosiye ya needupdatefile.txt ntiyabonetse. Turasimbuye...",
+    "needupdate_not_required": "[ServerProcess] Nta mods zipfuma zivugururwa. Turasimbuye...",
+    "steamcmd_not_found": "[ServerProcess] Dosiye ya steamcmd.sh ntiyabonetse. Turasimbuye...",
+    "steamcmd_update_mods": "[ServerProcess] Turiko turavugurura workshop mods binyuze muri steamcmd...",
+    "steamcmd_error": "[ServerProcess] Ikosa ryabaye mu gukora kwa steamcmd: {error}",
+    "workshop_path_not_found": "[ServerProcess] Ikibanza (path) ca Workshop ntikiyabonetse. Turasimbuye...",
+    "no_mods_found": "[ServerProcess] Nta workshop mods zabonetse. Turasimbuye...",
+    "make_lowercase_symlink_directory": "[ServerProcess] Turiko turakora symbolic links z'ububiko (directories)...",
+    "make_lowercase_symlink_file": "[ServerProcess] Turiko turakora symbolic links z'amadosiye (files)...",
+    "make_lowercase_symlink_result": "[ServerProcess] Ivyavuye mu gukora symlinks:",
+    "make_lowercase_symlink_error": "[ServerProcess] Ikosa ryabaye mu gukora symlinks: {error}",
+    "symlink_correct": "[ServerProcess] Symbolic link n'y'ukuri kuko yegereye. Turasimbuye...",
+    "symlink_not_required": "[ServerProcess] Link y'ukuri igizwe kale n'indome ntoyi gusa (lower case). Turasimbuye...",
+    "create_symlink": "[ServerProcess] Turiko turakora symbolic link: {location}",
+    "create_symlink_failed": "[ServerProcess] Ntivyashobotse kukora symbolic link: {location}",
 
     // CommandsDesc
     "set_public_channel_desc": "Ishiraho channel rusangi.",

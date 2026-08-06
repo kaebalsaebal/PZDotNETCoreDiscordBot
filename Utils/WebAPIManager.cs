@@ -111,13 +111,16 @@ namespace DotNETCoreDiscordBot
             {
                 var response = await _client.PostAsync(_apiEndPoint, content);
 
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                JObject parsedJson = JObject.Parse(jsonResponse);
-                JToken detailsToken = parsedJson["response"]?["publishedfiledetails"];
-
-                if (detailsToken != null)
+                if (response.IsSuccessStatusCode)
                 {
-                    return detailsToken.ToObject<List<Model.WorkshopItemDetails>>();
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    JObject parsedJson = JObject.Parse(jsonResponse);
+                    JToken detailsToken = parsedJson["response"]?["publishedfiledetails"];
+
+                    if (detailsToken != null)
+                    {
+                        return detailsToken.ToObject<List<Model.WorkshopItemDetails>>();
+                    }
                 }
             }
             catch (Exception e)
@@ -137,24 +140,28 @@ namespace DotNETCoreDiscordBot
             try
             {
                 var response = await _client.GetAsync(_apiEndPoint);
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                JObject parsedJson = JObject.Parse(jsonResponse);
 
-                JToken detailsToken = parsedJson["id"];
-
-                if (detailsToken != null)
+                if (response.IsSuccessStatusCode)
                 {
-                    result = new Model.ReleaseDetails();
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+                    JObject parsedJson = JObject.Parse(jsonResponse);
 
-                    result.Name = parsedJson["name"].ToString();
-                    result.TagName = parsedJson["tag_name"].ToString();
-                    result.HtmlUrl = parsedJson["html_url"].ToString();
+                    JToken detailsToken = parsedJson["id"];
 
-                    // Version tag example: vx.x.x
-                    if (Regex.IsMatch(result.TagName, @"^v?\d+(\.\d+)*$", RegexOptions.IgnoreCase) &&
-                        Version.TryParse(result.TagName.TrimStart('v'), out Version? version))
+                    if (detailsToken != null)
                     {
-                        result.Version = version;
+                        result = new Model.ReleaseDetails();
+
+                        result.Name = parsedJson["name"].ToString();
+                        result.TagName = parsedJson["tag_name"].ToString();
+                        result.HtmlUrl = parsedJson["html_url"].ToString();
+
+                        // Version tag example: vx.x.x
+                        if (Regex.IsMatch(result.TagName, @"^v?\d+(\.\d+)*$", RegexOptions.IgnoreCase) &&
+                            Version.TryParse(result.TagName.TrimStart('v'), out Version? version))
+                        {
+                            result.Version = version;
+                        }
                     }
                 }
 

@@ -87,7 +87,7 @@ namespace DotNETCoreDiscordBot
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string needupdateLocation = Path.Combine(AppContext.BaseDirectory, "needupdatefile.txt");
-            string steamcmdLocation = Path.Combine(homeDir, "Steam", "steamcmd.sh");
+            string steamcmdLocation = "";
 
             if (!File.Exists(needupdateLocation))
             {
@@ -131,7 +131,6 @@ namespace DotNETCoreDiscordBot
             }
 
             // if not installed steamcmd via package manager, use some install dir nominees
-
             List<string> pathNominees = new List<string>
             {
                 Path.Combine(homeDir, "Steam", "steamcmd.sh"),

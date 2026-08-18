@@ -207,6 +207,7 @@ namespace DotNETCoreDiscordBot
                 }
 
                 _restartCts.Cancel();
+                _restartCountdown = null;
 
                 return true;
             } catch(Exception e)
@@ -225,7 +226,7 @@ namespace DotNETCoreDiscordBot
             }
             TimeSpan countdown = _restartCountdown.Value - now;
 
-            return Messages.Get("check_restart").KeyFormat(("minutes", countdown.TotalMinutes), ("seconds", countdown.Seconds));
+            return Messages.Get("check_restart").KeyFormat(("minutes", countdown.Minutes), ("seconds", countdown.Seconds));
         }
 
         public async Task ShutdownServer(DiscordSocketClient client, ulong channelId)

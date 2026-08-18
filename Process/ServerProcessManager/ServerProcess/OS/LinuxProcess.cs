@@ -103,6 +103,9 @@ namespace DotNETCoreDiscordBot
                 return;
             }
 
+            // Clear needupdatefile.txt after stacking modsNeedupdate
+            await File.WriteAllTextAsync(needupdateLocation, string.Empty);
+
             // try searching steamcmd location installed by package manager
             try
             {

@@ -28,6 +28,8 @@
     "restart_server": "[ServerServiceManager] Turiko turasubira gutangura server. Turabasavye kwihangana",
     "restart_server_canceled": "[ServerServiceManager] Igikorwa co gusubira gutangura cahagaritswe",
     "restart_server_canceled_rcon": "Igikorwa co gusubira gutangura server cahagaritswe.",
+    "check_restart": "[ServerServiceManager] Igihe gisigaye kugira seriveri yongere itangire ni {minutes}m {seconds}s",
+    "check_restart_not_exists": "[ServerServiceManager] Nta gahunda zihari zo kongera gutangira seriveri.",
     "shutdown_server": "[ServerServiceManager] Turiko turazima server",
 
     // ServerProcessManager

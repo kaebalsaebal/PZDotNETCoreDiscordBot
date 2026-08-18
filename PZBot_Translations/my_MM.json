@@ -28,6 +28,8 @@
     "restart_server": "[ServerServiceManager] ဆာဗာကို ပြန်လည်စတင်နေသည်။ ခေတ္တစောင့်ဆိုင်းပေးပါ",
     "restart_server_canceled": "[ServerServiceManager] ပြန်လည်စတင်မည့် လုပ်ဆောင်ချက်ကို ပယ်ဖျက်လိုက်ပါပြီ",
     "restart_server_canceled_rcon": "သတ်မှတ်ထားသော ဆာဗာပြန်လည်စတင်ခြင်းကို ပယ်ဖျက်လိုက်ပါပြီ။",
+    "check_restart": "[ServerServiceManager] ဆာဗာပြန်လည်စတင်ရန် ကျန်ရှိသောအချိန်မှာ {minutes}m {seconds}s ဖြစ်ပါသည်",
+    "check_restart_not_exists": "[ServerServiceManager] ဆာဗာပြန်လည်စတင်မည့် အစီအစဉ် မရှိပါ။",
     "shutdown_server": "[ServerServiceManager] ဆာဗာကို ပိတ်နေသည်",
 
     // ServerProcessManager

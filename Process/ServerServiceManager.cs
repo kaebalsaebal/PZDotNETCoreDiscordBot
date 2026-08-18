@@ -19,6 +19,7 @@ namespace DotNETCoreDiscordBot
         Task SaveServer(DiscordSocketClient client, ulong channelId);
         Task RestartServer(DiscordSocketClient client, ulong channelId, uint RestartTimer);
         bool CancelRestart(DiscordSocketClient client, ulong channelId);
+        string CheckRestart();
         Task ShutdownServer(DiscordSocketClient client, ulong channelId);
         Task<double[]> GetUsage();
 
@@ -33,6 +34,8 @@ namespace DotNETCoreDiscordBot
 
         // Token for Cancel Commands
         private CancellationTokenSource? _restartCts;
+        // Remaining Timer until Restart
+        private DateTime? _restartCountdown;
         // Semaphore for Preventing Race Condition on SaveServer
         private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
@@ -126,6 +129,8 @@ namespace DotNETCoreDiscordBot
                 _restartCts = new CancellationTokenSource();
                 var token = _restartCts.Token;
 
+                _restartCountdown = DateTime.Now.AddMilliseconds(RestartTimer);
+
                 try
                 {
                     List<uint> RestartTimers = new List<uint>
@@ -181,6 +186,8 @@ namespace DotNETCoreDiscordBot
                 {
                     _restartCts.Dispose();
                     _restartCts = null;
+
+                    _restartCountdown = null;
                 }
             } catch(Exception e)
             {
@@ -206,6 +213,19 @@ namespace DotNETCoreDiscordBot
             {
                 throw;
             }
+        }
+
+        public string CheckRestart()
+        {
+            DateTime now = DateTime.Now;
+
+            if (_restartCountdown == null || _restartCountdown <= now)
+            {
+                return Messages.Get("check_restart_not_exists");
+            }
+            TimeSpan countdown = _restartCountdown.Value - now;
+
+            return Messages.Get("check_restart").KeyFormat(("minutes", countdown.TotalMinutes), ("seconds", countdown.Seconds));
         }
 
         public async Task ShutdownServer(DiscordSocketClient client, ulong channelId)

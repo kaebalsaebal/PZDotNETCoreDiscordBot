@@ -28,6 +28,8 @@
     "restart_server": "[ServerServiceManager] 서버를 재시작하는 중입니다. 잠시만 기다려 주세요.",
     "restart_server_canceled": "[ServerServiceManager] 재시작 작업이 취소되었습니다.",
     "restart_server_canceled_rcon": "예정된 서버 재시작이 취소되었습니다.",
+    "check_restart": "[ServerServiceManager] 서버 재시작까지 {minutes}분 {seconds}초 남았습니다.",
+    "check_restart_not_exists": "[ServerServiceManager] 서버 재시작 작업이 없습니다.",
     "shutdown_server": "[ServerServiceManager] 서버를 종료하는 중입니다.",
 
     // ServerProcessManager

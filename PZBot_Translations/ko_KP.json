@@ -28,6 +28,8 @@
     "restart_server": "[ServerServiceManager] 써버프로그람을 재시작하는중입니다. 잠시 기다려주십시오.",
     "restart_server_canceled": "[ServerServiceManager] 재시작작업이 취소되였습니다.",
     "restart_server_canceled_rcon": "예정된 써버재시작일정이 취소되였습니다.",
+    "check_restart": "[ServerServiceManager] 써버재시작까지 남은시간은 {minutes}분 {seconds}초입니다.",
+    "check_restart_not_exists": "[ServerServiceManager] 써버재시작일정이 없습니다.",
     "shutdown_server": "[ServerServiceManager] 써버프로그람을 종료하는중입니다.",
 
     // ServerProcessManager

@@ -28,6 +28,8 @@
     "restart_server": "[ServerServiceManager] Restarting server. Wait patiently",
     "restart_server_canceled": "[ServerServiceManager] Restart task has been canceled",
     "restart_server_canceled_rcon": "The scheduled server restart has been canceled.",
+    "check_restart": "[ServerServiceManager] The server restarts after {minutes}m {seconds}s",
+    "check_restart_not_exists": "[ServerServiceManager] There are no restarting schedules.",
     "shutdown_server": "[ServerServiceManager] Shutting down server",
 
     // ServerProcessManager

@@ -28,7 +28,7 @@ namespace DotNETCoreDiscordBot
             _tools = new Tools();
         }
 
-        [SlashCommand("players", "Gets players joined")]
+        [SlashCommand("players", "Get players joined")]
         public async Task CheckPlayers()
         {
             string result = await _rconManager.SendCommandAsync("players");
@@ -88,7 +88,7 @@ namespace DotNETCoreDiscordBot
 
             List<StringBuilder> sbList = _tools.SplitSB(sb);
 
-            foreach(StringBuilder sbItem in sbList)
+            foreach (StringBuilder sbItem in sbList)
             {
                 await FollowupAsync(sbItem.ToString(), ephemeral: true);
             }
@@ -122,7 +122,7 @@ namespace DotNETCoreDiscordBot
 
             foreach (var module in _interactionService.Modules)
             {
-                foreach(var cmd in module.SlashCommands)
+                foreach (var cmd in module.SlashCommands)
                 {
                     if (cmd.Name == "ping") continue;
 
@@ -132,7 +132,7 @@ namespace DotNETCoreDiscordBot
                     {
                         publicSB.Append(commandLine);
                     }
-                    else if(module.Name.Contains("Command") || module.Name.Contains("Channel"))
+                    else if (module.Name.Contains("Command") || module.Name.Contains("Channel"))
                     {
                         commandSB.Append(commandLine);
                     }
@@ -157,6 +157,12 @@ namespace DotNETCoreDiscordBot
             {
                 await FollowupAsync(sbItem.ToString(), ephemeral: true);
             }
+        }
+
+        [SlashCommand("check_restart_timer", "Get remaining time until server restarts")]
+        public async Task CheckRestart()
+        {
+            await RespondAsync(_serverService.CheckRestart());
         }
     }
 }

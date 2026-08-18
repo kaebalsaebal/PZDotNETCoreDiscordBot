@@ -33,7 +33,7 @@ namespace DotNETCoreDiscordBot
         {
             string result = await _rconManager.SendCommandAsync("players");
 
-            await RespondAsync($"```\n{result}\n```");
+            await RespondAsync($"```\n{result}\n```", ephemeral: true);
         }
 
         [SlashCommand("check_workshop_mods", "Get workshop mods in your server")]
@@ -162,7 +162,7 @@ namespace DotNETCoreDiscordBot
         [SlashCommand("check_restart_timer", "Get remaining time until server restarts")]
         public async Task CheckRestart()
         {
-            await RespondAsync(_serverService.CheckRestart());
+            await RespondAsync(_serverService.CheckRestart(), ephemeral: true);
         }
     }
 }

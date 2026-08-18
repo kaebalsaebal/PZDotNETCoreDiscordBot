@@ -102,7 +102,7 @@ namespace DotNETCoreDiscordBot
 
             await _serverService.SaveServer(Context.Client, _botConfig.LogChannelId);
 
-            await FollowupAsync("Save completed...", ephemeral: true);
+            await FollowupAsync("Save completed...", ephemeral: false);
         }
 
         [SlashCommand("restart_server", "Restarts server after n minutes")]
@@ -118,7 +118,7 @@ namespace DotNETCoreDiscordBot
                     minutes * 60000);
             });
 
-            await FollowupAsync(Messages.Get("slash_restart_server").KeyFormat(("minutes", minutes)), ephemeral: true);
+            await FollowupAsync(Messages.Get("slash_restart_server").KeyFormat(("minutes", minutes)), ephemeral: false);
         }
 
         [SlashCommand("restart_cancel", "Cancel scheduled restart")]
@@ -130,7 +130,7 @@ namespace DotNETCoreDiscordBot
 
             if (isCancelled)
             {
-                await FollowupAsync(Messages.Get("slash_restart_canceled"), ephemeral: true);
+                await FollowupAsync(Messages.Get("slash_restart_canceled"), ephemeral: false);
             }
             else
             {
@@ -145,7 +145,7 @@ namespace DotNETCoreDiscordBot
 
             await _serverService.ShutdownServer(Context.Client, _botConfig.LogChannelId);
 
-            await FollowupAsync(Messages.Get("slash_shutdown_server"), ephemeral: true);
+            await FollowupAsync(Messages.Get("slash_shutdown_server"), ephemeral: false);
         }
 
         [SlashCommand("grant_auth", "Grant user permission to command")]

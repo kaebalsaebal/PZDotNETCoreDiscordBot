@@ -70,6 +70,7 @@
     "save_server_desc": "Saves the server state.",
     "restart_server_desc": "Restarts the server after a specified number of minutes.",
     "restart_cancel_desc": "Cancels a scheduled server restart.",
+    "check_restart_timer_desc":  "Checks remaining time when server restart schedule is running",
     "shutdown_server_desc": "Saves and shuts down the server immediately.",
     "grant_auth_desc": "Grants a user permission to issue commands in the command channel.",
     "revoke_auth_desc": "Revokes a user's permission to issue commands in the command channel.",

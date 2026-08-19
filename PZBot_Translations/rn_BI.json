@@ -69,6 +69,7 @@
     "save_server_desc": "Ibika uko server imeze.",
     "restart_server_desc": "Isubira gutangura server inyuma y'iminota wavuze.",
     "restart_cancel_desc": "Ihagarika igikorwa co gusubira gutangura server gitegekanijwe.",
+    "check_restart_timer_desc": "Gusuzuma umwanya usigaye igihe urutonde rwo gusubira gutangiza server ruri gukora",
     "shutdown_server_desc": "Ibika kandi ikazima server ubwo nyene.",
     "grant_auth_desc": "Itanga uburenganzira bwo gukoresha command muri channel ya command.",
     "revoke_auth_desc": "Yaka uburenganzira bwo gukoresha command muri channel ya command.",

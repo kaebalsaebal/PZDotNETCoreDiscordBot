@@ -30,6 +30,7 @@ I'll try my best to implement remaining features as well...
 | **/set_language** | language | Set bot language(default is English(US)) | command |
 | **/get_cpu_ram** | | Show server's CPU and memory usage | public |
 | **/players** | | Show players logged in | public |
+| **/check_restart_timer** | | Show remaing time until server restarts | public |
 | **/check_workshop_mods** | item | Show last (item) update mods in your server | public |
 | **/help** | | Show all commands | public |
 
